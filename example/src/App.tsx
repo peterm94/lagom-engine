@@ -1,13 +1,12 @@
 import React from 'react'
 
-import { Entity, ExampleComponent } from 'lagom-engine'
 import 'lagom-engine/dist/index.css'
+import { LagomGameComponent } from 'lagom-engine'
+import { TestGame } from './TestGame'
 
 const App = () => {
-  let a = new Entity('baanna')
-  a.getScene()
-  a.getScene()
-  return <ExampleComponent text="Create React Library Example WOW 😄"/>
+
+  return <LagomGameComponent game={new TestGame()}/>
 }
 
 export default App

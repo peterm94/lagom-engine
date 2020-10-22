@@ -1,8 +1,9 @@
-import { Log, Observable, Util } from '../Common'
+import { Log, Util } from '../Common/Util'
 import { Component } from './Component'
 import { LagomType, LifecycleObject } from './LifecycleObject'
 import { Scene } from './Scene'
 import * as PIXI from 'pixi.js'
+import {Observable} from "../Common/Observer";
 
 /**
  * Entity base class. Raw entities can be used or subclasses can be defined similarly to prefabs.
