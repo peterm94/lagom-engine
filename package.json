@@ -55,7 +55,12 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "^3.4.1",
-    "typescript": "^3.7.5"
+    "typescript": "^3.7.5",
+    "howler": "^2.1.2",
+    "detect-collisions": "^2.4.4",
+    "pixi.js": "^5.3.3",
+    "pixi.js-keyboard": "^1.0.9",
+    "pixi.js-mouse": "^1.0.4"
   },
   "files": [
     "dist"

@@ -8,3 +8,9 @@ interface Props {
 export const ExampleComponent = ({ text }: Props) => {
   return <div className={styles.test}>Example Component: {text}</div>
 }
+
+export const Pls = () => {};
+
+
+export * from './Common'
+export * from './ECS'
