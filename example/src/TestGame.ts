@@ -1,10 +1,12 @@
 import {Game, Scene} from 'lagom-engine';
 
-class TestScene extends Scene {
+class TestScene extends Scene
+{
 
 }
 
-export class TestGame extends Game {
+export class TestGame extends Game
+{
     constructor()
     {
         super({

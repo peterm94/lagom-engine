@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Game} from "./ECS";
+import {Game} from "..";
 
 
 export class LagomGameComponent extends React.Component<{ game: Game }, {}>

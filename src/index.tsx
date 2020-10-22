@@ -43,6 +43,8 @@ export * from './ECS/System'
 export * from './Input/Button'
 export * from './Input/Key'
 
-export * from './LagomGameComponent'
+export * from './Physics/SimplePhysics'
+
+export * from './React/LagomGameComponent'
 
 
