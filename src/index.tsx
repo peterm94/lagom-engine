@@ -9,6 +9,9 @@ interface Props
 export const ExampleComponent = ({ text }: Props) => {
   return <div className={styles.test}>Example Component: {text}</div>
 }
+
+export * from './Audio/AudioAtlas'
+
 export * from './Common/Sprite/AnimatedSprite'
 export * from './Common/Sprite/AnimatedSpriteController'
 export * from './Common/Sprite/Sprite'
