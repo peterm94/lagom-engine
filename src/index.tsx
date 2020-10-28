@@ -45,6 +45,7 @@ export * from './ECS/System'
 
 export * from './Input/Button'
 export * from './Input/Key'
+export * from './Input/Mouse'
 
 export * from './Physics/SimplePhysics'
 
