@@ -26,9 +26,9 @@
   "dependencies": {
     "detect-collisions": "^2.4.4",
     "howler": "^2.1.2",
-    "pixi.js": "^5.3.3",
-    "pixi.js-keyboard": "^1.0.9",
-    "pixi.js-mouse": "^1.0.4"
+    "pixi.js": "^5.3.10",
+    "pixi.js-keyboard": "^1.1.6",
+    "pixi.js-mouse": "^1.1.6"
   },
   "devDependencies": {
     "@types/howler": "^2.2.1",
