@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js";
+import { Container } from "pixi.js";
 import {Vector} from "./Vector";
 
 
@@ -199,9 +199,9 @@ export class Util
      *
      * @returns The container.
      */
-    static sortedContainer(): PIXI.Container
+    static sortedContainer(): Container
     {
-        const container = new PIXI.Container();
+        const container = new Container();
         container.sortableChildren = true;
         container.sortDirty = true;
         return container;

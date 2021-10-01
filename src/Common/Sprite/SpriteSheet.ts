@@ -1,11 +1,11 @@
-import * as PIXI from "pixi.js";
+import { BaseTexture, Rectangle, SCALE_MODES, Texture } from "pixi.js";
 
 /**
  * Convenient way to load multiple sprites from a single Sprite Sheet.
  */
 export class SpriteSheet
 {
-    private readonly sheetTexture: PIXI.BaseTexture;
+    private readonly sheetTexture: BaseTexture;
 
     /**
      * Create a new SpriteSheet.
@@ -15,12 +15,12 @@ export class SpriteSheet
      */
     constructor(resource: string, private readonly tileWidth: number, private readonly tileHeight: number)
     {
-        this.sheetTexture = PIXI.BaseTexture.from(resource);
+        this.sheetTexture = BaseTexture.from(resource);
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
 
         // Turn off antialiasing. I'm not even making this optional, who would want it on?
-        this.sheetTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+        this.sheetTexture.scaleMode = SCALE_MODES.NEAREST;
     }
 
     /**
@@ -30,12 +30,12 @@ export class SpriteSheet
      * @param width Optional override for the texture width.
      * @param height Optional override for the texture height.
      */
-    texture(column: number, row: number, width?: number, height?: number): PIXI.Texture
+    texture(column: number, row: number, width?: number, height?: number): Texture
     {
         const w = width || this.tileWidth;
         const h = height || this.tileHeight;
 
-        return new PIXI.Texture(this.sheetTexture, new PIXI.Rectangle(column * this.tileWidth,
+        return new Texture(this.sheetTexture, new Rectangle(column * this.tileWidth,
                                                                       row * this.tileHeight,
                                                                       w, h));
     }
@@ -47,9 +47,9 @@ export class SpriteSheet
      * @param width Width in pixels.
      * @param height Height in pixels.
      */
-    textureFromPoints(x: number, y: number, width: number, height: number): PIXI.Texture
+    textureFromPoints(x: number, y: number, width: number, height: number): Texture
     {
-        return new PIXI.Texture(this.sheetTexture, new PIXI.Rectangle(x, y, width, height));
+        return new Texture(this.sheetTexture, new Rectangle(x, y, width, height));
     }
 
     /**
@@ -57,12 +57,12 @@ export class SpriteSheet
      * @param index Tile index of the texture to load.
      * @returns The loaded texture.
      */
-    textureFromIndex(index: number): PIXI.Texture
+    textureFromIndex(index: number): Texture
     {
         const col = index % (this.sheetTexture.realWidth / this.tileWidth);
         const row = Math.floor(index / (this.sheetTexture.realHeight / this.tileHeight));
 
-        return new PIXI.Texture(this.sheetTexture, new PIXI.Rectangle(col * this.tileWidth,
+        return new Texture(this.sheetTexture, new Rectangle(col * this.tileWidth,
                                                                       row * this.tileHeight,
                                                                       this.tileWidth, this.tileHeight));
     }
@@ -74,7 +74,7 @@ export class SpriteSheet
      * @param height Optional override for the texture height.
      * @returns The loaded textures.
      */
-    textures(frames: [number, number][], width?: number, height?: number): PIXI.Texture[]
+    textures(frames: [number, number][], width?: number, height?: number): Texture[]
     {
         const textures = [];
         for (const frame of frames)
@@ -93,7 +93,7 @@ export class SpriteSheet
      * @param height Optional override for the texture height.
      * @returns The loaded texture.
      */
-    textureSliceFromRow(row: number, start: number, end: number, width?: number, height?: number): PIXI.Texture[]
+    textureSliceFromRow(row: number, start: number, end: number, width?: number, height?: number): Texture[]
     {
         const textures = [];
 

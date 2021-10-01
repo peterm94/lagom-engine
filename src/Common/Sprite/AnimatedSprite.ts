@@ -1,6 +1,6 @@
 import {FrameTrigger} from "../FrameTrigger";
 import {Sprite, SpriteConfig} from "./Sprite";
-import * as PIXI from "pixi.js";
+import {Texture} from "pixi.js";
 
 /**
  * Animation end action.
@@ -79,7 +79,7 @@ export class AnimatedSprite extends FrameTrigger<number>
      * @param textures Textures for the Sprite to use.
      * @param config Configuration for this Sprite.
      */
-    constructor(protected textures: PIXI.Texture[], readonly config: AnimatedSpriteConfig | null = null)
+    constructor(protected textures: Texture[], readonly config: AnimatedSpriteConfig | null = null)
     {
         super(0);
 

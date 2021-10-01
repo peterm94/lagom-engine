@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js";
+import { Point } from "pixi.js";
 import {Scene} from "../ECS/Scene";
 import {MathUtil} from "./Util";
 
@@ -34,9 +34,9 @@ export class Camera
      * @param y The y position on the view.
      * @returns The world position.
      */
-    viewToWorld(x: number, y: number): PIXI.Point
+    viewToWorld(x: number, y: number): Point
     {
-        const point = new PIXI.Point();
+        const point = new Point();
         this.scene.getGame().manager.mapPositionToPoint(point, x, y);
 
         point.x -= this.scene.sceneNode.transform.position.x;
@@ -49,9 +49,9 @@ export class Camera
      * Position of the camera in the world.
      * @returns A Point for the position of the camera.
      */
-    position(): PIXI.Point
+    position(): Point
     {
-        return new PIXI.Point(-this.scene.sceneNode.transform.position.x, -this.scene.sceneNode.transform.position.y);
+        return new Point(-this.scene.sceneNode.transform.position.x, -this.scene.sceneNode.transform.position.y);
     }
 
     /**

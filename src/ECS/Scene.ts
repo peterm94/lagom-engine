@@ -1,4 +1,3 @@
-import * as PIXI from 'pixi.js';
 import {LifecycleObject, Updatable} from "./LifecycleObject";
 import {Entity} from "./Entity";
 import {System} from "./System";
@@ -8,6 +7,7 @@ import {Game} from "./Game";
 import {LagomType} from "./LifecycleObject";
 import {Camera} from "../Common/Camera";
 import {Log, Util} from "../Common/Util";
+import { Container } from "pixi.js";
 
 /**
  * Scene object type. Contains the root nodes for the entity trees, and runs all Systems and GlobalSystems..
@@ -25,7 +25,7 @@ export class Scene extends LifecycleObject implements Updatable
     readonly entityRemovedEvent: Observable<Scene, Entity> = new Observable();
 
     // Top level scene node.
-    readonly pixiStage: PIXI.Container;
+    readonly pixiStage: Container;
 
     // Node for scene objects. This can be offset to simulate camera movement.
     readonly sceneNode: Entity;

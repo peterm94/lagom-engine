@@ -1,19 +1,19 @@
 import {PIXIComponent} from "../../ECS/Component";
-import * as PIXI from "pixi.js";
+import {Filter, Sprite as PixiSpite, Texture} from "pixi.js";
 
 /**
  * Simple Sprite Component.
  */
-export class Sprite extends PIXIComponent<PIXI.Sprite>
+export class Sprite extends PIXIComponent<PixiSpite>
 {
     /**
      * Create a new Sprite.
      * @param texture The Texture for the Sprite.
      * @param config Configuration for the Sprite.
      */
-    constructor(texture: PIXI.Texture, config: SpriteConfig | null = null)
+    constructor(texture: Texture, config: SpriteConfig | null = null)
     {
-        super(new PIXI.Sprite(texture));
+        super(new PixiSpite(texture));
 
         if (config) this.applyConfig(config);
     }
@@ -57,5 +57,5 @@ export interface SpriteConfig
     rotation?: number;
     /** The opacity of the sprite. 0 = transparent, 100 = opaque. */
     alpha?: number;
-    filters?: PIXI.Filter[];
+    filters?: Filter[];
 }

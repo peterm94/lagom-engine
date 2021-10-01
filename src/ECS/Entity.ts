@@ -2,8 +2,8 @@ import { Log, Util } from '../Common/Util'
 import { Component } from './Component'
 import { LagomType, LifecycleObject } from './LifecycleObject'
 import { Scene } from './Scene'
-import * as PIXI from 'pixi.js'
 import {Observable} from "../Common/Observer";
+import { Container } from 'pixi.js';
 
 /**
  * Entity base class. Raw entities can be used or subclasses can be defined similarly to prefabs.
@@ -79,7 +79,7 @@ export class Entity extends LifecycleObject
   /**
    * The transform for this entity. All children transforms will be relative to this one.
    */
-  transform: PIXI.Container = Util.sortedContainer()
+  transform: Container = Util.sortedContainer()
 
   /**
    * Create a new entity. It must be added to a Game to actually do anything.

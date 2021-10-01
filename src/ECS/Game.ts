@@ -1,6 +1,6 @@
-import * as PIXI from "pixi.js";
 import {Scene} from "./Scene";
 import {Log} from "../Common/Util";
+import {InteractionManager, IRendererOptions, Renderer } from "pixi.js";
 
 // https://www.npmjs.com/package/pixi.js-keyboard
 // keys: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code#Code_values
@@ -36,10 +36,10 @@ export class Game
     gameOver = false;
 
     // Main PIXI renderer
-    readonly renderer: PIXI.Renderer;
+    readonly renderer: Renderer;
 
     // PIXI interaction manager
-    readonly manager: PIXI.InteractionManager;
+    readonly manager: InteractionManager;
 
     // Currently loaded scene.
     currentScene!: Scene;
@@ -107,25 +107,11 @@ export class Game
      * Create a new Game.
      * @param options Options for the PIXI Renderer.
      */
-    constructor(options?: {
-        width?: number;
-        height?: number;
-        view?: HTMLCanvasElement;
-        transparent?: boolean;
-        autoDensity?: boolean;
-        antialias?: boolean;
-        forceFXAA?: boolean;
-        resolution?: number;
-        clearBeforeRender?: boolean;
-        preserveDrawingBuffer?: boolean;
-        backgroundColor?: number;
-        powerPreference?: string;
-        context?: unknown;
-    })
+    constructor(options?: IRendererOptions)
     {
         // Set it up in the page
-        this.renderer = new PIXI.Renderer(options);
-        this.manager = new PIXI.InteractionManager(this.renderer);
+        this.renderer = new Renderer(options);
+        this.manager = new InteractionManager(this.renderer);
     }
 
     /**

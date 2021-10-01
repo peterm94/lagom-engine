@@ -1,3 +1,4 @@
+import { DisplayObject, IPointData } from "pixi.js";
 import {Entity} from "./Entity";
 import {LifecycleObject} from "./LifecycleObject";
 import {Scene} from "./Scene";
@@ -37,7 +38,7 @@ export abstract class Component extends LifecycleObject
 /**
  * PIXI Component base class. More for convenience than anything else, will add to the PIXI tree.
  */
-export abstract class PIXIComponent<T extends PIXI.DisplayObject> extends Component
+export abstract class PIXIComponent<T extends DisplayObject> extends Component
 {
     readonly pixiObj: T;
 
@@ -64,7 +65,7 @@ export abstract class PIXIComponent<T extends PIXI.DisplayObject> extends Compon
      * @param skipUpdate True to skip the PIXI positional update.
      * @returns The calculated point.
      */
-    globalPos(skipUpdate = false): PIXI.Point
+    globalPos(skipUpdate = false): IPointData
     {
         // This function is scary, it takes into account view changes, as does getGlobalPosition().
         // We need to offset the camera position, because it actually shifts everything in the scene.
