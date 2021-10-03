@@ -104,4 +104,14 @@ export class SpriteSheet
 
         return textures;
     }
+
+  /**
+   * Slices all sprites out of the first row of the SpriteSheet.
+   * @returns PIXI.Texture[] The loaded textures.
+   */
+  textureSliceFromSheet(): PIXI.Texture[]
+    {
+        const end = Math.floor(this.sheetTexture.width / this.tileWidth);
+        return this.textureSliceFromRow(0, 0, end - 1)
+    }
 }
