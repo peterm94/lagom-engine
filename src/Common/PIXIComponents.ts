@@ -1,5 +1,6 @@
 import {PIXIComponent} from "../ECS/Component";
 import * as PIXI from "pixi.js";
+import { ITextStyle } from "pixi.js";
 
 /**
  * Text renderer component.
@@ -13,37 +14,7 @@ export class TextDisp extends PIXIComponent<PIXI.Text>
      * @param text The text to display.
      * @param options Styling options for the text.
      */
-    constructor(xOff: number, yOff: number, text: string, options?: {
-        align?: string;
-        breakWords?: boolean;
-        dropShadow?: boolean;
-        dropShadowAlpha?: number;
-        dropShadowAngle?: number;
-        dropShadowBlur?: number;
-        dropShadowColor?: string | number;
-        dropShadowDistance?: number;
-        fill?: string | string[] | number | number[];
-        fillGradientType?: number;
-        fillGradientStops?: number[];
-        fontFamily?: string | string[];
-        fontSize?: number | string;
-        fontStyle?: string;
-        fontVariant?: string;
-        fontWeight?: string;
-        leading?: number;
-        letterSpacing?: number;
-        lineHeight?: number;
-        lineJoin?: string;
-        miterLimit?: number;
-        padding?: number;
-        stroke?: string | number;
-        strokeThickness?: number;
-        trim?: boolean;
-        textBaseline?: string;
-        whiteSpace?: string;
-        wordWrap?: boolean;
-        wordWrapWidth?: number;
-    })
+    constructor(xOff: number, yOff: number, text: string, options?: Partial<ITextStyle>)
     {
         super(new PIXI.Text(text, new PIXI.TextStyle(options)));
 

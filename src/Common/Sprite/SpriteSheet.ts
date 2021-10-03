@@ -23,6 +23,11 @@ export class SpriteSheet
         this.sheetTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
     }
 
+    public load(): Promise<unknown>
+    {
+        return this.sheetTexture.resource.load()
+    }
+
     /**
      * Get a texture from the SpriteSheet.
      * @param column The column index for the texture.
