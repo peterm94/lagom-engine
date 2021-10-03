@@ -20,12 +20,7 @@ export enum AnimationEnd
     /**
      * Continue the animation from the first frame.
      */
-    LOOP,
-
-    /**
-     * Trigger the end of animation event.
-     */
-    TRIGGER
+    LOOP
 }
 
 /**
@@ -96,11 +91,13 @@ export class AnimatedSprite extends FrameTrigger<number>
 
         this.onTrigger.register((_: FrameTrigger<number>, currFrame: number) => {
 
+            let lastFrame = false;
             let nextFrame = this.frameIndex + this.frameAdvancer;
 
             // Check for after last or first frame to trigger the end action.
             if (nextFrame === -1 || nextFrame === this.textures.length)
             {
+                lastFrame = true;
                 switch (this.animationEndAction)
                 {
                     // Loop back to the start
@@ -117,17 +114,18 @@ export class AnimatedSprite extends FrameTrigger<number>
                         nextFrame = currFrame;
                         this.frameAdvancer = 0;
                         break;
-                    // Call the trigger event if defined. Reset the frame to the start to support animation switching.
-                    case  AnimationEnd.TRIGGER:
-                        nextFrame %= this.textures.length;
-                        this.animationEndEvent?.call(this);
-                        break;
                 }
             }
 
             this.frameIndex = nextFrame;
 
             if (this.sprite) this.sprite.pixiObj.texture = this.textures[this.frameIndex];
+
+            // Last frame, call the trigger if it is defined.
+            if (lastFrame)
+            {
+                this.animationEndEvent?.call(this);
+            }
         });
     }
 
