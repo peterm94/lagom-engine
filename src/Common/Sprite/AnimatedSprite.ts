@@ -20,7 +20,12 @@ export enum AnimationEnd
     /**
      * Continue the animation from the first frame.
      */
-    LOOP
+    LOOP,
+
+    /**
+     * Trigger the end of animation event.
+     */
+    TRIGGER
 }
 
 /**
@@ -37,6 +42,8 @@ export interface AnimatedSpriteConfig extends SpriteConfig
      * Action to perform when the animation completes.
      */
     animationEndAction?: AnimationEnd;
+
+    animationEndEvent?: () => void;
 }
 
 /**
@@ -45,6 +52,7 @@ export interface AnimatedSpriteConfig extends SpriteConfig
 export class AnimatedSprite extends FrameTrigger<number>
 {
     animationEndAction: AnimationEnd = AnimationEnd.LOOP;
+    animationEndEvent?: () => void;
 
     private frameIndex = -1;
     private frameAdvancer = 1;
@@ -61,6 +69,7 @@ export class AnimatedSprite extends FrameTrigger<number>
         // Do animated sprite stuff
         if (config.animationSpeed !== undefined) this.triggerInterval = config.animationSpeed;
         if (config.animationEndAction !== undefined) this.animationEndAction = config.animationEndAction;
+        this.animationEndEvent = config.animationEndEvent;
     }
 
     /**
@@ -107,6 +116,11 @@ export class AnimatedSprite extends FrameTrigger<number>
                     case AnimationEnd.STOP:
                         nextFrame = currFrame;
                         this.frameAdvancer = 0;
+                        break;
+                    // Call the trigger event if defined. Reset the frame to the start to support animation switching.
+                    case  AnimationEnd.TRIGGER:
+                        nextFrame %= this.textures.length;
+                        this.animationEndEvent?.call(this);
                         break;
                 }
             }

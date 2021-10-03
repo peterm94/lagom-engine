@@ -22,6 +22,8 @@ export interface SpriteAnimation
      * Optional configuration for this animation.
      */
     config?: AnimatedSpriteConfig;
+
+    events?: { [key: number]: () => void };
 }
 
 /**
@@ -75,6 +77,14 @@ export class AnimatedSpriteController extends AnimatedSprite
 
     private spriteChangeFrame(_: FrameTrigger<number>, animationFrame: number): void
     {
+        const eventMap = this.animationStates.get(this._currentState)?.events;
+
+        if (eventMap !== undefined)
+        {
+            eventMap[animationFrame]?.call(this);
+        }
+
+        // TODO can I remove this? I don't think it is being used or works atm
         if (this.currentEventMap !== null)
         {
             const event = this.currentEventMap.get(animationFrame);
