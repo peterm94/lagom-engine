@@ -37,6 +37,8 @@ export interface AnimatedSpriteConfig extends SpriteConfig
      * Action to perform when the animation completes.
      */
     animationEndAction?: AnimationEnd;
+
+    animationEndEvent?: () => void;
 }
 
 /**
@@ -45,6 +47,7 @@ export interface AnimatedSpriteConfig extends SpriteConfig
 export class AnimatedSprite extends FrameTrigger<number>
 {
     animationEndAction: AnimationEnd = AnimationEnd.LOOP;
+    animationEndEvent?: () => void;
 
     private frameIndex = -1;
     private frameAdvancer = 1;
@@ -61,6 +64,7 @@ export class AnimatedSprite extends FrameTrigger<number>
         // Do animated sprite stuff
         if (config.animationSpeed !== undefined) this.triggerInterval = config.animationSpeed;
         if (config.animationEndAction !== undefined) this.animationEndAction = config.animationEndAction;
+        this.animationEndEvent = config.animationEndEvent;
     }
 
     /**
@@ -87,11 +91,13 @@ export class AnimatedSprite extends FrameTrigger<number>
 
         this.onTrigger.register((_: FrameTrigger<number>, currFrame: number) => {
 
+            let lastFrame = false;
             let nextFrame = this.frameIndex + this.frameAdvancer;
 
             // Check for after last or first frame to trigger the end action.
             if (nextFrame === -1 || nextFrame === this.textures.length)
             {
+                lastFrame = true;
                 switch (this.animationEndAction)
                 {
                     // Loop back to the start
@@ -114,6 +120,12 @@ export class AnimatedSprite extends FrameTrigger<number>
             this.frameIndex = nextFrame;
 
             if (this.sprite) this.sprite.pixiObj.texture = this.textures[this.frameIndex];
+
+            // Last frame, call the trigger if it is defined.
+            if (lastFrame)
+            {
+                this.animationEndEvent?.call(this);
+            }
         });
     }
 

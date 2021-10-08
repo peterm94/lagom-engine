@@ -13,20 +13,22 @@ export class Timer<T> extends Component
      */
     onTrigger: Observable<Timer<T>, T> = new Observable();
 
-    remainingMS: number;
+    timerLengthMs: number;
+    remainingMs: number;
     payload: T;
     repeat: boolean;
 
     /**
      * Create a new timer.
-     * @param lengthMS Timer length in milliseconds.
+     * @param lengthMs Timer length in milliseconds.
      * @param payload What will be delivered in the trigger event.
      * @param repeat Set to true to repeat the timer after it triggers.
      */
-    constructor(lengthMS: number, payload: T, repeat = false)
+    constructor(lengthMs: number, payload: T, repeat = false)
     {
         super();
-        this.remainingMS = lengthMS;
+        this.timerLengthMs = lengthMs;
+        this.remainingMs = lengthMs;
         this.payload = payload;
         this.repeat = repeat;
     }
@@ -53,14 +55,18 @@ export class TimerSystem extends GlobalSystem
         this.runOnComponents((timers: Timer<unknown>[]) => {
             for (const timer of timers)
             {
-                timer.remainingMS -= delta;
+                timer.remainingMs -= delta;
 
-                if (timer.remainingMS <= 0)
+                if (timer.remainingMs <= 0)
                 {
                     timer.onTrigger.trigger(timer, timer.payload);
                     if (!timer.repeat)
                     {
                         timer.destroy();
+                    }
+                    else
+                    {
+                      timer.remainingMs = timer.timerLengthMs;
                     }
                 }
             }

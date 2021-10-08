@@ -6,6 +6,13 @@ import * as PIXI from "pixi.js";
  */
 export class Sprite extends PIXIComponent<PIXI.Sprite>
 {
+    public static whiteFilter = () =>
+    {
+        const filter = new PIXI.filters.ColorMatrixFilter();
+        filter.contrast(100, true);
+        return filter;
+    }
+
     /**
      * Create a new Sprite.
      * @param texture The Texture for the Sprite.

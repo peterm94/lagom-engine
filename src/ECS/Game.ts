@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js";
 import {Scene} from "./Scene";
 import {Log} from "../Common/Util";
+import { IRendererOptions } from "pixi.js";
 
 // https://www.npmjs.com/package/pixi.js-keyboard
 // keys: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code#Code_values
@@ -107,21 +108,7 @@ export class Game
      * Create a new Game.
      * @param options Options for the PIXI Renderer.
      */
-    constructor(options?: {
-        width?: number;
-        height?: number;
-        view?: HTMLCanvasElement;
-        transparent?: boolean;
-        autoDensity?: boolean;
-        antialias?: boolean;
-        forceFXAA?: boolean;
-        resolution?: number;
-        clearBeforeRender?: boolean;
-        preserveDrawingBuffer?: boolean;
-        backgroundColor?: number;
-        powerPreference?: string;
-        context?: unknown;
-    })
+    constructor(options?: IRendererOptions)
     {
         // Set it up in the page
         this.renderer = new PIXI.Renderer(options);
