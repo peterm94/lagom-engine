@@ -8,7 +8,7 @@ import {Scene} from "./Scene";
  * System base class. Systems should be used to run on groups of components.
  * Note that this will only trigger if every component type is represented on an entity. Partial matches will not run.
  */
-export abstract class System extends LifecycleObject implements Updatable
+export abstract class System<T extends Component[]> extends LifecycleObject implements Updatable
 {
     private readonly runOn: Map<Entity, Component[]> = new Map();
 
@@ -148,9 +148,11 @@ export abstract class System extends LifecycleObject implements Updatable
      * For example, if types() is [Sprite, Collider], the function arguments would look as follows: (entity:
      * Entity, sprite: Sprite, collider: Collider).
      */
-    protected runOnEntities(f: Function): void
+    protected runOnEntities(f: (entity: Entity, ...components: T) => void): void
     {
         this.runOn.forEach((value: Component[], key: Entity) => {
+            // It doesn't like the type mapping from the generic types, but it does actually work.
+            // @ts-ignore
             f(key, ...value);
         });
     }
@@ -163,9 +165,11 @@ export abstract class System extends LifecycleObject implements Updatable
      * in the order defined by types(). For example, if types() is [Sprite, Collider], the function arguments would
      * look as follows: (system: System, entity: Entity, sprite: Sprite, collider: Collider).
      */
-    protected runOnEntitiesWithSystem(f: Function): void
+    protected runOnEntitiesWithSystem(f: (system: this, entity: Entity, ...components: T) => void): void
     {
         this.runOn.forEach((value: Component[], key: Entity) => {
+            // It doesn't like the type mapping from the generic types, but it does actually work.
+            // @ts-ignore
             f(this, key, ...value);
         });
     }
