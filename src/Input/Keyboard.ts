@@ -1,15 +1,21 @@
+/**
+ * Class storing all player keyboard inputs.
+ */
 export class Keyboard
 {
     private readonly keys: Set<string> = new Set();
     private readonly keyDowns: Set<string> = new Set();
     private readonly keyUps: Set<string> = new Set();
 
+    /**
+     * Constructor.
+     *
+     * @param canvas The game canvas to listen for keyboard inputs on.
+     */
     constructor(canvas: HTMLCanvasElement)
     {
         const keydown = (e: KeyboardEvent) => {
             e.preventDefault();
-
-            if (this.keys.has(e.code)) return;
 
             this.keyDowns.add(e.code);
             this.keys.add(e.code);
