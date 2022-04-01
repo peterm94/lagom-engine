@@ -1,8 +1,8 @@
 import {System} from "../ECS/System";
 import {LagomType} from "../ECS/LifecycleObject";
 import {Component} from "../ECS/Component";
-import {Entity} from "../ECS/Entity";
 import {Camera} from "./Camera";
+import {Entity} from "../ECS/Entity";
 
 export class FollowMe extends Component
 {
@@ -16,7 +16,7 @@ export interface CamOptions
     lerpSpeed?: number;
 }
 
-export class FollowCamera extends System
+export class FollowCamera extends System<[FollowMe]>
 {
     private camera!: Camera;
 
@@ -58,20 +58,20 @@ export class FollowCamera extends System
 
     fixedUpdate(delta: number): void
     {
-        this.runOnEntitiesWithSystem((system: FollowCamera, entity: Entity) => {
+        this.runOnEntities((entity: Entity) => {
 
             let targetX = entity.transform.x + this.xOffset;
             let targetY = entity.transform.y + this.yOffset;
 
             // Calculate camera midpoint
-            if (system.centre)
+            if (this.centre)
             {
-                targetX -= system.camera.halfWidth;
-                targetY -= system.camera.halfHeight;
+                targetX -= this.camera.halfWidth;
+                targetY -= this.camera.halfHeight;
             }
 
             // Soft follow
-            system.camera.moveTowards(targetX, targetY, system.lerpSpeed * (delta / 1000));
+            this.camera.moveTowards(targetX, targetY, this.lerpSpeed * (delta / 1000));
         });
     }
 }
