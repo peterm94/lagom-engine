@@ -148,7 +148,7 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
      * For example, if types() is [Sprite, Collider], the function arguments would look as follows: (entity:
      * Entity, sprite: Sprite, collider: Collider).
      */
-    protected runOnEntities(f: (entity: Entity, ...components: T) => void): void
+    protected runOnEntities(f: (entity: Entity, ...component: T) => void): void
     {
         this.runOn.forEach((value: Component[], key: Entity) => {
             // It doesn't like the type mapping from the generic types, but it does actually work.
@@ -165,7 +165,7 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
      * in the order defined by types(). For example, if types() is [Sprite, Collider], the function arguments would
      * look as follows: (system: System, entity: Entity, sprite: Sprite, collider: Collider).
      */
-    protected runOnEntitiesWithSystem(f: (system: this, entity: Entity, ...components: T) => void): void
+    protected runOnEntitiesWithSystem(f: (system: this, entity: Entity, ...component: T) => void): void
     {
         this.runOn.forEach((value: Component[], key: Entity) => {
             // It doesn't like the type mapping from the generic types, but it does actually work.
