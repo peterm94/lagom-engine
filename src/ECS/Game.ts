@@ -2,10 +2,7 @@ import * as PIXI from "pixi.js";
 import {Scene} from "./Scene";
 import {Log} from "../Common/Util";
 import { IRendererOptions } from "pixi.js";
-
-// https://www.npmjs.com/package/pixi.js-keyboard
-// keys: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code#Code_values
-const Keyboard = require('pixi.js-keyboard');
+import {Keyboard} from "../Input/Keyboard";
 
 // https://www.npmjs.com/package/pixi.js-mouse
 const Mouse = require('pixi.js-mouse');
@@ -31,7 +28,7 @@ export class Game
     /**
      * Use this to get keyboard events. Updated every update() frame.
      */
-    static keyboard = Keyboard;
+    readonly keyboard: Keyboard;
 
     // Set this to true to end the game
     gameOver = false;
@@ -113,6 +110,7 @@ export class Game
         // Set it up in the page
         this.renderer = new PIXI.Renderer(options);
         this.manager = new PIXI.InteractionManager(this.renderer);
+        this.keyboard = new Keyboard(this.renderer.view);
     }
 
     /**
@@ -141,7 +139,7 @@ export class Game
     {
         this.currentScene.update(delta);
 
-        Game.keyboard.update();
+        this.keyboard.update();
         Game.mouse.update();
     }
 
