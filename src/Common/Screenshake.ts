@@ -31,6 +31,11 @@ export class ScreenShaker extends GlobalSystem
     intensity = 0;
     duration = 0;
 
+    constructor(readonly rotateCenterX = 0, readonly rotateCenterY = 0)
+    {
+        super();
+    }
+
     types(): LagomType<Component>[]
     {
         return [ScreenShake];
@@ -50,7 +55,8 @@ export class ScreenShaker extends GlobalSystem
 
         if (this.duration > 0)
         {
-            this.getScene().camera.rotate(Math.random() * (this.intensity + this.intensity) - this.intensity);
+            this.getScene().camera.rotateAround(Math.random() * (this.intensity + this.intensity) - this.intensity,
+                                                this.rotateCenterX, this.rotateCenterY);
             this.duration -= delta;
         }
         else

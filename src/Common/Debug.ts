@@ -19,7 +19,7 @@ class FpsTracker extends Component
 /**
  * System that updates with diagnostic information.
  */
-class FpsUpdater extends System
+class FpsUpdater extends System<[TextDisp, FpsTracker]>
 {
     printFrame = 10;
     frameCount = 0;

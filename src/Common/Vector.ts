@@ -108,8 +108,8 @@ export class Vector
      */
     asNormalized(): Vector
     {
-        const len = this.length();
-        return new Vector(this.x / len, this.y / len);
+        let vec = new Vector(this.x, this.y);
+        return vec.normalize();
     }
 
     /**
@@ -120,6 +120,14 @@ export class Vector
     {
         const len = this.length();
         this.divide(len);
+        if (isNaN(this.x))
+        {
+            this.x = 0;
+        }
+        if (isNaN(this.y))
+        {
+            this.y = 0;
+        }
         return this;
     }
 
