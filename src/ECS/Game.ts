@@ -1,7 +1,9 @@
 import * as PIXI from "pixi.js";
+import {IRendererOptions} from "pixi.js";
 import {Scene} from "./Scene";
 import {Log} from "../Common/Util";
-import { IRendererOptions } from "pixi.js";
+import {ResourceLoader} from "../Common/ResourceLoader";
+import {SpriteSheet} from "../Common/Sprite/SpriteSheet";
 
 // https://www.npmjs.com/package/pixi.js-keyboard
 // keys: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code#Code_values
@@ -41,6 +43,8 @@ export class Game
 
     // PIXI interaction manager
     readonly manager: PIXI.InteractionManager;
+
+    readonly resourceLoader: ResourceLoader = new ResourceLoader();
 
     // Currently loaded scene.
     currentScene!: Scene;
@@ -163,5 +167,20 @@ export class Game
         Log.debug("Setting scene for game.", scene);
         scene.onAdded();
         return scene;
+    }
+
+    getResource(name: string): SpriteSheet
+    {
+        return this.resourceLoader.get(name);
+    }
+
+    addResource(name: string, sheet: SpriteSheet): SpriteSheet
+    {
+        return this.resourceLoader.addResource(name, sheet);
+    }
+
+    load(): Promise<unknown>
+    {
+        return this.resourceLoader.loadAll();
     }
 }
