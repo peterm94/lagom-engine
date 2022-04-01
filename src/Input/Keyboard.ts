@@ -9,17 +9,17 @@ export class Keyboard
         const keydown = (e: KeyboardEvent) => {
             e.preventDefault();
 
-            if (this.keys.has(e.key)) return;
+            if (this.keys.has(e.code)) return;
 
-            this.keyDowns.add(e.key);
-            this.keys.add(e.key);
+            this.keyDowns.add(e.code);
+            this.keys.add(e.code);
         };
 
         const keyup = (e: KeyboardEvent) => {
             e.preventDefault();
 
-            this.keyUps.add(e.key);
-            this.keys.delete(e.key);
+            this.keyUps.add(e.code);
+            this.keys.delete(e.code);
         };
 
         const clearKeys = () => this.keys.clear();
