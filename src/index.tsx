@@ -11,6 +11,7 @@ export * from './Common/Debug';
 export * from './Common/FrameTrigger';
 export * from './Common/Observer';
 export * from './Common/PIXIComponents';
+export * from './Common/ResourceLoader';
 export * from './Common/Screenshake';
 export * from './Common/TiledMapLoader';
 export * from './Common/Timer';
