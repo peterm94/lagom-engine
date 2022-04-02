@@ -1,5 +1,4 @@
 import * as PIXI from "pixi.js";
-import {IRendererOptions} from "pixi.js";
 import {Scene} from "./Scene";
 import {Log} from "../Common/Util";
 import {ResourceLoader} from "../Common/ResourceLoader";
