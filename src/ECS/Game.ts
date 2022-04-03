@@ -5,9 +5,7 @@ import {ResourceLoader} from "../Common/ResourceLoader";
 import {SpriteSheet} from "../Common/Sprite/SpriteSheet";
 import { IRendererOptions } from "pixi.js";
 import {Keyboard} from "../Input/Keyboard";
-
-// https://www.npmjs.com/package/pixi.js-mouse
-const Mouse = require('pixi.js-mouse');
+import {Mouse} from "../Input/Mouse";
 
 class Diag
 {
@@ -22,15 +20,11 @@ class Diag
  */
 export class Game
 {
-    /**
-     * Use this to get mouse input events. Updated every update() frame.
-     */
-    static mouse = Mouse;
-
-    /**
-     * Use this to get keyboard events. Updated every update() frame.
-     */
+    // Get keyboard events. Updated every update() frame.
     readonly keyboard: Keyboard;
+
+    // Get mouse events. Updated every update() frame.
+    readonly mouse: Mouse;
 
     // Set this to true to end the game
     gameOver = false;
@@ -115,6 +109,7 @@ export class Game
         this.renderer = new PIXI.Renderer(options);
         this.manager = new PIXI.InteractionManager(this.renderer);
         this.keyboard = new Keyboard(this.renderer.view);
+        this.mouse = new Mouse(this.renderer.view);
     }
 
     /**
@@ -144,7 +139,7 @@ export class Game
         this.currentScene.update(delta);
 
         this.keyboard.update();
-        Game.mouse.update();
+        this.mouse.pixi_mouse.update();
     }
 
     private fixedUpdateInternal(delta: number): void
