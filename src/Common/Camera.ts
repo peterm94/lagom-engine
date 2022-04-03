@@ -136,11 +136,22 @@ export class Camera
     rotateAround(angle: number, offsetX = 0, offsetY = 0): void
     {
         // TODO this does not work if the camera moves at all.
-        this.scene.sceneNode.transform.pivot.set(offsetX, offsetY);
-        this.scene.sceneNode.transform.angle = angle;
-        this.angle = this.scene.sceneNode.transform.angle;
+        // this.scene.sceneNode.transform.pivot.set(offsetX, offsetY);
+        // this.scene.sceneNode.transform.angle = angle;
+        // this.angle = this.scene.sceneNode.transform.angle;
+        //
+        // this.scene.sceneNode.transform.position.x = offsetX;
+        // this.scene.sceneNode.transform.position.y = offsetY;
+        const rads = MathUtil.degToRad(angle);
+        const topLeft = this.rotate_point(0, 0, offsetX, offsetY, rads);
+        this.scene.sceneNode.transform.rotation = rads;
+        this.scene.sceneNode.transform.position.x = topLeft[0];
+        this.scene.sceneNode.transform.position.y = topLeft[1];
+    }
 
-        this.scene.sceneNode.transform.position.x = offsetX;
-        this.scene.sceneNode.transform.position.y = offsetY;
+    rotate_point(pointX: number, pointY: number, originX: number, originY: number, angle: number): number[]
+    {
+        return [Math.cos(angle) * (pointX - originX) - Math.sin(angle) * (pointY - originY) + originX,
+                Math.sin(angle) * (pointX - originX) + Math.cos(angle) * (pointY - originY) + originY];
     }
 }
