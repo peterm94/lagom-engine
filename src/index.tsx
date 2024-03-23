@@ -38,6 +38,4 @@ export * from './Input/Mouse'
 
 export * from './Physics/SimplePhysics'
 
-export * from './React/LagomGameComponent'
-
 
