@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "Lagom Game Engine",
   "type": "module",
+  "main": "dist/lagom-engine.js",
+  "types": "dist/main.d.ts",
   "author": "peterm94",
   "license": "MIT",
   "repository": "peterm94/lagom-engine",
@@ -17,8 +19,12 @@
     "pixi.js": "^6.3.0"
   },
   "devDependencies": {
+    "@types/howler": "^2.2.3",
     "typescript": "^5.2.2",
     "vite": "^5.2.0",
-    "@types/howler": "^2.2.3"
-  }
+    "vite-plugin-dts": "^3.7.3"
+  },
+  "files": [
+    "dist"
+  ]
 }
