@@ -3,11 +3,12 @@ import PixiMouse from "./PixiMouse";
 
 export class Mouse
 {
+    readonly pixi_mouse: PixiMouse;
+
     constructor(readonly canvas: HTMLCanvasElement)
     {
+        this.pixi_mouse = new PixiMouse(this.canvas)
     }
-
-    readonly pixi_mouse = new PixiMouse(this.canvas)
 
     /**
      * Check if a button pressed down in this frame.
