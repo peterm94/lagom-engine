@@ -1,6 +1,6 @@
 {
   "name": "lagom-engine",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Lagom Game Engine",
   "type": "module",
   "main": "dist/lagom-engine.js",
