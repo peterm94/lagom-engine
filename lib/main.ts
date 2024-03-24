@@ -5,6 +5,7 @@ export * from './Common/Sprite/AnimatedSpriteController'
 export * from './Common/Sprite/Sprite'
 export * from './Common/Sprite/SpriteSheet'
 
+export * from './Common/ActionOnPress.ts';
 export * from './Common/Camera';
 export * from './Common/CameraUtil';
 export * from './Common/Debug';
@@ -37,7 +38,5 @@ export * from './Input/Key'
 export * from './Input/Mouse'
 
 export * from './Physics/SimplePhysics'
-
-export * from './React/LagomGameComponent'
 
 
