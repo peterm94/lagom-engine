@@ -3,7 +3,6 @@ import {Entity} from "../ECS/Entity";
 import {System} from "../ECS/System";
 import {Component} from "../ECS/Component";
 import {Game} from "../ECS/Game";
-import {LagomType} from "../ECS/LifecycleObject";
 
 /**
  * FPS tracking component.
@@ -97,10 +96,7 @@ class FpsUpdater extends System<[TextDisp, FpsTracker]>
         }
     }
 
-    types(): LagomType<Component>[]
-    {
-        return [TextDisp, FpsTracker];
-    }
+    types = [TextDisp, FpsTracker];
 }
 
 

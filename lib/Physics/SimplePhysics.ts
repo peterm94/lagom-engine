@@ -3,7 +3,6 @@ import {Entity} from "../ECS/Entity";
 import {MathUtil} from "../Common/Util";
 import {Rigidbody} from "../Collisions/Rigidbody";
 import {Component} from "../ECS/Component";
-import {LagomType} from "../ECS/LifecycleObject";
 
 /**
  * Properties interface for SimplePhysics module.
@@ -113,7 +112,7 @@ export class SimplePhysicsBody extends Component
  */
 export class SimplePhysics extends System<[Rigidbody, SimplePhysicsBody]>
 {
-    types = (): LagomType<Component>[] => [Rigidbody, SimplePhysicsBody];
+    types = [Rigidbody, SimplePhysicsBody];
 
     update(_: number): void
     {

@@ -17,7 +17,7 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
     private onComponentAdded(entity: Entity, component: Component): void
     {
         // Check if we care about this type at all
-        if (this.types().find((val) => component instanceof val) === undefined)
+        if (this.types.find((val) => component instanceof val) === undefined)
         {
             return;
         }
@@ -38,10 +38,9 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
 
     private findComponents(entity: Entity): Component[] | null
     {
-        const inTypes = this.types();
         const ret: Component[] = [];
 
-        for (const type of inTypes)
+        for (const type of this.types)
         {
             const comp = entity.getComponent(type);
             if (comp == null) return null;
@@ -54,7 +53,7 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
     private onComponentRemoved(entity: Entity, component: Component): void
     {
         // Check if we care about this type at all
-        if (this.types().find((val) => component instanceof val) === undefined)
+        if (this.types.find((val) => component instanceof val) === undefined)
         {
             return;
         }
@@ -139,7 +138,7 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
      * Component types that this System runs on.
      * @returns A list of Component types.
      */
-    abstract types(): LagomType<Component>[];
+    abstract types: LagomType<Component>[];
 
     /**
      * Call this from update() to run on the requested component instances.

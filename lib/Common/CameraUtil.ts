@@ -1,5 +1,4 @@
 import {System} from "../ECS/System";
-import {LagomType} from "../ECS/LifecycleObject";
 import {Component} from "../ECS/Component";
 import {Camera} from "./Camera";
 import {Entity} from "../ECS/Entity";
@@ -46,10 +45,7 @@ export class FollowCamera extends System<[FollowMe]>
         this.camera = this.getScene().camera;
     }
 
-    types(): LagomType<Component>[]
-    {
-        return [FollowMe];
-    }
+    types= [FollowMe];
 
     update(): void
     {

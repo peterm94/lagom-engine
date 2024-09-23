@@ -1,7 +1,5 @@
 import {Key} from "../Input/Key.ts";
 import {System} from "../ECS/System.ts";
-import {LagomType} from "../ECS/LifecycleObject.ts";
-import {Component} from "../ECS/Component.ts";
 
 /**
  * Run a function on keypress. Key list is configurable.
@@ -12,9 +10,7 @@ export class ActionOnPress extends System<[]> {
         super();
     }
 
-    types(): LagomType<Component>[] {
-        return [];
-    }
+    types = [];
 
     update(_delta: number): void {
 

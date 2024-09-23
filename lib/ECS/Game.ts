@@ -3,7 +3,6 @@ import {Scene} from "./Scene";
 import {Log} from "../Common/Util";
 import {ResourceLoader} from "../Common/ResourceLoader";
 import {SpriteSheet} from "../Common/Sprite/SpriteSheet";
-import { IRendererOptions } from "pixi.js";
 import {Keyboard} from "../Input/Keyboard";
 import {Mouse} from "../Input/Mouse";
 
@@ -13,6 +12,13 @@ class Diag
     fixedUpdateTime = 0;
     updateTime = 0;
     totalFrameTime = 0;
+}
+
+export interface GameOptions {
+    width: number;
+    height: number;
+    resolution: number;
+    backgroundColor: number;
 }
 
 /**
@@ -103,7 +109,7 @@ export class Game
      * Create a new Game.
      * @param options Options for the PIXI Renderer.
      */
-    constructor(options?: IRendererOptions)
+    constructor(options?: GameOptions)
     {
         // Set it up in the page
         this.renderer = new PIXI.Renderer(options);
