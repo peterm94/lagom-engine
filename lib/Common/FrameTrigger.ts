@@ -1,5 +1,4 @@
 import {Component} from "../ECS/Component";
-import {LagomType} from "../ECS/LifecycleObject";
 import {GlobalSystem} from "../ECS/GlobalSystem";
 import {Observable} from "./Observer";
 
@@ -54,14 +53,11 @@ export abstract class FrameTrigger<T> extends Component
 /**
  * System used in conjunction with an implemented FrameTrigger. This system is required for them to actually function.
  */
-export class FrameTriggerSystem extends GlobalSystem
+export class FrameTriggerSystem extends GlobalSystem<[FrameTrigger<unknown>[]]>
 {
     private elapsed = 0;
 
-    types(): LagomType<Component>[]
-    {
-        return [FrameTrigger];
-    }
+    types = [FrameTrigger];
 
     update(delta: number): void
     {

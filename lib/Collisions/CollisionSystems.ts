@@ -4,13 +4,12 @@ import {Collisions, Result} from "detect-collisions";
 import {BodyType, Collider, LagomBody} from "./Colliders";
 import {GlobalSystem} from "../ECS/GlobalSystem";
 import {Rigidbody} from "./Rigidbody";
-import {LagomType} from "../ECS/LifecycleObject";
-import {Component} from "../ECS/Component";
+import {Component} from "../ECS/Component.ts";
 
 /**
  * Base class for collision systems.
  */
-export abstract class CollisionSystem extends GlobalSystem
+export abstract class CollisionSystem<T extends Component[][]> extends GlobalSystem<T>
 {
     // The inner detect system that will perform the collision checks.
     readonly detectSystem: Collisions = new Collisions();
@@ -101,8 +100,7 @@ export abstract class CollisionSystem extends GlobalSystem
                     {
                         // Still inside the trigger.
                         collider.onTrigger.trigger(collider, {other: otherComp, result: result});
-                    }
-                    else
+                    } else
                     {
                         // New event detected.
                         collider.onTriggerEnter.trigger(collider, {other: otherComp, result: result});
@@ -129,9 +127,9 @@ export abstract class CollisionSystem extends GlobalSystem
  *
  * Avoid fast moving objects, as they will easily clip through things. use the continuous implementation if required.
  */
-export class DiscreteCollisionSystem extends CollisionSystem
+export class DiscreteCollisionSystem extends CollisionSystem<[Collider[]]>
 {
-    types = (): LagomType<Component>[] => [Collider];
+    types = [Collider];
 
     update(_: number): void
     {
@@ -166,7 +164,7 @@ export class DiscreteCollisionSystem extends CollisionSystem
  * independently, cascading all effects to child components. Not sure how to deal with update order here, can think
  * about that later.
  */
-export class ContinuousCollisionSystem extends CollisionSystem
+export class ContinuousCollisionSystem extends CollisionSystem<[Rigidbody[]]>
 {
     /**
      * Construct the collision system.
@@ -180,7 +178,7 @@ export class ContinuousCollisionSystem extends CollisionSystem
         super(collisionMatrix);
     }
 
-    types = (): LagomType<Component>[] => [Rigidbody];
+    types = [Rigidbody];
 
     update(_: number): void
     {
@@ -198,8 +196,7 @@ export class ContinuousCollisionSystem extends CollisionSystem
                 if (!body.active || body.bodyType === BodyType.Static)
                 {
                     // Skip. Can't hit other statics. If something moves into me, it will trigger an event.
-                }
-                else if (body.bodyType === BodyType.Discrete ||
+                } else if (body.bodyType === BodyType.Discrete ||
                     (body.pendingY === 0 && body.pendingX === 0 && body.pendingRotation === 0))
                 {
                     // Discrete or not moving, just move to final position and do the checks.
@@ -220,8 +217,7 @@ export class ContinuousCollisionSystem extends CollisionSystem
 
                     // Do checks.
                     this.doCollisionCheck(body.affectedColliders);
-                }
-                else
+                } else
                 {
                     // TODO could do this with trig instead of doing x/y independently, not sure if worth. Will slow it
                     //  down, but be more accurate for things moving off axis.
@@ -271,18 +267,18 @@ export class ContinuousCollisionSystem extends CollisionSystem
  * <canvas id={"detect-render"} width={"512"} height={"512"} style={{border:"black", borderStyle:"solid"}}/>
  * ```
  */
-export class DebugCollisionSystem extends GlobalSystem
+export class DebugCollisionSystem extends GlobalSystem<[]>
 {
     /**
      * Constructor.
      * @param system The system to draw.
      */
-    constructor(readonly system: CollisionSystem)
+    constructor(readonly system: CollisionSystem<any>)
     {
         super();
     }
 
-    types = (): LagomType<Component>[] => [];
+    types = [];
 
     update(_: number): void
     {

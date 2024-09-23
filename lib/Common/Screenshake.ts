@@ -1,6 +1,5 @@
 import {Component} from "../ECS/Component";
 import {GlobalSystem} from "../ECS/GlobalSystem";
-import {LagomType} from "../ECS/LifecycleObject";
 
 /**
  * Add this component to an Entity to trigger the ScreenShaker controller.
@@ -26,7 +25,7 @@ export class ScreenShake extends Component
 /**
  * Screenshake controller. Must be added to a scene for the ScreenShake to be applied.
  */
-export class ScreenShaker extends GlobalSystem
+export class ScreenShaker extends GlobalSystem<[ScreenShake[]]>
 {
     intensity = 0;
     duration = 0;
@@ -36,10 +35,7 @@ export class ScreenShaker extends GlobalSystem
         super();
     }
 
-    types(): LagomType<Component>[]
-    {
-        return [ScreenShake];
-    }
+    types = [ScreenShake];
 
     update(delta: number): void
     {
@@ -56,10 +52,9 @@ export class ScreenShaker extends GlobalSystem
         if (this.duration > 0)
         {
             this.getScene().camera.rotateAround(Math.random() * (this.intensity + this.intensity) - this.intensity,
-                                                this.rotateCenterX, this.rotateCenterY);
+                this.rotateCenterX, this.rotateCenterY);
             this.duration -= delta;
-        }
-        else
+        } else
         {
             this.getScene().camera.rotate(0);
             this.intensity = 0;

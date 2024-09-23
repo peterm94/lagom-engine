@@ -39,7 +39,7 @@ export class Scene extends LifecycleObject implements Updatable
     // TODO can these be sets? need unique, but update order needs to be defined :/ i need a comparator for each
     //  type that can define it's order.
     readonly systems: System<any>[] = [];
-    readonly globalSystems: GlobalSystem[] = [];
+    readonly globalSystems: GlobalSystem<any>[] = [];
 
     // Milliseconds
     readonly updateWarnThreshold = 5;
@@ -158,7 +158,7 @@ export class Scene extends LifecycleObject implements Updatable
      * @param system The system to add.
      * @returns The added system.
      */
-    addGlobalSystem<T extends GlobalSystem>(system: T): T
+    addGlobalSystem<T extends GlobalSystem<any>>(system: T): T
     {
         system.scene = this;
 
@@ -175,7 +175,7 @@ export class Scene extends LifecycleObject implements Updatable
      * @param type The type of system to search for.
      * @returns The found system or null.
      */
-    getGlobalSystem<T extends GlobalSystem>(type: LagomType<GlobalSystem>): T | null
+    getGlobalSystem<T extends GlobalSystem<any>>(type: LagomType<GlobalSystem<any>>): T | null
     {
         const found = this.globalSystems.find(value => value instanceof type);
         return found !== undefined ? found as T : null;

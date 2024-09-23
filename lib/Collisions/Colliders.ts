@@ -92,7 +92,7 @@ export abstract class Collider extends PIXIComponent<PIXI.Container>
      * @param body The inner body type.
      * @param options Any additional body options.
      */
-    protected constructor(private readonly engine: CollisionSystem, readonly body: Body, options: ColliderOptions)
+    protected constructor(private readonly engine: CollisionSystem<any>, readonly body: Body, options: ColliderOptions)
     {
         super(new PIXI.Container());
 
@@ -173,7 +173,7 @@ export class CircleCollider extends Collider
      * @param system System to add the collider to.
      * @param options Options for this collider.
      */
-    constructor(system: CollisionSystem, options: CircleColliderOptions)
+    constructor(system: CollisionSystem<any>, options: CircleColliderOptions)
     {
         super(system, new Circle(0, 0, options.radius), options);
     }
@@ -189,7 +189,7 @@ export class PointCollider extends Collider
      * @param system System to add the collider to.
      * @param options Options for this collider.
      */
-    constructor(system: CollisionSystem, options: ColliderOptions)
+    constructor(system: CollisionSystem<any>, options: ColliderOptions)
     {
         super(system, new Point(0, 0), options);
     }
@@ -221,7 +221,7 @@ export class PolyCollider extends Collider
      * @param system System to add the collider to.
      * @param options Options for this collider.
      */
-    constructor(system: CollisionSystem, options: PolyColliderInterface)
+    constructor(system: CollisionSystem<any>, options: PolyColliderInterface)
     {
         // NOTE: The order of the points matters, the library is bugged, this function ensures they are anticlockwise.
         // TODO not sure about the (x, y) here, it used to be (xOff, yOff), but I'm sure it was never tested.
@@ -322,7 +322,7 @@ export class RectCollider extends PolyCollider
      * @param system System to add the collider to.
      * @param options Options for this collider.
      */
-    constructor(system: CollisionSystem, options: RectColliderOptions)
+    constructor(system: CollisionSystem<any>, options: RectColliderOptions)
     {
         super(system, {
             points: [[0, 0], [options.width, 0], [options.width, options.height], [0, options.height]],

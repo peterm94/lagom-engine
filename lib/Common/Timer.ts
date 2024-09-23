@@ -1,6 +1,5 @@
 import {Component} from "../ECS/Component";
 import {GlobalSystem} from "../ECS/GlobalSystem";
-import {LagomType} from "../ECS/LifecycleObject";
 import {Observable} from "./Observer";
 
 /**
@@ -43,12 +42,9 @@ export class Timer<T> extends Component
 /**
  * System used to drive the Timer.
  */
-export class TimerSystem extends GlobalSystem
+export class TimerSystem extends GlobalSystem<[Timer<unknown>[]]>
 {
-    types(): LagomType<Component>[]
-    {
-        return [Timer];
-    }
+    types = [Timer];
 
     update(delta: number): void
     {

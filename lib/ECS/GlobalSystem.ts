@@ -7,7 +7,7 @@ import {Scene} from "./Scene";
 /**
  * Global system base class. Designed to run on batches of Components. Will be run every update frame.
  */
-export abstract class GlobalSystem extends LifecycleObject implements Updatable
+export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObject implements Updatable
 {
     // The key type is technically wrong, but it works because types aren't real
     private readonly runOn: Map<{ new(): Component }, Component[]> = new Map();
@@ -30,7 +30,7 @@ export abstract class GlobalSystem extends LifecycleObject implements Updatable
      * An array of types that this GlobalSystem will run on. This should remain static.
      * @returns An array of component types to run on during update().
      */
-    abstract types(): LagomType<Component>[];
+    abstract types: LagomType<Component>[];
 
     /**
      * Call this in update() to retrieve the collection of components to run on.
@@ -38,8 +38,9 @@ export abstract class GlobalSystem extends LifecycleObject implements Updatable
      * types() returns [Sprite, Collider], the function will be passed two arrays, (sprites: Sprite[], colliders:
      * Collider[]).
      */
-    protected runOnComponents(f: Function): void
+    protected runOnComponents(f: (...components: T) => void): void
     {
+        // @ts-ignore
         f(...Array.from(this.runOn.values()));
     }
 
@@ -50,15 +51,16 @@ export abstract class GlobalSystem extends LifecycleObject implements Updatable
      * returned by types(). For example, if types() returns [Sprite, Collider], the function will be passed the
      * system and t hen two arrays, (system: GlobalSystem, sprites: Sprite[], colliders: Collider[]).
      */
-    protected runOnComponentsWithSystem(f: Function): void
+    protected runOnComponentsWithSystem(f: (system: this, ...components: T) => void): void
     {
+        // @ts-ignore
         f(this, ...Array.from(this.runOn.values()));
     }
 
     private onComponentAdded(_: Entity, component: Component): void
     {
         // Check if we care about this type at all
-        const type = this.types().find((val) => {
+        const type = this.types.find((val) => {
             return component instanceof val;
         });
 
@@ -78,7 +80,7 @@ export abstract class GlobalSystem extends LifecycleObject implements Updatable
     private onComponentRemoved(_: Entity, component: Component): void
     {
         // Check if we care about this type at all
-        const type = this.types().find((val) => {
+        const type = this.types.find((val) => {
             return component instanceof val;
         });
 
@@ -109,7 +111,7 @@ export abstract class GlobalSystem extends LifecycleObject implements Updatable
     addedToScene(scene: Scene): void
     {
         // make each component map
-        this.types().forEach(type => {
+        this.types.forEach(type => {
             this.runOn.set(type.prototype, []);
         });
 
