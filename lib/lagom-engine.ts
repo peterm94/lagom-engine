@@ -5,7 +5,7 @@ export * from './Common/Sprite/AnimatedSpriteController'
 export * from './Common/Sprite/Sprite'
 export * from './Common/Sprite/SpriteSheet'
 
-export * from './Common/ActionOnPress.ts';
+export * from './Common/ActionOnPress';
 export * from './Common/Camera';
 export * from './Common/CameraUtil';
 export * from './Common/Debug';
