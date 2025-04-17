@@ -1,24 +1,20 @@
 import {Entity} from "./Entity";
 import {Component} from "./Component";
 import {LagomType, LifecycleObject, Updatable} from "./LifecycleObject";
-import {Util} from "../Common/Util";
 import {Scene} from "./Scene";
 
 /**
  * System base class. Systems should be used to run on groups of components.
  * Note that this will only trigger if every component type is represented on an entity. Partial matches will not run.
  */
-export abstract class System<T extends Component[]> extends LifecycleObject implements Updatable
-{
+export abstract class System<T extends Component[]> extends LifecycleObject implements Updatable {
     private readonly runOn: Map<Entity, Component[]> = new Map();
 
     scene !: Scene;
 
-    private onComponentAdded(entity: Entity, component: Component): void
-    {
+    private onComponentAdded(entity: Entity, component: Component): void {
         // Check if we care about this type at all
-        if (this.types.find((val) => component instanceof val) === undefined)
-        {
+        if (this.types.find((val) => component instanceof val) === undefined) {
             return;
         }
 
@@ -36,12 +32,10 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
         this.runOn.set(entity, ret);
     }
 
-    private findComponents(entity: Entity): Component[] | null
-    {
+    private findComponents(entity: Entity): Component[] | null {
         const ret: Component[] = [];
 
-        for (const type of this.types)
-        {
+        for (const type of this.types) {
             const comp = entity.getComponent(type);
             if (comp == null) return null;
             ret.push(comp);
@@ -50,11 +44,9 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
         return ret;
     }
 
-    private onComponentRemoved(entity: Entity, component: Component): void
-    {
+    private onComponentRemoved(entity: Entity, component: Component): void {
         // Check if we care about this type at all
-        if (this.types.find((val) => component instanceof val) === undefined)
-        {
+        if (this.types.find((val) => component instanceof val) === undefined) {
             return;
         }
 
@@ -65,27 +57,22 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
 
         // Recompute if we can run on this entity, remove if we cannot
         const ret = this.findComponents(entity);
-        if (ret === null)
-        {
+        if (ret === null) {
             // Can't run, remove entry
             this.runOn.delete(entity);
-        }
-        else
-        {
+        } else {
             // Can run, update runOn
             this.runOn.set(entity, ret);
         }
     }
 
-    private onEntityAdded(_: Scene, entity: Entity): void
-    {
+    private onEntityAdded(_: Scene, entity: Entity): void {
         // Register for component changes
         entity.componentAddedEvent.register(this.onComponentAdded.bind(this));
         entity.componentRemovedEvent.register(this.onComponentRemoved.bind(this));
     }
 
-    private onEntityRemoved(_: Scene, entity: Entity): void
-    {
+    private onEntityRemoved(_: Scene, entity: Entity): void {
         entity.componentAddedEvent.deregister(this.onComponentAdded.bind(this));
         entity.componentRemovedEvent.deregister(this.onComponentRemoved.bind(this));
 
@@ -93,8 +80,7 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
         this.runOn.delete(entity);
     }
 
-    addedToScene(scene: Scene): void
-    {
+    addedToScene(scene: Scene): void {
         scene.entityAddedEvent.register(this.onEntityAdded.bind(this));
         scene.entityRemovedEvent.register(this.onEntityRemoved.bind(this));
 
@@ -105,19 +91,23 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
 
             // Check it, add if ready.
             const ret = this.findComponents(entity);
-            if (ret !== null)
-            {
+            if (ret !== null) {
                 this.runOn.set(entity, ret);
             }
         });
     }
 
-    onRemoved(): void
-    {
+    destroy() {
+        super.destroy();
+
+        this.onRemoved();
+    }
+
+    onRemoved(): void {
         super.onRemoved();
 
         const scene = this.getScene();
-        Util.remove(scene.systems, this);
+        scene.systems.delete(this.id);
 
         scene.entityAddedEvent.deregister(this.onEntityAdded.bind(this));
         scene.entityRemovedEvent.deregister(this.onEntityRemoved.bind(this));
@@ -129,8 +119,7 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
      */
     abstract update(delta: number): void;
 
-    fixedUpdate(_: number): void
-    {
+    fixedUpdate(_: number): void {
         // Default empty implementation.
     }
 
@@ -147,8 +136,7 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
      * For example, if types() is [Sprite, Collider], the function arguments would look as follows: (entity:
      * Entity, sprite: Sprite, collider: Collider).
      */
-    protected runOnEntities(f: (entity: Entity, ...component: T) => void): void
-    {
+    protected runOnEntities(f: (entity: Entity, ...component: T) => void): void {
         this.runOn.forEach((value: Component[], key: Entity) => {
             // It doesn't like the type mapping from the generic types, but it does actually work.
             // @ts-ignore
@@ -164,8 +152,7 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
      * in the order defined by types(). For example, if types() is [Sprite, Collider], the function arguments would
      * look as follows: (system: System, entity: Entity, sprite: Sprite, collider: Collider).
      */
-    protected runOnEntitiesWithSystem(f: (system: this, entity: Entity, ...component: T) => void): void
-    {
+    protected runOnEntitiesWithSystem(f: (system: this, entity: Entity, ...component: T) => void): void {
         this.runOn.forEach((value: Component[], key: Entity) => {
             // It doesn't like the type mapping from the generic types, but it does actually work.
             // @ts-ignore
@@ -177,8 +164,7 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
      * Return the Scene object that this system belongs to.
      * @returns The parent Scene.
      */
-    getScene(): Scene
-    {
+    getScene(): Scene {
         return this.scene;
     }
 }

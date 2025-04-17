@@ -1,19 +1,17 @@
 import * as PIXI from 'pixi.js';
-import {LifecycleObject, Updatable} from "./LifecycleObject";
+import {LagomType, LifecycleObject, Updatable} from "./LifecycleObject";
 import {Entity} from "./Entity";
 import {System} from "./System";
 import {GlobalSystem} from "./GlobalSystem";
 import {Observable} from "../Common/Observer";
 import {Game} from "./Game";
-import {LagomType} from "./LifecycleObject";
 import {Camera} from "../Common/Camera";
 import {Log, Util} from "../Common/Util";
 
 /**
  * Scene object type. Contains the root nodes for the entity trees, and runs all Systems and GlobalSystems..
  */
-export class Scene extends LifecycleObject implements Updatable
-{
+export class Scene extends LifecycleObject implements Updatable {
     /**
      * Event for an entity being added to the scene.
      */
@@ -34,12 +32,11 @@ export class Scene extends LifecycleObject implements Updatable
     readonly guiNode: Entity;
 
     // TODO I don't know if I want this to stick around forever. Need systems to be able to see all entities.
-    readonly entities: Entity[] = [];
+    readonly entities: Map<number, Entity> = new Map();
 
-    // TODO can these be sets? need unique, but update order needs to be defined :/ i need a comparator for each
-    //  type that can define it's order.
-    readonly systems: System<any>[] = [];
-    readonly globalSystems: GlobalSystem<any>[] = [];
+    // Maps remember insertion order so this keeps it consistent.
+    readonly systems: Map<number, System<any>> = new Map();
+    readonly globalSystems: Map<number, GlobalSystem<any>> = new Map();
 
     // Milliseconds
     readonly updateWarnThreshold = 5;
@@ -53,8 +50,7 @@ export class Scene extends LifecycleObject implements Updatable
      * Construct a new scene.
      * @param game The game to add the scene to.
      */
-    constructor(readonly game: Game)
-    {
+    constructor(readonly game: Game) {
         super();
 
         // Root pixi container for the entire scene.
@@ -75,15 +71,13 @@ export class Scene extends LifecycleObject implements Updatable
         this.camera = new Camera(this);
     }
 
-    update(delta: number): void
-    {
+    update(delta: number): void {
         // Update global systems
         this.globalSystems.forEach(system => {
             const now = Date.now();
             system.update(delta);
             const time = Date.now() - now;
-            if (time > this.updateWarnThreshold)
-            {
+            if (time > this.updateWarnThreshold) {
                 Log.warn(`GlobalSystem update took ${time}ms`, system);
             }
         });
@@ -93,22 +87,19 @@ export class Scene extends LifecycleObject implements Updatable
             const now = Date.now();
             system.update(delta);
             const time = Date.now() - now;
-            if (time > this.updateWarnThreshold)
-            {
+            if (time > this.updateWarnThreshold) {
                 Log.warn(`System update took ${time}ms`, system);
             }
         });
     }
 
-    fixedUpdate(delta: number): void
-    {
+    fixedUpdate(delta: number): void {
         // Update global systems
         this.globalSystems.forEach(system => {
             const now = Date.now();
             system.fixedUpdate(delta);
             const time = Date.now() - now;
-            if (time > this.updateWarnThreshold)
-            {
+            if (time > this.updateWarnThreshold) {
                 Log.warn(`System fixedUpdate took ${time}ms`, system);
             }
         });
@@ -118,8 +109,7 @@ export class Scene extends LifecycleObject implements Updatable
             const now = Date.now();
             system.fixedUpdate(delta);
             const time = Date.now() - now;
-            if (time > this.updateWarnThreshold)
-            {
+            if (time > this.updateWarnThreshold) {
                 Log.warn(`System fixedUpdate took ${time}ms`, system);
             }
         });
@@ -130,11 +120,10 @@ export class Scene extends LifecycleObject implements Updatable
      * @param system The system to add.
      * @returns The added system.
      */
-    addSystem<T extends System<any>>(system: T): T
-    {
+    addSystem<T extends System<any>>(system: T): T {
         system.scene = this;
 
-        this.systems.push(system);
+        this.systems.set(system.id, system);
         system.addedToScene(this);
 
         system.onAdded();
@@ -147,10 +136,13 @@ export class Scene extends LifecycleObject implements Updatable
      * @param type The type of system to search for.
      * @returns The found system or null.
      */
-    getSystem<T extends System<any>>(type: LagomType<System<any>>): T | null
-    {
-        const found = this.systems.find(value => value instanceof type);
-        return found !== undefined ? found as T : null;
+    getSystem<T extends System<any>>(type: LagomType<System<any>>): T | null {
+        this.systems.forEach(system => {
+            if (system instanceof type) {
+                return system;
+            }
+        })
+        return null;
     }
 
     /**
@@ -158,11 +150,10 @@ export class Scene extends LifecycleObject implements Updatable
      * @param system The system to add.
      * @returns The added system.
      */
-    addGlobalSystem<T extends GlobalSystem<any>>(system: T): T
-    {
+    addGlobalSystem<T extends GlobalSystem<any>>(system: T): T {
         system.scene = this;
 
-        this.globalSystems.push(system);
+        this.globalSystems.set(system.id, system);
         system.addedToScene(this);
 
         system.onAdded();
@@ -175,10 +166,13 @@ export class Scene extends LifecycleObject implements Updatable
      * @param type The type of system to search for.
      * @returns The found system or null.
      */
-    getGlobalSystem<T extends GlobalSystem<any>>(type: LagomType<GlobalSystem<any>>): T | null
-    {
-        const found = this.globalSystems.find(value => value instanceof type);
-        return found !== undefined ? found as T : null;
+    getGlobalSystem<T extends GlobalSystem<any>>(type: LagomType<GlobalSystem<any>>): T | null {
+        this.globalSystems.forEach(value => {
+            if (value instanceof type) {
+                return value;
+            }
+        });
+        return null;
     }
 
     /**
@@ -186,8 +180,7 @@ export class Scene extends LifecycleObject implements Updatable
      * @param entity The entity to add to the scene.
      * @returns The added entity.
      */
-    addEntity<T extends Entity>(entity: T): T
-    {
+    addEntity<T extends Entity>(entity: T): T {
         return this.sceneNode.addChild(entity);
     }
 
@@ -195,8 +188,7 @@ export class Scene extends LifecycleObject implements Updatable
      * Remove an entity from the scene.
      * @param entity The entity to remove.
      */
-    removeEntity(entity: Entity): void
-    {
+    removeEntity(entity: Entity): void {
         this.sceneNode.removeChild(entity);
     }
 
@@ -206,8 +198,7 @@ export class Scene extends LifecycleObject implements Updatable
      * @param entity The entity to add.
      * @returns The added entity.
      */
-    addGUIEntity<T extends Entity>(entity: T): T
-    {
+    addGUIEntity<T extends Entity>(entity: T): T {
         return this.guiNode.addChild(entity);
     }
 
@@ -215,8 +206,7 @@ export class Scene extends LifecycleObject implements Updatable
      * Remove an entity from the scene that was added with addGUIEntity.
      * @param entity The entity to remove.
      */
-    removeGUIEntity(entity: Entity): void
-    {
+    removeGUIEntity(entity: Entity): void {
         this.guiNode.removeChild(entity);
     }
 
@@ -227,8 +217,7 @@ export class Scene extends LifecycleObject implements Updatable
      * @param name The name of the Entity to search for.
      * @returns The found Entity or null.
      */
-    getEntityWithName<T extends Entity>(name: string): T | null
-    {
+    getEntityWithName<T extends Entity>(name: string): T | null {
         // Check the scene node first.
         const node = this.sceneNode.findChildWithName(name);
 
@@ -240,13 +229,11 @@ export class Scene extends LifecycleObject implements Updatable
      * Return the Game object that this Scene belongs to.
      * @returns The parent Game.
      */
-    getGame(): Game
-    {
+    getGame(): Game {
         return this.game;
     }
 
-    onRemoved(): void
-    {
+    onRemoved(): void {
         super.onRemoved();
 
         this.entityAddedEvent.releaseAll();
