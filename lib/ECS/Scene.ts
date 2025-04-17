@@ -7,9 +7,10 @@ import {Observable} from "../Common/Observer";
 import {Game} from "./Game";
 import {Camera} from "../Common/Camera";
 import {Log, Util} from "../Common/Util";
+import {SysFn, SystemFn} from "./SystemFn";
 
 /**
- * Scene object type. Contains the root nodes for the entity trees, and runs all Systems and GlobalSystems..
+ * Scene object type. Contains the root nodes for the entity trees, and runs all Systems and GlobalSystems.
  */
 export class Scene extends LifecycleObject implements Updatable {
     /**
@@ -36,6 +37,7 @@ export class Scene extends LifecycleObject implements Updatable {
 
     // Maps remember insertion order so this keeps it consistent.
     readonly systems: Map<number, System<any>> = new Map();
+    readonly fnSystems: Map<number, SystemFn<any>> = new Map();
     readonly globalSystems: Map<number, GlobalSystem<any>> = new Map();
 
     // Milliseconds
@@ -91,6 +93,15 @@ export class Scene extends LifecycleObject implements Updatable {
                 Log.warn(`System update took ${time}ms`, system);
             }
         });
+
+        this.fnSystems.forEach(system => {
+            const now = Date.now();
+            system.update(delta);
+            const time = Date.now() - now;
+            if (time > this.updateWarnThreshold) {
+                Log.warn(`FnSystem update took ${time}ms`, system);
+            }
+        })
     }
 
     fixedUpdate(delta: number): void {
@@ -159,6 +170,14 @@ export class Scene extends LifecycleObject implements Updatable {
         system.onAdded();
 
         return system;
+    }
+
+    // TODO there is quite a bit of duplicated code between all 3 system types, can we clean it up?
+    // TODO name this properly.
+    addMagic<T extends any[]>(system: SysFn<T>){
+        const sysInstance = new SystemFn(system);
+        this.fnSystems.set(sysInstance.id, sysInstance);
+        sysInstance.addedToScene(this);
     }
 
     /**
