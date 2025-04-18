@@ -7,7 +7,7 @@ import {Observable} from "../Common/Observer";
 import {Game} from "./Game";
 import {Camera} from "../Common/Camera";
 import {Log, Util} from "../Common/Util";
-import {SysFn, SystemFn} from "./SystemFn";
+import {Constructor, FnSystemWrapper, SysFn} from "./FnSystemWrapper";
 
 /**
  * Scene object type. Contains the root nodes for the entity trees, and runs all Systems and GlobalSystems.
@@ -37,7 +37,6 @@ export class Scene extends LifecycleObject implements Updatable {
 
     // Maps remember insertion order so this keeps it consistent.
     readonly systems: Map<number, System<any>> = new Map();
-    readonly fnSystems: Map<number, SystemFn<any>> = new Map();
     readonly globalSystems: Map<number, GlobalSystem<any>> = new Map();
 
     // Milliseconds
@@ -93,15 +92,6 @@ export class Scene extends LifecycleObject implements Updatable {
                 Log.warn(`System update took ${time}ms`, system);
             }
         });
-
-        this.fnSystems.forEach(system => {
-            const now = Date.now();
-            system.update(delta);
-            const time = Date.now() - now;
-            if (time > this.updateWarnThreshold) {
-                Log.warn(`FnSystem update took ${time}ms`, system);
-            }
-        })
     }
 
     fixedUpdate(delta: number): void {
@@ -172,12 +162,30 @@ export class Scene extends LifecycleObject implements Updatable {
         return system;
     }
 
-    // TODO there is quite a bit of duplicated code between all 3 system types, can we clean it up?
-    // TODO name this properly.
-    addMagic<T extends any[]>(system: SysFn<T>){
-        const sysInstance = new SystemFn(system);
-        this.fnSystems.set(sysInstance.id, sysInstance);
-        sysInstance.addedToScene(this);
+    /**
+     * Add a function as a system. You can define a function using newSystem().
+     * @param system The system to add.
+     */
+    addFnSystem<T extends any[]>(system: SysFn<T>): void;
+
+    /**
+     * Add a functional system.
+     * @param classes An array of component types to support.
+     * @param func The system update() method. Requires each component type as an added parameter to the function.
+     */
+    addFnSystem<T extends any[]>(classes: { [K in keyof T]: Constructor<T[K]> }, func: (delta: number, entity: Entity, ...components: T) => void): void;
+
+    addFnSystem<T extends any[]>(
+        sysFn: SysFn<T> | { [K in keyof T]: Constructor<T[K]> },
+        func?: (delta: number, entity: Entity, ...components: T) => void
+    ): void {
+        if (func) {
+            const sysInstance = new FnSystemWrapper([sysFn as { [K in keyof T]: Constructor<T[K]> }, func]);
+            this.addSystem(sysInstance);
+        } else {
+            const sysInstance = new FnSystemWrapper(sysFn as SysFn<T>);
+            this.addSystem(sysInstance);
+        }
     }
 
     /**

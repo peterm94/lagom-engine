@@ -32,7 +32,7 @@ export * from './ECS/GlobalSystem'
 export * from './ECS/LifecycleObject'
 export * from './ECS/Scene'
 export * from './ECS/System'
-export * from './ECS/SystemFn'
+export * from './ECS/FnSystemWrapper'
 
 export * from './Input/Button'
 export * from './Input/Key'
