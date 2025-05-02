@@ -14,9 +14,10 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
+    "@pixi/assets": "^7.4.3",
     "detect-collisions": "^2.6.0",
     "howler": "^2.2.4",
-    "pixi.js": "^6.5.10"
+    "pixi.js": "^8.9.1"
   },
   "devDependencies": {
     "@types/howler": "^2.2.12",
