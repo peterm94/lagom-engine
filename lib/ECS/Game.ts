@@ -23,17 +23,17 @@ export interface GameOptions {
 /**
  * Game class, containing all high level framework references. Sets up the render window and controls updating the ECS.
  */
-export class Game {
+export abstract class Game {
     // Get keyboard events. Updated every update() frame.
-    readonly keyboard!: Keyboard;
+    keyboard!: Keyboard;
 
     // Get mouse events. Updated every update() frame.
-    readonly mouse!: Mouse;
+    mouse!: Mouse;
 
     // Set this to true to end the game
     gameOver = false;
 
-    readonly renderer: Renderer;
+    renderer!: Renderer;
     readonly application: Application;
 
     readonly resourceLoader: ResourceLoader = new ResourceLoader();
@@ -100,25 +100,26 @@ export class Game {
      * Create a new Game.
      * @param options Options for the PIXI Renderer.
      */
-    constructor(options?: GameOptions) {
+    protected constructor(readonly options?: GameOptions) {
         // Set it up in the page
-        this.application = new Application(options);
-        // TODO this is undefined at this point.
-        this.renderer = this.application.renderer;
-        // this.keyboard = new Keyboard(this.renderer.view);
-        // this.mouse = new Mouse(this.renderer.view);
+        this.application = new Application();
     }
 
     /**
      * Start the game loop.
      */
-    start(): void {
-        if (this.currentScene == null) {
-            throw new Error("Ensure a scene is set before starting the game.");
-        }
+    async start(): Promise<void> {
+        await this.application.init(this.options).then(() => {
+            this.renderer = this.application.renderer;
 
-        this.startInternal();
+            this.keyboard = new Keyboard(this.renderer.canvas);
+            this.mouse = new Mouse(this.renderer.canvas);
+            this.setScene(this.startScene());
+            this.startInternal();
+        });
     }
+
+    abstract startScene: () => Scene;
 
     private startInternal(): void {
         Log.info("Game started.");

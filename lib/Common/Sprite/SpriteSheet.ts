@@ -1,6 +1,4 @@
-import {Rectangle, SCALE_MODES, Texture, TextureSource} from "pixi.js";
-import {Assets} from "@pixi/assets";
-
+import {Assets, Rectangle, SCALE_MODES, Texture, TextureSource} from "pixi.js";
 
 /**
  * Convenient way to load multiple sprites from a single Sprite Sheet.
