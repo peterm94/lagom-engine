@@ -2,6 +2,8 @@
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'; // Import the plugin
+
 export default defineConfig({
     build: {
         lib: {
@@ -10,6 +12,7 @@ export default defineConfig({
         }
     },
     plugins: [
-        dts()
+        dts(),
+        nodePolyfills()
     ]
 })
