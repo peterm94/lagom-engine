@@ -14,6 +14,7 @@ export * from './Common/Observer';
 export * from './Common/PIXIComponents';
 export * from './Common/ResourceLoader';
 export * from './Common/Screenshake';
+export * from './Common/SpriteFusionLoader';
 export * from './Common/TiledMapLoader';
 export * from './Common/Timer';
 export * from './Common/Util';
