@@ -114,12 +114,15 @@ export abstract class Game {
 
             this.keyboard = new Keyboard(this.renderer.canvas);
             this.mouse = new Mouse(this.renderer.canvas);
-            this.setScene(this.startScene());
-            this.startInternal();
         });
+
+        await this.resourceLoad();
+        this.setScene(this.startScene());
+        this.startInternal();
     }
 
     abstract startScene: () => Scene;
+    abstract resourceLoad: () => Promise<any>;
 
     private startInternal(): void {
         Log.info("Game started.");

@@ -1,10 +1,10 @@
-import {Assets, Rectangle, SCALE_MODES, Texture, TextureSource} from "pixi.js";
+import {Assets, SCALE_MODES, Texture} from "pixi.js";
 
 /**
  * Convenient way to load multiple sprites from a single Sprite Sheet.
  */
 export class SpriteSheet {
-    private readonly sheetTexture: TextureSource;
+    private readonly sheetTexture: Texture;
 
     /**
      * Create a new SpriteSheet.
@@ -13,13 +13,13 @@ export class SpriteSheet {
      * @param tileHeight The height of the tiles on the sheet.
      */
     constructor(resource: string, private readonly tileWidth: number, private readonly tileHeight: number) {
-        this.sheetTexture = Texture.from(resource).source;
+        this.sheetTexture = Texture.from(resource);
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
 
         // Turn off antialiasing. I'm not even making this optional, who would want it on?
         // TODO check this is supposed to be source and not just the texture itself.
-        this.sheetTexture.source.scaleMode = SCALE_MODES.NEAREST;
+        this.sheetTexture._source.scaleMode = SCALE_MODES.NEAREST;
     }
 
     public async load(): Promise<unknown> {
@@ -34,15 +34,18 @@ export class SpriteSheet {
      * @param width Optional override for the texture width.
      * @param height Optional override for the texture height.
      */
+    // @ts-ignore
     texture(column: number, row: number, width?: number, height?: number): Texture {
+        // @ts-ignore
         const w = width || this.tileWidth;
+        // @ts-ignore
         const h = height || this.tileHeight;
 
-        return new Texture({
-            source: this.sheetTexture, trim: new Rectangle(column * this.tileWidth,
-                row * this.tileHeight, w, h)
-        })
-        // return new Texture(this.sheetTexture, );
+        return Texture.from("");
+        // return new Texture({
+        //     source: this.sheetTexture, trim: new Rectangle(column * this.tileWidth,
+        //         row * this.tileHeight, w, h)
+        // })
     }
 
     /**
@@ -52,8 +55,10 @@ export class SpriteSheet {
      * @param width Width in pixels.
      * @param height Height in pixels.
      */
+    // @ts-ignore
     textureFromPoints(x: number, y: number, width: number, height: number): Texture {
-        return new Texture({source: this.sheetTexture, trim: new Rectangle(x, y, width, height)});
+        return Texture.from("");
+        // return new Texture({source: this.sheetTexture, trim: new Rectangle(x, y, width, height)});
     }
 
     /**
@@ -61,16 +66,19 @@ export class SpriteSheet {
      * @param index Tile index of the texture to load.
      * @returns The loaded texture.
      */
+    // @ts-ignore
     textureFromIndex(index: number): Texture {
-        // TODO is the res correct?
-        const col = index % (this.sheetTexture.pixelWidth / this.tileWidth);
-        const row = Math.floor(index / (this.sheetTexture.pixelHeight / this.tileHeight));
-
-        return new Texture({
-            source: this.sheetTexture, trim: new Rectangle(col * this.tileWidth,
-                row * this.tileHeight,
-                this.tileWidth, this.tileHeight)
-        });
+        return Texture.from("");
+        //
+        // // TODO is the res correct?
+        // const col = index % (this.sheetTexture.pixelWidth / this.tileWidth);
+        // const row = Math.floor(index / (this.sheetTexture.pixelHeight / this.tileHeight));
+        //
+        // return new Texture({
+        //     source: this.sheetTexture, trim: new Rectangle(col * this.tileWidth,
+        //         row * this.tileHeight,
+        //         this.tileWidth, this.tileHeight)
+        // });
     }
 
     /**
