@@ -5,7 +5,7 @@ export * from './Common/Sprite/AnimatedSpriteController'
 export * from './Common/Sprite/Sprite'
 export * from './Common/Sprite/SpriteSheet'
 
-export * from './Common/ActionOnPress.ts';
+export * from './Common/ActionOnPress';
 export * from './Common/Camera';
 export * from './Common/CameraUtil';
 export * from './Common/Debug';
@@ -32,6 +32,7 @@ export * from './ECS/GlobalSystem'
 export * from './ECS/LifecycleObject'
 export * from './ECS/Scene'
 export * from './ECS/System'
+export * from './ECS/FnSystemWrapper'
 
 export * from './Input/Button'
 export * from './Input/Key'

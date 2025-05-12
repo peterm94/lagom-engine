@@ -90,7 +90,7 @@ class FpsUpdater extends System<[TextDisp, FpsTracker]>
                         + `// ${this.avgRender.toFixed(2)}ms`
                         + `\nTotalFrameTime: ${this.game.diag.totalFrameTime.toFixed(2)}ms `
                         + `// ${this.avgFrame.toFixed(2)}ms`
-                        + `\nEntities: ${this.game.currentScene.entities.length}`;
+                        + `\nEntities: ${this.game.currentScene.entities.size}`;
                 }
             });
         }

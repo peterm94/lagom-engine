@@ -130,12 +130,18 @@ export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObj
         });
     }
 
+    destroy() {
+        super.destroy();
+
+        this.onRemoved();
+    }
+
     onRemoved(): void
     {
         super.onRemoved();
 
         const scene = this.getScene();
-        Util.remove(scene.globalSystems, this);
+        scene.globalSystems.delete(this.id);
 
         scene.entityAddedEvent.deregister(this.onEntityAdded.bind(this));
         scene.entityRemovedEvent.deregister(this.onEntityRemoved.bind(this));

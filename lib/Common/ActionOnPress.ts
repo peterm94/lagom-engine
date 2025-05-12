@@ -1,5 +1,5 @@
-import {Key} from "../Input/Key.ts";
-import {System} from "../ECS/System.ts";
+import {Key} from "../Input/Key";
+import {System} from "../ECS/System";
 
 /**
  * Run a function on keypress. Key list is configurable.

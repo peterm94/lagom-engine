@@ -2,8 +2,7 @@ import {Body, Circle, Point, Polygon, Result} from "detect-collisions";
 import {Component, PIXIComponent} from "../ECS/Component";
 import {Observable} from "../Common/Observer";
 import {CollisionSystem} from "./CollisionSystems";
-
-import * as PIXI from "pixi.js";
+import {Container} from "pixi.js";
 
 /**
  * Collision body type. Determines the way the body interacts with the collision simulation.
@@ -62,7 +61,7 @@ export interface LagomBody
 /**
  * Collider types for this collision system.
  */
-export abstract class Collider extends PIXIComponent<PIXI.Container>
+export abstract class Collider extends PIXIComponent<Container>
 {
     /**
      * Observable event for continuous collision trigger. Will be fired every frame a trigger occurs. If Continuous
@@ -94,7 +93,7 @@ export abstract class Collider extends PIXIComponent<PIXI.Container>
      */
     protected constructor(private readonly engine: CollisionSystem<any>, readonly body: Body, options: ColliderOptions)
     {
-        super(new PIXI.Container());
+        super(new Container());
 
         this.xOff = options.xOff !== undefined ? options.xOff : 0;
         this.yOff = options.yOff !== undefined ? options.yOff : 0;

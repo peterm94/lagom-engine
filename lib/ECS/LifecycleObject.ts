@@ -1,31 +1,31 @@
 /**
  * Base class for any lifecycle-aware object.
  */
-export abstract class LifecycleObject
-{
+export abstract class LifecycleObject {
+    private static _next_id = 0
+
+    readonly id = LifecycleObject._next_id++;
+
     active = true;
 
     /**
      * Will be called when added to the Game.
      */
-    onAdded(): void
-    {
+    onAdded(): void {
         // Default empty implementation.
     }
 
     /**
      * Will be called when removed from the Game.
      */
-    onRemoved(): void
-    {
+    onRemoved(): void {
         this.active = false;
     }
 
     /**
      * Call this to destroy the object. Any dependent objects or children will also be destroyed.
      */
-    destroy(): void
-    {
+    destroy(): void {
         // Default empty implementation.
     }
 }
@@ -33,8 +33,7 @@ export abstract class LifecycleObject
 /**
  * Interface for updatable objects. Update will be called once per logic frame.
  */
-export interface Updatable
-{
+export interface Updatable {
     /**
      * The update method.
      * @param delta Elapsed time since the last update call.
@@ -46,18 +45,6 @@ export interface Updatable
      * @param delta Elapsed time since the last update call.
      */
     fixedUpdate(delta: number): void;
-}
-
-/**
- * Interface for renderable objects. Render will be called once per render frame.
- */
-export interface Renderable
-{
-    /**
-     * The render method.
-     * @param delta Elapsed time since the last render call.
-     */
-    render(delta: number): void;
 }
 
 /**
