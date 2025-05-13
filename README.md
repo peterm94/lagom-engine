@@ -6,8 +6,7 @@
 
 # Lagom
 
-Lagom is a game framework for Javascript games.
-
+Lagom is a game framework for Typescript games.
 
 # Basic Usage
 
@@ -16,7 +15,7 @@ Lagom is a game framework for Javascript games.
 ### Component
 
 Data container class. `Components` generally should not contain any logic. Use them to store data which can be
-manipulated or read by `Systems` or `WorldSystems`.
+manipulated or read by `Systems` or `GlobalSystems`.
 
 ### Entity
 
@@ -30,10 +29,72 @@ combinations it wishes to run on. If an `Entity` is found which holds an instanc
 the system will run on it. If any `Component` types are missing from the `Entity`, the `System` will not run.
 If multiple matching Components of the same type are found on an `Entity`, the first found will be returned.
 
+You can create a system in one of 2 ways. Either as a class, or as a function. To define a system as a function and
+add it to a scene:
+
+```ts
+    scene.addFnSystem([CompA, CompB], (delta, entity, compA, compB) => {
+    // logic here
+
+    // or just make one and add it later.
+    const a = newSystem([A], (delta, entity, a) => {
+        a.destroy();
+    })
+
+    this.addFnSystem(a);
+});
+```
+
+The first parameter is an array of component types to match. The second is a function with the delta since the last
+frame in milliseconds, the owning entity, and each component instance as defined in order based on the first parameter.
+
+To create a System as a class:
+
+```ts
+class Booster extends System<[Boost]> {
+    update(delta: number): void {
+        this.runOnEntities((entity, booster) => {
+            ThingMover.velocity += 0.005 * component.mod;
+            component.destroy();
+        })
+    }
+
+    // You need to provide the types again for.
+    types: [CType<Boost>] = [Boost];
+
+}
+```
+
+The type parameter should be a list of components. Unlike the functional approach, this method has a method for you to
+implement, which gives you the entity and component instances and is run every frame.
+
+You also need to provide the generic types again in the `types` variable.
+
 ### GlobalSystem
 
 `GlobalSystems` are similar to `Systems`, but instead of running on `Component` groupings by entities, they run on all
 `Components` of specified types.
+
+These can only be defined as classes:
+
+```ts
+
+export class ScreenShaker extends GlobalSystem<[ScreenShake[]]> {
+
+    types = [ScreenShake];
+
+    update(delta: number): void {
+        this.runOnComponents((shakers: ScreenShake[]) => {
+            for (const shaker of shakers) {
+                // logic
+            }
+        });
+    }
+}
+```
+
+The type parameter should be a list of component lists. As above, the types variable must be set and the update method
+called with runOnComponents.
 
 ### Scene
 
@@ -53,11 +114,13 @@ The `AudioAtlas` class allows you to load and manage audio files using the [Howl
 Audio files can be loaded using the `load` method.
 
 Example:
+
 ```typescript
 AudioAtlas.load("jump", require("./resources/jump.wav"))
 ```
 
-A file can then be simply played with the `AudioAtlas.play()` method, or `Howler` methods can be used directly for more advanced usage.
+A file can then be simply played with the `AudioAtlas.play()` method, or `Howler` methods can be used directly for more
+advanced usage.
 
 ### Sprite
 
@@ -67,7 +130,8 @@ Simple `Sprite` component used to render images. A `Sprite` can be directly crea
 
 #### SpriteSheet
 
-A `SpriteSheet` can be used to load multiple sprites at once that are part of a larger image. This supports single and multiple texture extraction with tile indexing support.
+A `SpriteSheet` can be used to load multiple sprites at once that are part of a larger image. This supports single and
+multiple texture extraction with tile indexing support.
 
 #### AnimatedSprite
 
@@ -75,17 +139,20 @@ A `Sprite` component type that supports multiple image frames and animation opti
 
 #### AnimatedSpriteController
 
-A more advanced version of `AnimatedSprite`, that allows for multiple animation states that can be controlled with logic.
+A more advanced version of `AnimatedSprite`, that allows for multiple animation states that can be controlled with
+logic.
 Also supports custom event triggering on registered animation frames.
 
 ### Camera
 
-A Lagom `Scene` always has a single `Camera`, which can be accessed via the `camera` property. This controls how the game viewport is rendered.
+A Lagom `Scene` always has a single `Camera`, which can be accessed via the `camera` property. This controls how the
+game viewport is rendered.
 The `Camera` can be moved directly, or used with the `FollowCamera` to follow an `Entity` in a game `Scene`.
 
 ### PIXI Components
 
 Commonly used rendering `Components`, to display shapes and text.
+
 - TextDisp
 - RenderCircle
 - RenderRect
@@ -93,52 +160,114 @@ Commonly used rendering `Components`, to display shapes and text.
 
 ### ScreenShake
 
-Screenshake `System` and `Component`. The `ScreenShaker` `WorldSystem` must be added to a `Scene` for it to work. Create a `ScreenShake` instance on an `Entity` to trigger it.
+Screenshake `System` and `Component`. The `ScreenShaker` `WorldSystem` must be added to a `Scene` for it to work. Create
+a `ScreenShake` instance on an `Entity` to trigger it.
 
 ### TiledMapLoader
 
-Custom loader for [Tiled](https://www.mapeditor.org/) exported maps. This class can only open map exported with the JSON type.
+Custom loader for [Tiled](https://www.mapeditor.org/) exported maps. This class can only open map exported with the JSON
+type.
 
 ### Timer
 
-Timer used to schedule events, controlled by the ECS. All subscribed Observers to the `onTrigger` event will be notified when the timer is complete.
+Timer used to schedule events, controlled by the ECS. All subscribed Observers to the `onTrigger` event will be notified
+when the timer is complete.
 A `TimerSystem` must be added to a `Scene` for the timer to function.
 
 ### Debugging and Utilities
 
 A `Diagnostics` `Entity` has been provided that will display useful information about the FPS on the canvas.
 
-The `Util` and `MathUtil` classes provide useful helper functions that are commonly used when dealing with objects in a 2D space.
+The `Util` and `MathUtil` classes provide useful helper functions that are commonly used when dealing with objects in a
+2D space.
 
 `Log` is a custom logger with multiple logging levels that can be enabled or disabled with the `Log.logLevel` property.
 
 ### Physics and Collision Detection
 
-There are two libraries that can be used for collision detection. `Detect`, which can be used as a pure collision detection library (no physics!) and `Matter`, which is a wrapper for the [Matter.js](http://brm.io/matter-js/) physics engine.
+Collision detection is implemented using the Detect library. There are a few different implementations you can use
+depending on your use case.
 
-Both of these libraries make use of the `CollisionMatrix` class, which allows layers and collision rules to be created. By default, no layers can collide at all.
+It makes use of the `CollisionMatrix` class, which allows layers and collision rules to be created.
+By default, no layers can collide at all.
 
 #### Detect
 
-To use this system, a `DetectCollisionSystem` must be added to the active `Scene`.
+The two implementations are `ContinuousCollisionSystem` and `DiscreteCollisionSystem`. See the class docs for details.
 
-In order to register for collisions, `Entities` must add one of the various `DetectCollider` `Components` (`CircleCollider`, `PointCollider`, `RectCollider`, `PolyCollider`).
-If the `isTrigger` flag is set for a `DetectCollider`, collider overlaps will be permitted by the system. Otherwise, colliders will be treated as solid objects that cannot occupy the same space. If overlap of colliders occurs, the engine will attempt to separate them.
-The `DetectCollider` type has multiple `Observable` members that are triggered for different types of collision events. These can be subscribed to by any `Observer`.
+To use this system, an instance must be added to the active `Scene`.
 
-- `onCollision`/`onTrigger`: Triggered on any collision frame. For continuous collisions, this will be triggered on every single frame.
+In order to register for collisions, `Entities` must add one of the various `Collider` `Components` (
+`CircleCollider`, `PointCollider`, `RectCollider`, `PolyCollider`).
+
+The `Collider` type has multiple `Observable` members that are triggered for different types of collision events.
+These can be subscribed to by any `Observer`.
+
+- `onCollision`/`onTrigger`: Triggered on any collision frame. For continuous collisions, this will be triggered on
+  every single frame.
 - `onCollisionEnter`/`onTriggerEnter`: Triggered on the first collision frame.
 - `onCollisionExit`/`onTriggerExit`: Triggered one frame after the last collision frame.
 
-If an `Entity` has a `DetectCollider` on it, it should **not** be moved by directly modifying the `transform` position. This could cause the Entity to desynchronize from the `Detect` engine.
-Instead, a `DetectRigidbody` should be added to the `Entity` which contains `move` functions for direct movement, as well as physics functions for dealing with forces.
+Depending on the Detect System that you are using, you may want to avoid moving the entity directly via the transform.
+`DiscreteCollisionSystem` allows for normal movement via the transform, `ContinuousCollisionSystem` bodies should only
+be moved via Rigidbody updates.
 
-#### Matter
+### Game Setup
 
-To use this system, a `MatterEngine` must be added to the active `Scene`. This engine can only be used as a physics engine
+To make a new game, make a class that extends `Game`. In the constructor, set up the view canvas, and ensure a `Scene`
+is set.
 
-Entities must have a `MCollider` Component on them to be registered by the engine. As with the `Detect` module, a `Matter` controlled `Entity` should not be moved with `transform` modification.
-Instead, use `Matter.Body.*` methods such as `applyForce` on the `Body` instance contained by the `MCollider`.
+```ts
+export class Pong extends Game {
+    constructor() {
+        super({width: 800, height: 600, resolution: 1, backgroundColor: 0x000000});
+        this.setScene(new MainScene(this));
+    }
+}
+```
+
+Then, just instantiate the game and append the game's renderer to your web page.
+
+```ts
+const main = document.querySelector<HTMLDivElement>('#main');
+const game = new Pong();
+
+main.appendChild(game.renderer.view);
+
+// Focus the canvas for keyboard events
+game.renderer.view.focus();
+
+// Trigger game start.
+game.start();
+```
+
+### Resource Loading
+
+To ensure image resources are loaded before use, you can make use of the resource loader on the `Game` class. All resources
+will be loaded before the game loop starts.
+
+```ts
+// Game constructor excerpt:
+
+export class MyGame extends Game {
+  constructor() {
+      super({
+          width: VIEW_WIDTH,
+          height: GAME_HEIGHT,
+          resolution: 2,
+          backgroundColor: 0x0B0926
+      });
+
+      this.addResource("mute_button", new SpriteSheet(muteButtonSpr, 16, 16));
+      this.addResource("tile", new SpriteSheet(tileSpr, 12, 12));
+  }
+}
+```
+Then to use it later:
+```ts
+new Sprite(this.scene.game.getResource("tile").textureFromIndex(0));
+```
+
 
 ## License
 

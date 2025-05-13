@@ -4,6 +4,7 @@ export * from './Common/Sprite/AnimatedSprite'
 export * from './Common/Sprite/AnimatedSpriteController'
 export * from './Common/Sprite/Sprite'
 export * from './Common/Sprite/SpriteSheet'
+export * from './Common/Sprite/VariantSprite'
 
 export * from './Common/ActionOnPress';
 export * from './Common/Camera';
