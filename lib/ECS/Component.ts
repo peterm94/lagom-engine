@@ -31,7 +31,7 @@ export abstract class Component extends LifecycleObject
     destroy(): void
     {
         super.destroy();
-        this.getEntity().removeComponent(this, true);
+        this.getEntity().removeComponent(this);
     }
 }
 

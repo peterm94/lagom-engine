@@ -4,7 +4,7 @@ import {Collisions, Result} from "detect-collisions";
 import {BodyType, Collider, LagomBody} from "./Colliders";
 import {GlobalSystem} from "../ECS/GlobalSystem";
 import {Rigidbody} from "./Rigidbody";
-import {Component} from "../ECS/Component.ts";
+import {Component} from "../ECS/Component";
 
 /**
  * Base class for collision systems.
