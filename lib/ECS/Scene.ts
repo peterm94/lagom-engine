@@ -74,46 +74,46 @@ export class Scene extends LifecycleObject implements Updatable {
 
     update(delta: number): void {
         // Update global systems
-        this.globalSystems.forEach(system => {
+        for (let [_, system] of this.globalSystems) {
             const now = Date.now();
             system.update(delta);
             const time = Date.now() - now;
             if (time > this.updateWarnThreshold) {
                 Log.warn(`GlobalSystem update took ${time}ms`, system);
             }
-        });
+        }
 
-        // Update normal systems
-        this.systems.forEach(system => {
+        for (let [_, system] of this.systems) {
+            // Update normal systems
             const now = Date.now();
             system.update(delta);
             const time = Date.now() - now;
             if (time > this.updateWarnThreshold) {
                 Log.warn(`System update took ${time}ms`, system);
             }
-        });
+        }
     }
 
     fixedUpdate(delta: number): void {
         // Update global systems
-        this.globalSystems.forEach(system => {
+        for (let [_, system] of this.globalSystems) {
             const now = Date.now();
             system.fixedUpdate(delta);
             const time = Date.now() - now;
             if (time > this.updateWarnThreshold) {
                 Log.warn(`System fixedUpdate took ${time}ms`, system);
             }
-        });
+        }
 
         // Update normal systems
-        this.systems.forEach(system => {
+        for (let [_, system] of this.systems) {
             const now = Date.now();
             system.fixedUpdate(delta);
             const time = Date.now() - now;
             if (time > this.updateWarnThreshold) {
                 Log.warn(`System fixedUpdate took ${time}ms`, system);
             }
-        });
+        }
     }
 
     /**

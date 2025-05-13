@@ -3,7 +3,7 @@ import {Entity} from "../ECS/Entity";
 import {System} from "../ECS/System";
 import {Component} from "../ECS/Component";
 import {Game} from "../ECS/Game";
-import {CType} from "../lagom-engine";
+import {CType} from "../ECS/FnSystemWrapper";
 
 /**
  * FPS tracking component.

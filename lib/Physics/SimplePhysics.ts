@@ -3,7 +3,7 @@ import {Entity} from "../ECS/Entity";
 import {MathUtil} from "../Common/Util";
 import {Rigidbody} from "../Collisions/Rigidbody";
 import {Component} from "../ECS/Component";
-import {CType} from "../lagom-engine";
+import {CType} from "../ECS/FnSystemWrapper";
 
 /**
  * Properties interface for SimplePhysics module.
