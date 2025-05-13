@@ -3,12 +3,12 @@ import {Entity} from "../ECS/Entity";
 import {MathUtil} from "../Common/Util";
 import {Rigidbody} from "../Collisions/Rigidbody";
 import {Component} from "../ECS/Component";
+import {CType} from "../lagom-engine";
 
 /**
  * Properties interface for SimplePhysics module.
  */
-export interface SimplePhysicsProps
-{
+export interface SimplePhysicsProps {
     /**
      * Angular velocity cap.
      */
@@ -33,8 +33,7 @@ export interface SimplePhysicsProps
 /**
  * Component type for the SimplePhysics system to run on.
  */
-export class SimplePhysicsBody extends Component
-{
+export class SimplePhysicsBody extends Component {
     // Requested movement. This will be cleared on frame end.
     x = 0;
     y = 0;
@@ -56,8 +55,7 @@ export class SimplePhysicsBody extends Component
      * @param x Amount to move on the x axis.
      * @param y Amount to move on the y axis.
      */
-    move(x = 0, y = 0): void
-    {
+    move(x = 0, y = 0): void {
         this.x += x;
         this.y += y;
     }
@@ -66,16 +64,14 @@ export class SimplePhysicsBody extends Component
      * Rotate the body.
      * @param rotation Rotation in radians.
      */
-    rotate(rotation: number): void
-    {
+    rotate(rotation: number): void {
         this.rotation += rotation;
     }
 
     /**
      * Clear the input state. Should only be called by the SimplePhysics system.
      */
-    clearInput(): void
-    {
+    clearInput(): void {
         this.x = 0;
         this.y = 0;
         this.rotation = 0;
@@ -84,8 +80,7 @@ export class SimplePhysicsBody extends Component
     /**
      * Clear all internal movement state.
      */
-    stopMotion(): void
-    {
+    stopMotion(): void {
         this.yVel = 0;
         this.xVel = 0;
         this.angVel = 0;
@@ -95,8 +90,7 @@ export class SimplePhysicsBody extends Component
      * Create a new SimplePhysicsBody.
      * @param props Optional physics property overrides.
      */
-    constructor(readonly props: SimplePhysicsProps = {})
-    {
+    constructor(readonly props: SimplePhysicsProps = {}) {
         super();
 
         this.angCap = props.angCap === undefined ? 0.01 : props.angCap;
@@ -110,47 +104,38 @@ export class SimplePhysicsBody extends Component
  * Basic physics implementation. Has the concept of drag and velocity caps. No mass or momentum calculations are
  * taken into account yet, this can be simulated by tweaking drag and managing acceleration externally.
  */
-export class SimplePhysics extends System<[Rigidbody, SimplePhysicsBody]>
-{
-    types = [Rigidbody, SimplePhysicsBody];
+export class SimplePhysics extends System<[Rigidbody, SimplePhysicsBody]> {
+    types: [CType<Rigidbody>, CType<SimplePhysicsBody>] = [Rigidbody, SimplePhysicsBody];
 
-    update(_: number): void
-    {
-        // Fixed system.
+    runOnEntities(_delta: number, _entity: Entity, _args_0: Rigidbody, _args_1: SimplePhysicsBody): void {
+        // Fixed only
     }
 
-    fixedUpdate(delta: number): void
-    {
-        this.runOnEntities((_: Entity, body: Rigidbody, movement: SimplePhysicsBody) => {
+    runOnEntitiesFixed(delta: number, _entity: Entity, body: Rigidbody, movement: SimplePhysicsBody) {
+        // apply drag to existing motion.
+        movement.xVel -= movement.xVel * movement.linDrag * delta;
+        movement.yVel -= movement.yVel * movement.linDrag * delta;
+        movement.angVel -= movement.angVel * movement.angDrag * delta;
 
-            // apply drag to existing motion.
-            movement.xVel -= movement.xVel * movement.linDrag * delta;
-            movement.yVel -= movement.yVel * movement.linDrag * delta;
-            movement.angVel -= movement.angVel * movement.angDrag * delta;
+        // Apply movement, keeping within limits.
+        if (movement.x) {
+            movement.xVel = MathUtil.clamp(movement.xVel + (movement.x * delta),
+                -movement.linCap, movement.linCap);
+        }
+        if (movement.y) {
+            movement.yVel = MathUtil.clamp(movement.yVel + (movement.y * delta),
+                -movement.linCap, movement.linCap);
+        }
+        if (movement.rotation) {
+            movement.angVel = MathUtil.clamp(movement.angVel + (movement.rotation * delta),
+                -movement.angCap, movement.angCap);
+        }
 
-            // Apply movement, keeping within limits.
-            if (movement.x)
-            {
-                movement.xVel = MathUtil.clamp(movement.xVel + (movement.x * delta),
-                                               -movement.linCap, movement.linCap);
-            }
-            if (movement.y)
-            {
-                movement.yVel = MathUtil.clamp(movement.yVel + (movement.y * delta),
-                                               -movement.linCap, movement.linCap);
-            }
-            if (movement.rotation)
-            {
-                movement.angVel = MathUtil.clamp(movement.angVel + (movement.rotation * delta),
-                                                 -movement.angCap, movement.angCap);
-            }
+        // Reset the input state.
+        movement.clearInput();
 
-            // Reset the input state.
-            movement.clearInput();
-
-            // Apply the movement and rotation to the actual body for this frame.
-            body.move(movement.xVel, movement.yVel);
-            body.rotateRad(movement.angVel);
-        });
+        // Apply the movement and rotation to the actual body for this frame.
+        body.move(movement.xVel, movement.yVel);
+        body.rotateRad(movement.angVel);
     }
 }

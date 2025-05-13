@@ -7,7 +7,7 @@ import {Observable} from "../Common/Observer";
 import {Game} from "./Game";
 import {Camera} from "../Common/Camera";
 import {Log, Util} from "../Common/Util";
-import {Constructor, FnSystemWrapper, SysFn} from "./FnSystemWrapper";
+import {CType, FnSystemWrapper, SysFn} from "./FnSystemWrapper";
 
 /**
  * Scene object type. Contains the root nodes for the entity trees, and runs all Systems and GlobalSystems.
@@ -138,11 +138,11 @@ export class Scene extends LifecycleObject implements Updatable {
      * @returns The found system or null.
      */
     getSystem<T extends System<any>>(type: LagomType<System<any>>): T | null {
-        this.systems.forEach(system => {
+        for (let system of this.systems.values()) {
             if (system instanceof type) {
-                return system;
+                return system as T;
             }
-        })
+        }
         return null;
     }
 
@@ -173,14 +173,14 @@ export class Scene extends LifecycleObject implements Updatable {
      * @param classes An array of component types to support.
      * @param func The system update() method. Requires each component type as an added parameter to the function.
      */
-    addFnSystem<T extends any[]>(classes: { [K in keyof T]: Constructor<T[K]> }, func: (delta: number, entity: Entity, ...components: T) => void): void;
+    addFnSystem<T extends any[]>(classes: { [K in keyof T]: CType<T[K]> }, func: (delta: number, entity: Entity, ...components: T) => void): void;
 
     addFnSystem<T extends any[]>(
-        sysFn: SysFn<T> | { [K in keyof T]: Constructor<T[K]> },
+        sysFn: SysFn<T> | { [K in keyof T]: CType<T[K]> },
         func?: (delta: number, entity: Entity, ...components: T) => void
     ): void {
         if (func) {
-            const sysInstance = new FnSystemWrapper([sysFn as { [K in keyof T]: Constructor<T[K]> }, func]);
+            const sysInstance = new FnSystemWrapper([sysFn as { [K in keyof T]: CType<T[K]> }, func]);
             this.addSystem(sysInstance);
         } else {
             const sysInstance = new FnSystemWrapper(sysFn as SysFn<T>);
@@ -194,11 +194,11 @@ export class Scene extends LifecycleObject implements Updatable {
      * @returns The found system or null.
      */
     getGlobalSystem<T extends GlobalSystem<any>>(type: LagomType<GlobalSystem<any>>): T | null {
-        this.globalSystems.forEach(value => {
-            if (value instanceof type) {
-                return value;
+        for (let system of this.globalSystems.values()) {
+            if (system instanceof type) {
+                return system as T;
             }
-        });
+        }
         return null;
     }
 

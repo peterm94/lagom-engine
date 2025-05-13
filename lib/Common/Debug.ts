@@ -3,14 +3,13 @@ import {Entity} from "../ECS/Entity";
 import {System} from "../ECS/System";
 import {Component} from "../ECS/Component";
 import {Game} from "../ECS/Game";
+import {CType} from "../lagom-engine";
 
 /**
  * FPS tracking component.
  */
-class FpsTracker extends Component
-{
-    constructor(readonly verbose: boolean)
-    {
+class FpsTracker extends Component {
+    constructor(readonly verbose: boolean) {
         super();
     }
 }
@@ -18,8 +17,9 @@ class FpsTracker extends Component
 /**
  * System that updates with diagnostic information.
  */
-class FpsUpdater extends System<[TextDisp, FpsTracker]>
-{
+class FpsUpdater extends System<[TextDisp, FpsTracker]> {
+    types: [CType<TextDisp>, CType<FpsTracker>] = [TextDisp, FpsTracker];
+
     printFrame = 10;
     frameCount = 0;
 
@@ -35,30 +35,56 @@ class FpsUpdater extends System<[TextDisp, FpsTracker]>
 
     private readonly samples = 100;
 
-    onAdded(): void
-    {
+    onAdded(): void {
         super.onAdded();
         this.game = this.getScene().getGame();
     }
 
-    private rollAverage(prevAvg: number, newVal: number): number
-    {
+    private rollAverage(prevAvg: number, newVal: number): number {
         return (prevAvg * (this.samples - 1) + newVal) / this.samples;
     }
 
-    fixedUpdate(delta: number): void
-    {
+    fixedUpdate(delta: number): void {
+        super.fixedUpdate(delta);
         this.avgFixedUpdateDt = this.rollAverage(this.avgFixedUpdateDt, 1000 / delta);
         this.fixedDt = delta;
     }
 
-    update(delta: number): void
-    {
+    runOnEntities(delta: number, _entity: Entity, text: TextDisp, tracker: FpsTracker): void {
+
+        if ((this.frameCount % this.printFrame) !== 0) {
+            return;
+        }
+        text.pixiObj.text = `${this.avgUpdateDt.toFixed(2)}`;
+
+        if (tracker.verbose) {
+            text.pixiObj.text =
+                `U: ${delta.toFixed(2)}ms `
+                + `// ${(1000 / delta).toFixed(2)}hz `
+                + `// ${this.avgUpdateDt.toFixed(2)}hz`
+                + `\nFixedU: ${this.fixedDt.toFixed(2)}ms `
+                + `// ${(1000 / this.fixedDt).toFixed(2)}hz `
+                + `// ${this.avgFixedUpdateDt.toFixed(2)}hz`
+                + `\nUpdateTime: ${this.game.diag.updateTime.toFixed(2)}ms `
+                + `// ${this.avgUpdate.toFixed(2)}ms`
+                + `\nFixedUpdateTime: ${this.game.diag.fixedUpdateTime.toFixed(2)}ms `
+                + `// ${this.avgFixedUpdate.toFixed(2)}ms`
+                + `\nRenderTime: ${this.game.diag.renderTime.toFixed(2)}ms `
+                + `// ${this.avgRender.toFixed(2)}ms`
+                + `\nTotalFrameTime: ${this.game.diag.totalFrameTime.toFixed(2)}ms `
+                + `// ${this.avgFrame.toFixed(2)}ms`
+                + `\nEntities: ${this.game.currentScene.entities.size}`;
+        }
+
+    }
+
+    update(delta: number): void {
+        super.update(delta);
+
         this.frameCount++;
 
         // Delta of exactly 0 will break the average.
-        if (delta !== 0)
-        {
+        if (delta !== 0) {
             this.avgUpdateDt = this.rollAverage(this.avgUpdateDt, 1000 / delta);
         }
 
@@ -66,47 +92,15 @@ class FpsUpdater extends System<[TextDisp, FpsTracker]>
         this.avgFixedUpdate = this.rollAverage(this.avgFixedUpdate, this.game.diag.fixedUpdateTime);
         this.avgRender = this.rollAverage(this.avgRender, this.game.diag.renderTime);
         this.avgFrame = this.rollAverage(this.avgFrame, this.game.diag.totalFrameTime);
-
-        if ((this.frameCount % this.printFrame) === 0)
-        {
-            this.runOnEntities((_: Entity, text: TextDisp, tracker: FpsTracker) => {
-
-                text.pixiObj.text = `${this.avgUpdateDt.toFixed(2)}`;
-
-                if (tracker.verbose)
-                {
-                    text.pixiObj.text =
-                        `U: ${delta.toFixed(2)}ms `
-                        + `// ${(1000 / delta).toFixed(2)}hz `
-                        + `// ${this.avgUpdateDt.toFixed(2)}hz`
-                        + `\nFixedU: ${this.fixedDt.toFixed(2)}ms `
-                        + `// ${(1000 / this.fixedDt).toFixed(2)}hz `
-                        + `// ${this.avgFixedUpdateDt.toFixed(2)}hz`
-                        + `\nUpdateTime: ${this.game.diag.updateTime.toFixed(2)}ms `
-                        + `// ${this.avgUpdate.toFixed(2)}ms`
-                        + `\nFixedUpdateTime: ${this.game.diag.fixedUpdateTime.toFixed(2)}ms `
-                        + `// ${this.avgFixedUpdate.toFixed(2)}ms`
-                        + `\nRenderTime: ${this.game.diag.renderTime.toFixed(2)}ms `
-                        + `// ${this.avgRender.toFixed(2)}ms`
-                        + `\nTotalFrameTime: ${this.game.diag.totalFrameTime.toFixed(2)}ms `
-                        + `// ${this.avgFrame.toFixed(2)}ms`
-                        + `\nEntities: ${this.game.currentScene.entities.size}`;
-                }
-            });
-        }
     }
-
-    types = [TextDisp, FpsTracker];
 }
 
 
 /**
  * Entity that adds FPS information to the canvas.
  */
-export class Diagnostics extends Entity
-{
-    onAdded(): void
-    {
+export class Diagnostics extends Entity {
+    onAdded(): void {
         super.onAdded();
 
         this.addComponent(new FpsTracker(this.verbose));
@@ -124,8 +118,7 @@ export class Diagnostics extends Entity
      */
     constructor(private readonly textCol: string,
                 private readonly textSize: number = 10,
-                private verbose: boolean = false)
-    {
+                private verbose: boolean = false) {
         super("diagnostics");
     }
 }

@@ -2,21 +2,19 @@ import {System} from "../ECS/System";
 import {Component} from "../ECS/Component";
 import {Camera} from "./Camera";
 import {Entity} from "../ECS/Entity";
+import {CType} from "../ECS/FnSystemWrapper";
 
-export class FollowMe extends Component
-{
+export class FollowMe extends Component {
 }
 
-export interface CamOptions
-{
+export interface CamOptions {
     centre?: boolean;
     xOffset?: number;
     yOffset?: number;
     lerpSpeed?: number;
 }
 
-export class FollowCamera extends System<[FollowMe]>
-{
+export class FollowCamera extends System<[FollowMe]> {
     private camera!: Camera;
 
     centre = true;
@@ -25,12 +23,10 @@ export class FollowCamera extends System<[FollowMe]>
     lerpSpeed = 0.1;
 
 
-    constructor(options?: CamOptions)
-    {
+    constructor(options?: CamOptions) {
         super();
 
-        if (options)
-        {
+        if (options) {
             if (options.centre !== undefined) this.centre = options.centre;
             if (options.xOffset !== undefined) this.xOffset = options.xOffset;
             if (options.yOffset !== undefined) this.yOffset = options.yOffset;
@@ -38,36 +34,29 @@ export class FollowCamera extends System<[FollowMe]>
         }
     }
 
-    onAdded(): void
-    {
+    onAdded(): void {
         super.onAdded();
 
         this.camera = this.getScene().camera;
     }
 
-    types= [FollowMe];
+    types: [CType<FollowMe>] = [FollowMe];
 
-    update(): void
-    {
-        // no normal update required for this system
+    runOnEntities(_delta: number, _entity: Entity, _followMe: FollowMe): void {
+        // not required
     }
 
-    fixedUpdate(delta: number): void
-    {
-        this.runOnEntities((entity: Entity) => {
+    runOnEntitiesFixed(delta: number, entity: Entity, _followMe: FollowMe) {
+        let targetX = entity.transform.x + this.xOffset;
+        let targetY = entity.transform.y + this.yOffset;
 
-            let targetX = entity.transform.x + this.xOffset;
-            let targetY = entity.transform.y + this.yOffset;
+        // Calculate camera midpoint
+        if (this.centre) {
+            targetX -= this.camera.halfWidth;
+            targetY -= this.camera.halfHeight;
+        }
 
-            // Calculate camera midpoint
-            if (this.centre)
-            {
-                targetX -= this.camera.halfWidth;
-                targetY -= this.camera.halfHeight;
-            }
-
-            // Soft follow
-            this.camera.moveTowards(targetX, targetY, this.lerpSpeed * (delta / 1000));
-        });
+        // Soft follow
+        this.camera.moveTowards(targetX, targetY, this.lerpSpeed * (delta / 1000));
     }
 }
