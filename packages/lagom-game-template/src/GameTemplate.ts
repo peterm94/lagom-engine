@@ -75,7 +75,7 @@ export class GameTemplate extends Game {
         this.setScene(new Scene(this));
 
         // Import sounds and set their properties
-        // const music = GameTemplate.audioAtlas.load("music", "ADD_ME")
+        // const music = GameTemplate.audioAtlas.load("music", "src/assets/ADD_ME")
         //     .loop(true)
         //     .volume(0.3);
 

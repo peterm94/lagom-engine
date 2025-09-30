@@ -1,6 +1,6 @@
 import {AnimatedSpriteController, Button, Component, CType, Entity, Key, System, Timer} from "lagom-engine";
 
-import {GameTemplate} from "../GameTemplate.ts";
+import {GameTemplate} from "../GameTemplate";
 
 class MuteComp extends Component {
 }
@@ -84,7 +84,7 @@ export class SoundManager extends Entity {
 
     playSound(name: string, restart = false) {
         if (!GameTemplate.muted) {
-            if (GameTemplate.audioAtlas.sounds.get(name)?.playing() && !restart) return;
+            if (GameTemplate.audioAtlas.sounds.get(name)?.isPlaying && !restart) return;
             GameTemplate.audioAtlas.play(name);
         }
     }
