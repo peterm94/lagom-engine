@@ -11,7 +11,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 
 const main = document.querySelector<HTMLDivElement>('#main')!;
 
-const game = new GameTemplate();
+const game = new Platformer();
 
 main.appendChild(game.renderer.view);
 game.renderer.view.focus();

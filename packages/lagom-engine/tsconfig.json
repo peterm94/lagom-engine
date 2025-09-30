@@ -5,21 +5,13 @@
     "declaration": true,
     "declarationDir": "dist",
     "outDir": "dist",
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "strict": true,
-//
-//    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-//    "useDefineForClassFields": true,
-
-//    /* Bundler mode */
-//    "resolveJsonModule": true,
-//    "isolatedModules": true,
-//
-//    // TODO remove this when the mouse goes away
+    // TODO remove this when the mouse goes away
     "allowJs": true,
-//
+
 //    /* Linting */
 //    "noUnusedLocals": true,
 //    "noUnusedParameters": true,
