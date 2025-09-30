@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["node"],
+
+//    "useDefineForClassFields": true,
+
+
+
+    /* Bundler mode */
+//    "allowImportingTsExtensions": true,
+//    "resolveJsonModule": true,
+//    "experimentalDecorators": true,
+//    "emitDecoratorMetadata": true,
+//    "isolatedModules": true,
+//    "noEmit": true,
+//
+    /* Linting */
+    "strict": true
+  },
+  "include": ["src"]
+}

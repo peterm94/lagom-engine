@@ -57,7 +57,7 @@ export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObj
         f(this, ...Array.from(this.runOn.values()));
     }
 
-    private onComponentAdded(_: Entity, component: Component): void
+    private onComponentAdded(entity: Entity, component: Component): void
     {
         // Check if we care about this type at all
         const type = this.types.find((val) => {
@@ -75,9 +75,18 @@ export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObj
             this.runOn.set(type.prototype, compMap);
         }
         compMap.push(component);
+        this.componentLoaded(entity, component);
     }
 
-    private onComponentRemoved(_: Entity, component: Component): void
+    protected componentLoaded(_entity: Entity, _component: Component): void {
+
+    }
+
+    protected componentRemoved(_entity: Entity, _component: Component): void {
+
+    }
+
+    private onComponentRemoved(entity: Entity, component: Component): void
     {
         // Check if we care about this type at all
         const type = this.types.find((val) => {
@@ -93,6 +102,7 @@ export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObj
 
         // Get it out of the list if it is in it
         Util.remove(components, component);
+        this.componentRemoved(entity, component)
     }
 
     private onEntityAdded(_: Scene, entity: Entity): void

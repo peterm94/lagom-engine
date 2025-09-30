@@ -1,0 +1,6 @@
+packages:
+  - packages/lagom-engine
+  - packages/lagom-game-template
+
+onlyBuiltDependencies:
+  - esbuild

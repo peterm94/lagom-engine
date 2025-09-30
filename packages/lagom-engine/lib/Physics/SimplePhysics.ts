@@ -1,9 +1,9 @@
 import {System} from "../ECS/System";
 import {Entity} from "../ECS/Entity";
-import {MathUtil} from "../Common/Util";
 import {Rigidbody} from "../Collisions/Rigidbody";
 import {Component} from "../ECS/Component";
 import {CType} from "../ECS/FnSystemWrapper";
+import {MathUtil} from "../Common/Util";
 
 /**
  * Properties interface for SimplePhysics module.

@@ -8,6 +8,8 @@ export class CollisionMatrix
     // Nothing collides with anything by default.
     readonly layers: Map<number, number> = new Map();
 
+    readonly collisionPairs = new Set<[number, number]>();
+
     /**
      * Add a valid collision between two layers. This will be computed both ways.
      * @param l1 The first layer.
@@ -31,6 +33,9 @@ export class CollisionMatrix
         let layer2mask = this.layers.get(layer2);
         layer2mask = layer2mask === undefined ? 0 : layer2mask;
         this.layers.set(layer2, layer2mask | (1 << layer1));
+
+        const pair = [l1, l2].sort((a, b) => a - b);
+        this.collisionPairs.add(pair as [number, number]);
     }
 
     /**
