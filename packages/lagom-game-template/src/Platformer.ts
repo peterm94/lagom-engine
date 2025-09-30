@@ -13,8 +13,6 @@ import {
     Scene
 } from "lagom-engine";
 
-// import SAT from "sat";
-
 enum Layers {
     L1,
     L2
@@ -22,7 +20,8 @@ enum Layers {
 
 class MoveMe extends Component {
 }
-
+class MoveMeToo extends Component {
+}
 class MainScene extends Scene {
 
     onAdded() {
@@ -61,6 +60,8 @@ class MainScene extends Scene {
                 e.transform.position.x += d * .10;
             }
         }))
+
+        // this.addFnSystem(newSystem([MoveMe, MoveMeToo], (d, e) => {}))
     }
 
 }

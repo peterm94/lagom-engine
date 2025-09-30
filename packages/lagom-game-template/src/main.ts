@@ -1,4 +1,4 @@
-// import {GameTemplate} from "./GameTemplate.ts";
+import {GameTemplate} from "./GameTemplate";
 import "./main.css";
 // import {Pong} from "./Pong.ts";
 import {Platformer} from "./Platformer";
@@ -11,7 +11,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 
 const main = document.querySelector<HTMLDivElement>('#main')!;
 
-const game = new Platformer();
+const game = new GameTemplate();
 
 main.appendChild(game.renderer.view);
 game.renderer.view.focus();

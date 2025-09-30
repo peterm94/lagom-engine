@@ -28,7 +28,10 @@ export class FnSystemWrapper<T extends Component[]> extends System<T> {
  */
 export type CType<T extends Component> = new (...args: any[]) => T;
 
-export type SysFn<T extends Component[]> = [{ [K in keyof T]: CType<T[K]> }, (delta: number, entity: Entity, ...args: T) => void];
+export type SysFn<T extends readonly Component[]> = [
+    { [K in keyof T]: CType<T[K]> },
+    (delta: number, entity: Entity, ...args: T) => void
+];
 
 /**
  * Create a new functional system.
@@ -36,7 +39,11 @@ export type SysFn<T extends Component[]> = [{ [K in keyof T]: CType<T[K]> }, (de
  * @param classes An array of component types to support.
  * @param func The system update() method. Requires each component type as an added parameter to the function.
  */
-export function newSystem<T extends Component[]>(classes: { [K in keyof T]: CType<T[K]> },
-                                           func: (delta: number, entity: Entity, ...components: T) => void): SysFn<T> {
-    return [classes, func]
+export function newSystem<T extends readonly CType<Component>[]>(
+    classes: T,
+    func: (delta: number,
+           entity: Entity,
+           ...components: { [K in keyof T]: T[K] extends CType<infer U> ? U : never; }) => void):
+    SysFn<{ [K in keyof T]: T[K] extends CType<infer U> ? U : never; }> {
+    return [classes as any, func];
 }
