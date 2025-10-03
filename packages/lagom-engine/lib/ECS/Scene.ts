@@ -95,8 +95,8 @@ export class Scene extends LifecycleObject implements Updatable {
     }
 
     fixedUpdate(delta: number): void {
-        // Update global systems
-        for (let [_, system] of this.globalSystems) {
+        // Update normal systems
+        for (let [_, system] of this.systems) {
             const now = Date.now();
             system.fixedUpdate(delta);
             const time = Date.now() - now;
@@ -105,8 +105,8 @@ export class Scene extends LifecycleObject implements Updatable {
             }
         }
 
-        // Update normal systems
-        for (let [_, system] of this.systems) {
+        // Update global systems
+        for (let [_, system] of this.globalSystems) {
             const now = Date.now();
             system.fixedUpdate(delta);
             const time = Date.now() - now;
@@ -173,19 +173,24 @@ export class Scene extends LifecycleObject implements Updatable {
      * @param classes An array of component types to support.
      * @param func The system update() method. Requires each component type as an added parameter to the function.
      */
-    addFnSystem<T extends any[]>(classes: { [K in keyof T]: CType<T[K]> }, func: (delta: number, entity: Entity, ...components: T) => void): void;
+    addFnSystem<T extends any[]>(classes: { [K in keyof T]: CType<T[K]> }, func: (delta: number, entity: Entity, ...components: T) => void, fixed: boolean): void;
 
     addFnSystem<T extends any[]>(
         sysFn: SysFn<T> | { [K in keyof T]: CType<T[K]> },
-        func?: (delta: number, entity: Entity, ...components: T) => void
+        func?: (delta: number, entity: Entity, ...components: T) => void,
+        fixed?: boolean
     ): void {
         if (func) {
-            const sysInstance = new FnSystemWrapper([sysFn as { [K in keyof T]: CType<T[K]> }, func]);
+            const sysInstance = new FnSystemWrapper([sysFn as { [K in keyof T]: CType<T[K]> }, func], fixed ?? false);
             this.addSystem(sysInstance);
         } else {
-            const sysInstance = new FnSystemWrapper(sysFn as SysFn<T>);
+            const sysInstance = new FnSystemWrapper(sysFn as SysFn<T>, fixed ?? false);
             this.addSystem(sysInstance);
         }
+    }
+
+    addFixedFnSystem<T extends any[]>(system: SysFn<T>): void {
+        this.addFnSystem(system[0], system[1], true)
     }
 
     /**

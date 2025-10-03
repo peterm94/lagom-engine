@@ -9,12 +9,20 @@ export class FnSystemWrapper<T extends Component[]> extends System<T> {
     types: { [K in keyof T]: CType<T[K]>; };
 
     runOnEntities(delta: number, entity: Entity, ...args: T): void {
-        this.runFn(delta, entity, ...args);
+        if (!this.fixed) {
+            this.runFn(delta, entity, ...args);
+        }
+    }
+
+    runOnEntitiesFixed(delta: number, entity: Entity, ...args: T): void {
+        if (this.fixed) {
+            this.runFn(delta, entity, ...args);
+        }
     }
 
     private readonly runFn: (delta: number, entity: Entity, ...args: T) => void;
 
-    constructor(readonly sysFun: SysFn<T>) {
+    constructor(readonly sysFun: SysFn<T>, readonly fixed: boolean) {
         super();
 
         this.types = sysFun[0];
@@ -22,11 +30,21 @@ export class FnSystemWrapper<T extends Component[]> extends System<T> {
     }
 }
 
+type TupleInstances<T extends readonly CType<Component>[]> = {
+    [K in keyof T]: T[K] extends CType<infer U> ? U : never;
+};
+
 /**
  * Component constructor type. You can just provide the class name of a component if a type value is required.
  * e.g. If you are required to provide a `CType<A>`, you can just pass an `A`.
  */
 export type CType<T extends Component> = new (...args: any[]) => T;
+
+
+
+export function types<T extends readonly any[]>(...args: T): T {
+    return args;
+}
 
 export type SysFn<T extends readonly Component[]> = [
     { [K in keyof T]: CType<T[K]> },
@@ -41,9 +59,11 @@ export type SysFn<T extends readonly Component[]> = [
  */
 export function newSystem<T extends readonly CType<Component>[]>(
     classes: T,
-    func: (delta: number,
-           entity: Entity,
-           ...components: { [K in keyof T]: T[K] extends CType<infer U> ? U : never; }) => void):
-    SysFn<{ [K in keyof T]: T[K] extends CType<infer U> ? U : never; }> {
+    func: (
+        delta: number,
+        entity: Entity,
+        ...components: TupleInstances<T>
+    ) => void
+): SysFn<TupleInstances<T>> {
     return [classes as any, func];
 }
