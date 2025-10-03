@@ -17,8 +17,8 @@ export abstract class SatCollider extends Component {
 
     updatePosition() {
         const worldPoint = this.parent.transform.getGlobalPosition()
-        this.shape.pos.x = worldPoint.x
-        this.shape.pos.y = worldPoint.y
+        this.shape.pos.x = worldPoint.x + this.xOff
+        this.shape.pos.y = worldPoint.y + this.yOff
     }
 
     readonly onTrigger: Observable<SatCollider, { other: SatCollider; result: SatResponse }> = new Observable();
@@ -59,12 +59,25 @@ export class RectSatCollider extends PolySatCollider {
 }
 
 export interface SatResponse {
-    a: any;
-    b: any;
+    /**
+     * Magnitude of the overlap on the shortest colliding axis.
+     */
     overlap: number;
+    /**
+     * The shortest colliding axis (unit-vector)
+     */
     overlapN: SatVector;
+    /**
+     * The overlap vector. If this vector is subtracted from the position of a, a and b will no longer be colliding.
+     */
     overlapV: SatVector;
+    /**
+     * Whether the first object is completely inside the second.
+     */
     aInB: boolean;
+    /**
+     * Whether the second object is completely inside the first.
+     */
     bInA: boolean;
 }
 
@@ -133,6 +146,9 @@ export class SatCollisionSystem extends GlobalSystem<[SatCollider[]]> {
                     for (const c2 of colliders2) {
                         // This is fun, we only want one comparison to take place (c1, c2) === (c2, c1),
                         // By checking the sort order for a pair, we can ensure it only happens once
+
+                        debugger;
+
                         if (c1.id > c2.id) {
                             continue
                         }
