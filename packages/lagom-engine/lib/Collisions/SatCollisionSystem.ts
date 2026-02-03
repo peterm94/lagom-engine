@@ -120,6 +120,9 @@ export class SatCollisionSystem extends GlobalSystem<[SatCollider[]]> {
         this.colliders.forEach(v => v.forEach(coll => coll.updatePosition()))
 
         const hits: Map<string, [SatCollider, SatCollider, SAT.Response]> = new Map();
+
+        // We only have one pair (sorted) in for every combo (e.g. [L1, L2] exists, but [L2, L1] does not)
+        // This means we will only ever fire 1 event per collision while doing the comparison, except for [L1 == L2].
         for (let [l1, l2] of this.collisionMatrix.collisionPairs) {
             const colliders1 = this.colliders.get(l1);
             const colliders2 = this.colliders.get(l2);
@@ -144,14 +147,6 @@ export class SatCollisionSystem extends GlobalSystem<[SatCollider[]]> {
             } else {
                 for (const c1 of colliders1) {
                     for (const c2 of colliders2) {
-                        // This is fun, we only want one comparison to take place (c1, c2) === (c2, c1),
-                        // By checking the sort order for a pair, we can ensure it only happens once
-
-                        debugger;
-
-                        if (c1.id > c2.id) {
-                            continue
-                        }
                         const coll = this.testCollision(c1, c2);
                         if (coll !== undefined) {
                             hits.set(`${c1.id}:${c2.id}`, [c1, c2, coll]);
