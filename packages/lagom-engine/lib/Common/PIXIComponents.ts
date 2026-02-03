@@ -69,7 +69,7 @@ export class RenderCircle extends PIXIGraphicsComponent
                 lineColour: number = PIXIGraphicsComponent.defaultLine)
     {
         super(fillColour, lineColour);
-        this.pixiObj.circle(xOff, yOff, radius);
+        this.pixiObj.circle(xOff, yOff, radius).stroke();
     }
 }
 
@@ -96,7 +96,7 @@ export class RenderRect extends PIXIGraphicsComponent
                 lineColour: number = PIXIGraphicsComponent.defaultLine)
     {
         super(fillColour, lineColour);
-        this.pixiObj.rect(xOff, yOff, width, height);
+        this.pixiObj.rect(xOff, yOff, width, height).stroke();
     }
 }
 
@@ -117,6 +117,6 @@ export class RenderPoly extends PIXIGraphicsComponent
                 lineColour: number = PIXIGraphicsComponent.defaultLine)
     {
         super(fillColour, lineColour);
-        this.pixiObj.poly(points);
+        this.pixiObj.poly(points).stroke();
     }
 }
