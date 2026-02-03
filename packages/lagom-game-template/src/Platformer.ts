@@ -112,6 +112,8 @@ class MainScene extends Scene {
 }
 
 export class Platformer extends Game {
+    resourceLoad = async () => {};
+    startScene = () => new MainScene(this);
     static GAME_WIDTH = 512;
     static GAME_HEIGHT = 512;
 
@@ -124,7 +126,5 @@ export class Platformer extends Game {
         });
 
         Log.logLevel = LogLevel.INFO;
-
-        this.setScene(new MainScene(this));
     }
 }

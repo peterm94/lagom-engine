@@ -209,7 +209,7 @@ export class ContinuousCollisionSystem extends CollisionSystem<[Rigidbody[]]>
                     body.pendingRotation = 0;
 
                     // This forces the move. Otherwise, not applied until the next render frame.
-                    body.parent.transform.updateTransform();
+                    body.parent.transform.updateTransform({});
 
                     // Update body positions and simulation.
                     body.updateAffected();
@@ -243,7 +243,7 @@ export class ContinuousCollisionSystem extends CollisionSystem<[Rigidbody[]]>
                         body.parent.transform.rotation += dRot;
 
                         // This forces the move. Otherwise, not applied until the next render frame.
-                        body.parent.transform.updateTransform();
+                        body.parent.transform.updateTransform({});
 
                         // Update positions for all child colliders and update the model.
                         body.updateAffected();

@@ -10,7 +10,7 @@ class MuteListener extends System<[AnimatedSpriteController, MuteComp]> {
 
     runOnEntities(delta: number, e: Entity, spr: AnimatedSpriteController, args_1: MuteComp): void {
         if (this.scene.game.mouse.isButtonPressed(Button.LEFT)) {
-            const pos = e.scene.game.renderer.plugins.interaction.mouse.global;
+            const pos = e.scene.game.canvas.plugins.interaction.mouse.global;
 
             if (pos.x >= GameTemplate.GAME_WIDTH - 24 && pos.x <= GameTemplate.GAME_WIDTH - 8 && pos.y >= GameTemplate.GAME_HEIGHT - 24 && pos.y <= GameTemplate.GAME_HEIGHT - 8) {
                 (e.scene.getEntityWithName("audio") as SoundManager).toggleMute();

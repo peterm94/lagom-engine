@@ -1,6 +1,4 @@
-import {GameTemplate} from "./GameTemplate";
 import "./main.css";
-// import {Pong} from "./Pong.ts";
 import {Platformer} from "./Platformer";
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
@@ -13,6 +11,6 @@ const main = document.querySelector<HTMLDivElement>('#main')!;
 
 const game = new Platformer();
 
-main.appendChild(game.renderer.view);
-game.renderer.view.focus();
-game.start();
+await game.start()
+main.appendChild(game.application.canvas);
+game.application.canvas.focus();

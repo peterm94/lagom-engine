@@ -1,12 +1,11 @@
 import {FrameTrigger} from "../FrameTrigger";
 import {Sprite, SpriteConfig} from "./Sprite";
-import * as PIXI from "pixi.js";
+import {Texture} from "pixi.js";
 
 /**
  * Animation end action.
  */
-export enum AnimationEnd
-{
+export enum AnimationEnd {
     /**
      * Stop the animation.
      */
@@ -26,8 +25,7 @@ export enum AnimationEnd
 /**
  * Configuration for Animated Sprites.
  */
-export interface AnimatedSpriteConfig extends SpriteConfig
-{
+export interface AnimatedSpriteConfig extends SpriteConfig {
     /**
      * Speed at which the animation will play.
      */
@@ -44,8 +42,7 @@ export interface AnimatedSpriteConfig extends SpriteConfig
 /**
  * Animated Sprite Component type.
  */
-export class AnimatedSprite extends FrameTrigger<number>
-{
+export class AnimatedSprite extends FrameTrigger<number> {
     animationEndAction: AnimationEnd = AnimationEnd.LOOP;
     animationEndEvent?: () => void;
 
@@ -57,8 +54,7 @@ export class AnimatedSprite extends FrameTrigger<number>
      * Apply configuration to this AnimatedSprite.
      * @param config Any desired configuration options.
      */
-    public applyConfig(config: AnimatedSpriteConfig): void
-    {
+    public applyConfig(config: AnimatedSpriteConfig): void {
         if (this.sprite) this.sprite.applyConfig(config);
 
         // Do animated sprite stuff
@@ -70,8 +66,7 @@ export class AnimatedSprite extends FrameTrigger<number>
     /**
      * Reset the state of the FrameTrigger. This will also reset the sprite to the first animation frame.
      */
-    reset(): void
-    {
+    reset(): void {
         super.reset();
 
         this.frameIndex = -1;
@@ -83,8 +78,7 @@ export class AnimatedSprite extends FrameTrigger<number>
      * @param textures Textures for the Sprite to use.
      * @param config Configuration for this Sprite.
      */
-    constructor(protected textures: PIXI.Texture[], readonly config: AnimatedSpriteConfig | null = null)
-    {
+    constructor(protected textures: Texture[], readonly config: AnimatedSpriteConfig | null = null) {
         super(0);
 
         if (config) this.applyConfig(config);
@@ -95,11 +89,9 @@ export class AnimatedSprite extends FrameTrigger<number>
             let nextFrame = this.frameIndex + this.frameAdvancer;
 
             // Check for after last or first frame to trigger the end action.
-            if (nextFrame === -1 || nextFrame === this.textures.length)
-            {
+            if (nextFrame === -1 || nextFrame === this.textures.length) {
                 lastFrame = true;
-                switch (this.animationEndAction)
-                {
+                switch (this.animationEndAction) {
                     // Loop back to the start
                     case AnimationEnd.LOOP:
                         nextFrame %= this.textures.length;
@@ -122,29 +114,25 @@ export class AnimatedSprite extends FrameTrigger<number>
             if (this.sprite) this.sprite.pixiObj.texture = this.textures[this.frameIndex];
 
             // Last frame, call the trigger if it is defined.
-            if (lastFrame)
-            {
+            if (lastFrame) {
                 this.animationEndEvent?.call(this);
             }
         });
     }
 
-    payload(): number
-    {
+    payload(): number {
         return this.frameIndex;
     }
 
 
-    onAdded(): void
-    {
+    onAdded(): void {
         // TODO i can't wait to make this a nested guy :)
         super.onAdded();
         this.sprite = this.getEntity().addComponent(new Sprite(this.textures[this.frameIndex], this.config));
         this.reset();
     }
 
-    onRemoved(): void
-    {
+    onRemoved(): void {
         super.onRemoved();
         if (this.sprite) this.sprite.destroy();
     }

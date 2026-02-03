@@ -1,7 +1,7 @@
-import * as PIXI from "pixi.js";
 import {Log} from "../Util";
 import {FrameTrigger} from "../FrameTrigger";
 import {AnimatedSprite, AnimatedSpriteConfig} from "./AnimatedSprite";
+import {Texture} from "pixi.js";
 
 /**
  * Configured SpriteAnimation. Used for AnimatedSprite states.
@@ -16,7 +16,7 @@ export interface SpriteAnimation
     /**
      * Textures for this animation.
      */
-    textures: PIXI.Texture[];
+    textures: Texture[];
 
     /**
      * Optional configuration for this animation.
