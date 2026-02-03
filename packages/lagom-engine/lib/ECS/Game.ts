@@ -1,10 +1,10 @@
 import {Scene} from "./Scene";
 import {Log} from "../Common/Util";
 import {ResourceLoader} from "../Common/ResourceLoader";
-import {SpriteSheet} from "../Common/Sprite/SpriteSheet";
 import {Keyboard} from "../Input/Keyboard";
 import {Mouse} from "../Input/Mouse";
-import {Application, Renderer} from "pixi.js";
+import {Application} from "pixi.js";
+import {ImageAsset} from "../Common/ImageAsset";
 
 class Diag {
     renderTime = 0;
@@ -155,15 +155,7 @@ export abstract class Game {
         return scene;
     }
 
-    getResource(name: string): SpriteSheet {
+    getResource(name: string): ImageAsset {
         return this.resourceLoader.get(name);
-    }
-
-    addResource(name: string, sheet: SpriteSheet): SpriteSheet {
-        return this.resourceLoader.addResource(name, sheet);
-    }
-
-    load(): Promise<unknown> {
-        return this.resourceLoader.loadAll();
     }
 }

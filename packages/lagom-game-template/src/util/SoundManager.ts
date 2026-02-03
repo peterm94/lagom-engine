@@ -10,12 +10,13 @@ class MuteListener extends System<[AnimatedSpriteController, MuteComp]> {
 
     runOnEntities(delta: number, e: Entity, spr: AnimatedSpriteController, args_1: MuteComp): void {
         if (this.scene.game.mouse.isButtonPressed(Button.LEFT)) {
-            const pos = e.scene.game.canvas.plugins.interaction.mouse.global;
+            // TODO this is a bit cheeky, how can I do it now?
+            // const pos = e.scene.game.canvas.plugins.interaction.mouse.global;
 
-            if (pos.x >= GameTemplate.GAME_WIDTH - 24 && pos.x <= GameTemplate.GAME_WIDTH - 8 && pos.y >= GameTemplate.GAME_HEIGHT - 24 && pos.y <= GameTemplate.GAME_HEIGHT - 8) {
-                (e.scene.getEntityWithName("audio") as SoundManager).toggleMute();
-                spr.setAnimation(Number(GameTemplate.muted));
-            }
+            // if (pos.x >= GameTemplate.GAME_WIDTH - 24 && pos.x <= GameTemplate.GAME_WIDTH - 8 && pos.y >= GameTemplate.GAME_HEIGHT - 24 && pos.y <= GameTemplate.GAME_HEIGHT - 8) {
+            //     (e.scene.getEntityWithName("audio") as SoundManager).toggleMute();
+            //     spr.setAnimation(Number(GameTemplate.muted));
+            // }
         } else if (this.scene.game.keyboard.isKeyPressed(Key.KeyM)) {
             (e.scene.getEntityWithName("audio") as SoundManager).toggleMute();
             spr.setAnimation(Number(GameTemplate.muted));
@@ -36,10 +37,10 @@ export class SoundManager extends Entity {
         const spr = this.addComponent(new AnimatedSpriteController(Number(GameTemplate.muted), [
             {
                 id: 0,
-                textures: [this.scene.game.getResource("mute_button").texture(0, 0, 16, 16)]
+                textures: [this.scene.game.getResource("mute_button").tileAt(0, 0)]
             }, {
                 id: 1,
-                textures: [this.scene.game.getResource("mute_button").texture(1, 0, 16, 16)]
+                textures: [this.scene.game.getResource("mute_button").tileAt(1, 0)]
             }]));
 
         this.addComponent(new Timer(50, spr, false)).onTrigger.register((caller, data) => {
