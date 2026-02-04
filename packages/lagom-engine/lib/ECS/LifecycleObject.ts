@@ -2,7 +2,7 @@
  * Base class for any lifecycle-aware object.
  */
 export abstract class LifecycleObject {
-    private static _next_id = 0
+    private static _next_id = 0;
 
     readonly id = LifecycleObject._next_id++;
 

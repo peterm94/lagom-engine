@@ -1,10 +1,10 @@
-import {Scene} from "./Scene";
-import {Log} from "../Common/Util";
-import {ResourceLoader} from "../Common/ResourceLoader";
-import {Keyboard} from "../Input/Keyboard";
-import {Mouse} from "../Input/Mouse";
-import {Application} from "pixi.js";
-import {ImageAsset} from "../Common/ImageAsset";
+import { Scene } from "./Scene";
+import { Log } from "../Common/Util";
+import { ResourceLoader } from "../Common/ResourceLoader";
+import { Keyboard } from "../Input/Keyboard";
+import { Mouse } from "../Input/Mouse";
+import { Application } from "pixi.js";
+import { ImageAsset } from "../Common/ImageAsset";
 
 class Diag {
     renderTime = 0;
@@ -112,7 +112,7 @@ export abstract class Game {
             this.canvas = this.application.canvas;
             this.keyboard = new Keyboard(this.canvas);
             this.mouse = new Mouse(this.canvas);
-        })
+        });
         await this.resourceLoad();
 
         this.setScene(this.startScene());

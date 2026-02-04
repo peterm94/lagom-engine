@@ -1,14 +1,13 @@
-import {Body, Circle, Point, Polygon, Result} from "detect-collisions";
-import {Component, PIXIComponent} from "../ECS/Component";
-import {Observable} from "../Common/Observer";
-import {CollisionSystem} from "./CollisionSystems";
-import {Container} from "pixi.js";
+import { Body, Circle, Point, Polygon, Result } from "detect-collisions";
+import { Component, PIXIComponent } from "../ECS/Component";
+import { Observable } from "../Common/Observer";
+import { CollisionSystem } from "./CollisionSystems";
+import { Container } from "pixi.js";
 
 /**
  * Collision body type. Determines the way the body interacts with the collision simulation.
  */
-export enum BodyType
-{
+export enum BodyType {
     /**
      * Discrete bodies will jump to their destination position each frame.
      */
@@ -23,14 +22,13 @@ export enum BodyType
     /**
      * Static bodies should not move. If they do, will cause undefined behaviour.
      */
-    Static
+    Static,
 }
 
 /**
  * Properties for colliders.
  */
-export interface ColliderOptions
-{
+export interface ColliderOptions {
     /**
      * Layer that the collider is on. Required.
      */
@@ -50,8 +48,7 @@ export interface ColliderOptions
 /**
  * Interface type for Lagom controlled Collider bodies.
  */
-export interface LagomBody
-{
+export interface LagomBody {
     /**
      * Reference to the owning Component.
      */
@@ -61,8 +58,7 @@ export interface LagomBody
 /**
  * Collider types for this collision system.
  */
-export abstract class Collider extends PIXIComponent<Container>
-{
+export abstract class Collider extends PIXIComponent<Container> {
     /**
      * Observable event for continuous collision trigger. Will be fired every frame a trigger occurs. If Continuous
      * collision checking is enabled, may trigger multiple times in the same frame.
@@ -91,8 +87,11 @@ export abstract class Collider extends PIXIComponent<Container>
      * @param body The inner body type.
      * @param options Any additional body options.
      */
-    protected constructor(private readonly engine: CollisionSystem<any>, readonly body: Body, options: ColliderOptions)
-    {
+    protected constructor(
+        private readonly engine: CollisionSystem<any>,
+        readonly body: Body,
+        options: ColliderOptions,
+    ) {
         super(new Container());
 
         this.xOff = options.xOff !== undefined ? options.xOff : 0;
@@ -109,16 +108,14 @@ export abstract class Collider extends PIXIComponent<Container>
         (this.body as unknown as LagomBody).lagomComponent = this;
     }
 
-    onAdded(): void
-    {
+    onAdded(): void {
         super.onAdded();
 
         this.updatePosition();
         this.engine.addBody(this);
     }
 
-    onRemoved(): void
-    {
+    onRemoved(): void {
         super.onRemoved();
 
         this.engine.removeBody(this);
@@ -134,8 +131,7 @@ export abstract class Collider extends PIXIComponent<Container>
      * @param dy Y delta from current position.
      * @returns True if no collisions occur at the target location.
      */
-    placeFree(dx: number, dy: number): boolean
-    {
+    placeFree(dx: number, dy: number): boolean {
         if (this.engine) return this.engine.placeFree(this, dx, dy);
         return true;
     }
@@ -143,8 +139,7 @@ export abstract class Collider extends PIXIComponent<Container>
     /**
      * Sync the collider position with its anchor object in the scene.
      */
-    updatePosition(): void
-    {
+    updatePosition(): void {
         const pt = this.globalPos();
         this.body.x = pt.x;
         this.body.y = pt.y;
@@ -154,8 +149,7 @@ export abstract class Collider extends PIXIComponent<Container>
 /**
  * Collider options specifically for Circle types.
  */
-export interface CircleColliderOptions extends ColliderOptions
-{
+export interface CircleColliderOptions extends ColliderOptions {
     /**
      * Radius of the collision circle.
      */
@@ -165,15 +159,13 @@ export interface CircleColliderOptions extends ColliderOptions
 /**
  * Circle collider type. The centre point is (0, 0).
  */
-export class CircleCollider extends Collider
-{
+export class CircleCollider extends Collider {
     /**
      * Constructor.
      * @param system System to add the collider to.
      * @param options Options for this collider.
      */
-    constructor(system: CollisionSystem<any>, options: CircleColliderOptions)
-    {
+    constructor(system: CollisionSystem<any>, options: CircleColliderOptions) {
         super(system, new Circle(0, 0, options.radius), options);
     }
 }
@@ -181,15 +173,13 @@ export class CircleCollider extends Collider
 /**
  * Point collider type.
  */
-export class PointCollider extends Collider
-{
+export class PointCollider extends Collider {
     /**
      * Constructor.
      * @param system System to add the collider to.
      * @param options Options for this collider.
      */
-    constructor(system: CollisionSystem<any>, options: ColliderOptions)
-    {
+    constructor(system: CollisionSystem<any>, options: ColliderOptions) {
         super(system, new Point(0, 0), options);
     }
 }
@@ -197,8 +187,7 @@ export class PointCollider extends Collider
 /**
  * Collider options specifically for Polygons.
  */
-export interface PolyColliderInterface extends ColliderOptions
-{
+export interface PolyColliderInterface extends ColliderOptions {
     /**
      * Points that make up the polygon. Pass in an array of pair arrays. e.g. [[x1, y2], [x2, y2], [x3, y3]].
      */
@@ -213,15 +202,13 @@ export interface PolyColliderInterface extends ColliderOptions
 /**
  * Polygon collider. Please only use convex shapes.
  */
-export class PolyCollider extends Collider
-{
+export class PolyCollider extends Collider {
     /**
      * Constructor.
      * @param system System to add the collider to.
      * @param options Options for this collider.
      */
-    constructor(system: CollisionSystem<any>, options: PolyColliderInterface)
-    {
+    constructor(system: CollisionSystem<any>, options: PolyColliderInterface) {
         // NOTE: The order of the points matters, the library is bugged, this function ensures they are anticlockwise.
         // TODO not sure about the (x, y) here, it used to be (xOff, yOff), but I'm sure it was never tested.
         super(system, new Polygon(0, 0, PolyCollider.reorderVertices(options.points), options.rotation), options);
@@ -233,11 +220,9 @@ export class PolyCollider extends Collider
      * @param vertices Vertices to reorder.
      * @returns Correctly ordered vertices.
      */
-    protected static reorderVertices(vertices: number[][]): number[][]
-    {
+    protected static reorderVertices(vertices: number[][]): number[][] {
         const area = PolyCollider.findArea(vertices);
-        if (area < 0)
-        {
+        if (area < 0) {
             vertices.reverse();
         }
         return vertices;
@@ -250,28 +235,24 @@ export class PolyCollider extends Collider
      * @param vertices The polygon vertices.
      * @returns The area of the polygon.
      */
-    private static findArea(vertices: number[][]): number
-    {
+    private static findArea(vertices: number[][]): number {
         // find bottom right point
         let brIndex = 0;
-        for (let i = 1; i < vertices.length; ++i)
-        {
+        for (let i = 1; i < vertices.length; ++i) {
             const isLower = vertices[i][1] < vertices[brIndex][1];
-            const isRight = (vertices[i][1] === vertices[brIndex][1] && vertices[i][0] > vertices[brIndex][0]);
-            if (isLower || isRight)
-            {
+            const isRight = vertices[i][1] === vertices[brIndex][1] && vertices[i][0] > vertices[brIndex][0];
+            if (isLower || isRight) {
                 brIndex = i;
             }
         }
 
         // calculate area
         let area = 0;
-        for (let i = 0; i < vertices.length; ++i)
-        {
+        for (let i = 0; i < vertices.length; ++i) {
             const a = vertices[(i + brIndex) % vertices.length];
             const b = vertices[(i + 1 + brIndex) % vertices.length];
             const c = vertices[(i + 2 + brIndex) % vertices.length];
-            area += (((b[0] - a[0]) * (c[1] - a[1])) - ((c[0] - a[0]) * (b[1] - a[1])));
+            area += (b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1]);
         }
 
         return area / 2;
@@ -280,8 +261,7 @@ export class PolyCollider extends Collider
     /**
      * Update the position of the collider in the engine.
      */
-    updatePosition(): void
-    {
+    updatePosition(): void {
         super.updatePosition();
         const poly = this.body as Polygon;
 
@@ -293,8 +273,7 @@ export class PolyCollider extends Collider
 /**
  * Points that make up the polygon. Pass in an array of pair arrays. e.g. [[x1, y2], [x2, y2], [x3, y3]].
  */
-export interface RectColliderOptions extends ColliderOptions
-{
+export interface RectColliderOptions extends ColliderOptions {
     /**
      * Rectangle width.
      */
@@ -314,18 +293,24 @@ export interface RectColliderOptions extends ColliderOptions
 /**
  * Rectangle collider type.
  */
-export class RectCollider extends PolyCollider
-{
+export class RectCollider extends PolyCollider {
     /**
      * Constructor.
      * @param system System to add the collider to.
      * @param options Options for this collider.
      */
-    constructor(system: CollisionSystem<any>, options: RectColliderOptions)
-    {
+    constructor(system: CollisionSystem<any>, options: RectColliderOptions) {
         super(system, {
-            points: [[0, 0], [options.width, 0], [options.width, options.height], [0, options.height]],
-            layer: options.layer, yOff: options.yOff, xOff: options.xOff, rotation: options.rotation
+            points: [
+                [0, 0],
+                [options.width, 0],
+                [options.width, options.height],
+                [0, options.height],
+            ],
+            layer: options.layer,
+            yOff: options.yOff,
+            xOff: options.xOff,
+            rotation: options.rotation,
         });
     }
 }

@@ -1,8 +1,7 @@
 /**
  * A matrix representing all valid collisions for a physics engine. An enum is recommended for keeping track of layers.
  */
-export class CollisionMatrix
-{
+export class CollisionMatrix {
     private readonly maxLayer = 31;
 
     // Nothing collides with anything by default.
@@ -15,10 +14,8 @@ export class CollisionMatrix
      * @param l1 The first layer.
      * @param l2 The second layer.
      */
-    addCollision(l1: number, l2: number): void
-    {
-        if (!this.validLayer(l1) || !this.validLayer(l2))
-        {
+    addCollision(l1: number, l2: number): void {
+        if (!this.validLayer(l1) || !this.validLayer(l2)) {
             throw Error(`Layer must be between 0 and ${this.maxLayer}`);
         }
 
@@ -44,8 +41,7 @@ export class CollisionMatrix
      * @param layer2 The second layer to check.
      * @returns True if the layers can collide.
      */
-    canCollide(layer1: number, layer2: number): boolean
-    {
+    canCollide(layer1: number, layer2: number): boolean {
         const layerMask = this.layers.get(CollisionMatrix.layerInternal(layer1));
         if (layerMask === undefined) return false;
         return (layerMask & (1 << CollisionMatrix.layerInternal(layer2))) !== 0;
@@ -56,8 +52,7 @@ export class CollisionMatrix
      * @param layer The layer to use in the lookup.
      * @returns The valid collisions. If the mask is not valid or no collision are registered, will return 0.
      */
-    maskFor(layer: number): number
-    {
+    maskFor(layer: number): number {
         const layerMask = this.layers.get(CollisionMatrix.layerInternal(layer));
         return layerMask !== undefined ? layerMask : 0;
     }
@@ -67,8 +62,7 @@ export class CollisionMatrix
      * @param layer The layer to convert.
      * @returns The internal layer value.
      */
-    static layerInternal(layer: number): number
-    {
+    static layerInternal(layer: number): number {
         return layer + 1;
     }
 
@@ -77,8 +71,7 @@ export class CollisionMatrix
      * @param layer The layer to check.
      * @returns True if valid, false otherwise.
      */
-    private validLayer(layer: number): boolean
-    {
+    private validLayer(layer: number): boolean {
         return layer >= 0 && layer < this.maxLayer;
     }
 }

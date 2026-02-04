@@ -1,6 +1,6 @@
-import {FrameTrigger} from "../FrameTrigger";
-import {Sprite, SpriteConfig} from "./Sprite";
-import {Texture} from "pixi.js";
+import { FrameTrigger } from "../FrameTrigger";
+import { Sprite, SpriteConfig } from "./Sprite";
+import { Texture } from "pixi.js";
 
 /**
  * Animation end action.
@@ -19,7 +19,7 @@ export enum AnimationEnd {
     /**
      * Continue the animation from the first frame.
      */
-    LOOP
+    LOOP,
 }
 
 /**
@@ -78,13 +78,15 @@ export class AnimatedSprite extends FrameTrigger<number> {
      * @param textures Textures for the Sprite to use.
      * @param config Configuration for this Sprite.
      */
-    constructor(protected textures: Texture[], readonly config: AnimatedSpriteConfig | null = null) {
+    constructor(
+        protected textures: Texture[],
+        readonly config: AnimatedSpriteConfig | null = null,
+    ) {
         super(0);
 
         if (config) this.applyConfig(config);
 
         this.onTrigger.register((_: FrameTrigger<number>, currFrame: number) => {
-
             let lastFrame = false;
             let nextFrame = this.frameIndex + this.frameAdvancer;
 
@@ -123,7 +125,6 @@ export class AnimatedSprite extends FrameTrigger<number> {
     payload(): number {
         return this.frameIndex;
     }
-
 
     onAdded(): void {
         // TODO i can't wait to make this a nested guy :)

@@ -2,14 +2,13 @@ export enum ButtonState {
     UP,
     DOWN,
     PRESSED,
-    RELEASED
+    RELEASED,
 }
 
 /**
  * Class storing all player keyboard inputs.
  */
 export class Keyboard {
-
     private readonly keys: Map<string, ButtonState> = new Map();
 
     /**
@@ -46,7 +45,6 @@ export class Keyboard {
         const clearKeys = () => this.keys.clear();
 
         const mousedown = (e: MouseEvent) => {
-
             // Clear on right click. Otherwise keys get "stuck" down.
             if (e.button === 2) {
                 this.keys.clear();
@@ -64,7 +62,6 @@ export class Keyboard {
     }
 
     public update() {
-
         // This runs after the logic for the frame, so we can advance the states.
         for (const [key, value] of this.keys) {
             if (value === ButtonState.RELEASED) {
@@ -80,19 +77,19 @@ export class Keyboard {
      * @param keys The keys to check for. Only one key must be down for this to trigger.
      * @returns True if they key has been pressed this frame.
      */
-    public isKeyPressed = (...keys: string[]) => keys.some(key => this.keys.get(key) === ButtonState.PRESSED);
+    public isKeyPressed = (...keys: string[]) => keys.some((key) => this.keys.get(key) === ButtonState.PRESSED);
 
     /**
      * Check if a key has been released in this frame.
      * @param keys The keys to check for. Only one key must be released for this to trigger.
      * @returns True if they key has been released this frame.
      */
-    public isKeyReleased = (...keys: string[]) => keys.some(key => this.keys.get(key) === ButtonState.RELEASED);
+    public isKeyReleased = (...keys: string[]) => keys.some((key) => this.keys.get(key) === ButtonState.RELEASED);
 
     /**
      * Check if a key is currently down in this frame.
      * @param keys The keys to check for. Only one key must be down for this to trigger.
      * @returns True if they key is down this frame.
      */
-    public isKeyDown = (...keys: string[]) => keys.some(key => this.keys.get(key) === ButtonState.DOWN || this.keys.get(key) === ButtonState.PRESSED);
+    public isKeyDown = (...keys: string[]) => keys.some((key) => this.keys.get(key) === ButtonState.DOWN || this.keys.get(key) === ButtonState.PRESSED);
 }

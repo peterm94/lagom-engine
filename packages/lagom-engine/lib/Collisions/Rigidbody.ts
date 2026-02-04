@@ -1,13 +1,12 @@
-import {Component} from "../ECS/Component";
-import {BodyType, Collider} from "./Colliders";
-import {Entity} from "../ECS/Entity";
-import {MathUtil, Util} from "../Common/Util";
+import { Component } from "../ECS/Component";
+import { BodyType, Collider } from "./Colliders";
+import { Entity } from "../ECS/Entity";
+import { MathUtil, Util } from "../Common/Util";
 
 /**
  * Rigidbody type to be used as part of collisions and physics.
  */
-export class Rigidbody extends Component
-{
+export class Rigidbody extends Component {
     affectedColliders: Collider[] = [];
 
     // Radians
@@ -19,16 +18,14 @@ export class Rigidbody extends Component
      * Creates a new Rigidbody.
      * @param bodyType The type of body. Will impact how the collision system updates this component.
      */
-    constructor(readonly bodyType: BodyType = BodyType.Discrete)
-    {
+    constructor(readonly bodyType: BodyType = BodyType.Discrete) {
         super();
     }
 
     /**
      * Stop the movement of the Rigidbody.
      */
-    stopMotion(): void
-    {
+    stopMotion(): void {
         this.pendingX = 0;
         this.pendingY = 0;
     }
@@ -38,8 +35,7 @@ export class Rigidbody extends Component
      * @param x Amount to move on the X axis.
      * @param y Amount to move on the Y axis.
      */
-    move(x: number, y: number): void
-    {
+    move(x: number, y: number): void {
         this.pendingX += x;
         this.pendingY += y;
     }
@@ -48,8 +44,7 @@ export class Rigidbody extends Component
      * Rotate the body by the given degrees.
      * @param degrees Angle in degrees to rotate by.
      */
-    rotateDeg(degrees: number): void
-    {
+    rotateDeg(degrees: number): void {
         this.pendingRotation += MathUtil.degToRad(degrees);
     }
 
@@ -57,13 +52,11 @@ export class Rigidbody extends Component
      * Rotate the body by the angle given in radians.
      * @param radians Angle in radians to rotate by.
      */
-    rotateRad(radians: number): void
-    {
+    rotateRad(radians: number): void {
         this.pendingRotation += radians;
     }
 
-    onAdded(): void
-    {
+    onAdded(): void {
         super.onAdded();
 
         // Find any existing sibling or descendant colliders.
@@ -73,8 +66,7 @@ export class Rigidbody extends Component
         this.childAdd(this.parent, this.parent);
     }
 
-    private childAdd(_: Entity, child: Entity): void
-    {
+    private childAdd(_: Entity, child: Entity): void {
         // We need to watch the tree from this node down. Any new colliders need to be detected and added to this array.
         child.componentAddedEvent.register(this.compAdd.bind(this));
         child.childAdded.register(this.childAdd.bind(this));
@@ -84,27 +76,21 @@ export class Rigidbody extends Component
         child.childRemoved.register(this.childRem.bind(this));
     }
 
-    private compAdd(_: Entity, component: Component): void
-    {
-        if (component instanceof Collider)
-        {
+    private compAdd(_: Entity, component: Component): void {
+        if (component instanceof Collider) {
             this.affectedColliders.push(component);
         }
     }
 
-    private childRem(_: Entity, child: Entity): void
-    {
+    private childRem(_: Entity, child: Entity): void {
         const childColls = child.getComponentsOfType<Collider>(Collider, true);
-        for (const childColl of childColls)
-        {
+        for (const childColl of childColls) {
             Util.remove(this.affectedColliders, childColl);
         }
     }
 
-    private compRem(_: Entity, component: Component): void
-    {
-        if (component instanceof Collider)
-        {
+    private compRem(_: Entity, component: Component): void {
+        if (component instanceof Collider) {
             Util.remove(this.affectedColliders, component);
         }
     }
@@ -112,10 +98,8 @@ export class Rigidbody extends Component
     /**
      * Updated affected controllers. For internal engine use only.
      */
-    updateAffected(): void
-    {
-        for (const affectedCollider of this.affectedColliders)
-        {
+    updateAffected(): void {
+        for (const affectedCollider of this.affectedColliders) {
             affectedCollider.updatePosition();
         }
     }

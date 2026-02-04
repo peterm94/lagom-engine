@@ -1,8 +1,7 @@
 /**
  * Map loader for Tiled JSON files.
  */
-export class TiledMapLoader
-{
+export class TiledMapLoader {
     readonly map: TiledMap;
 
     /**
@@ -15,8 +14,7 @@ export class TiledMapLoader
      *
      * @param map The map to load.
      */
-    constructor(map: TiledMap)
-    {
+    constructor(map: TiledMap) {
         this.map = map;
     }
 
@@ -25,9 +23,8 @@ export class TiledMapLoader
      * @param layerName The name of the layer to load.
      * @param fn The function called for every tile loaded. Can be used as an alternative to the function map.
      */
-    loadFn(layerName: string, fn: (tileId: number, x: number, y: number) => void): void
-    {
-        const layer = this.map.layers.find(value => value.name === layerName && value.type === "tilelayer");
+    loadFn(layerName: string, fn: (tileId: number, x: number, y: number) => void): void {
+        const layer = this.map.layers.find((value) => value.name === layerName && value.type === "tilelayer");
 
         if (layer === undefined) {
             return;
@@ -41,12 +38,10 @@ export class TiledMapLoader
     }
 }
 
-
 /**
  * Type mappings for Tiled JSON maps.
  */
-export interface TiledMap
-{
+export interface TiledMap {
     compressionlevel: number;
     height: number;
     infinite: boolean;
@@ -67,8 +62,7 @@ export interface TiledMap
 /**
  * Type mappings for Tiled JSON layers.
  */
-export interface TiledLayer
-{
+export interface TiledLayer {
     data: number[];
     height: number;
     id: number;

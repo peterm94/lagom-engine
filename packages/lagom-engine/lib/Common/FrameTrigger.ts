@@ -1,12 +1,11 @@
-import {Component} from "../ECS/Component";
-import {GlobalSystem} from "../ECS/GlobalSystem";
-import {Observable} from "./Observer";
+import { Component } from "../ECS/Component";
+import { GlobalSystem } from "../ECS/GlobalSystem";
+import { Observable } from "./Observer";
 
 /**
  * Frame Trigger class. Custom event management base class that can be used to synchronize and coordinate events.
  */
-export abstract class FrameTrigger<T> extends Component
-{
+export abstract class FrameTrigger<T> extends Component {
     /**
      * Observable event. Will be fired when the trigger occurs.
      */
@@ -27,8 +26,7 @@ export abstract class FrameTrigger<T> extends Component
      *
      * @param triggerInterval The interval at which the trigger event is fired.
      */
-    protected constructor(triggerInterval: number)
-    {
+    protected constructor(triggerInterval: number) {
         super();
         this.triggerInterval = triggerInterval;
     }
@@ -36,45 +34,35 @@ export abstract class FrameTrigger<T> extends Component
     /**
      * Reset the internal trigger timer.
      */
-    reset(): void
-    {
+    reset(): void {
         this.nextTriggerTime = -1;
     }
 
-    onRemoved(): void
-    {
+    onRemoved(): void {
         super.onRemoved();
 
         this.onTrigger.releaseAll();
     }
 }
 
-
 /**
  * System used in conjunction with an implemented FrameTrigger. This system is required for them to actually function.
  */
-export class FrameTriggerSystem extends GlobalSystem<[FrameTrigger<unknown>[]]>
-{
+export class FrameTriggerSystem extends GlobalSystem<[FrameTrigger<unknown>[]]> {
     private elapsed = 0;
 
     types = [FrameTrigger];
 
-    update(delta: number): void
-    {
+    update(delta: number): void {
         this.elapsed += delta;
 
         this.runOnComponentsWithSystem((system: FrameTriggerSystem, triggers: FrameTrigger<unknown>[]) => {
-
-            for (const trigger of triggers)
-            {
-                if (trigger.nextTriggerTime === -1)
-                {
+            for (const trigger of triggers) {
+                if (trigger.nextTriggerTime === -1) {
                     // First trigger. Synchronise the component to the system.
                     trigger.onTrigger.trigger(trigger, trigger.payload());
                     trigger.nextTriggerTime = system.elapsed + trigger.triggerInterval;
-                }
-                else if (system.elapsed > trigger.nextTriggerTime)
-                {
+                } else if (system.elapsed > trigger.nextTriggerTime) {
                     // FRAME. TRIGGERED. EVENT.
                     trigger.onTrigger.trigger(trigger, trigger.payload());
                     trigger.nextTriggerTime += trigger.triggerInterval;

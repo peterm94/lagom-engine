@@ -1,12 +1,12 @@
-import {Component} from "./Component";
-import {Entity} from "./Entity";
-import {System} from "./System";
+import { Component } from "./Component";
+import { Entity } from "./Entity";
+import { System } from "./System";
 
 /**
  * Wrapper for systems so you can just provide a magic function.
  */
 export class FnSystemWrapper<T extends Component[]> extends System<T> {
-    types: { [K in keyof T]: CType<T[K]>; };
+    types: { [K in keyof T]: CType<T[K]> };
 
     runOnEntities(delta: number, entity: Entity, ...args: T): void {
         if (!this.fixed) {
@@ -22,7 +22,10 @@ export class FnSystemWrapper<T extends Component[]> extends System<T> {
 
     private readonly runFn: (delta: number, entity: Entity, ...args: T) => void;
 
-    constructor(readonly sysFun: SysFn<T>, readonly fixed: boolean) {
+    constructor(
+        readonly sysFun: SysFn<T>,
+        readonly fixed: boolean,
+    ) {
         super();
 
         this.types = sysFun[0];
@@ -40,16 +43,11 @@ type TupleInstances<T extends readonly CType<Component>[]> = {
  */
 export type CType<T extends Component> = new (...args: any[]) => T;
 
-
-
 export function types<T extends readonly any[]>(...args: T): T {
     return args;
 }
 
-export type SysFn<T extends readonly Component[]> = [
-    { [K in keyof T]: CType<T[K]> },
-    (delta: number, entity: Entity, ...args: T) => void
-];
+export type SysFn<T extends readonly Component[]> = [{ [K in keyof T]: CType<T[K]> }, (delta: number, entity: Entity, ...args: T) => void];
 
 /**
  * Create a new functional system.
@@ -59,11 +57,7 @@ export type SysFn<T extends readonly Component[]> = [
  */
 export function newSystem<T extends readonly CType<Component>[]>(
     classes: T,
-    func: (
-        delta: number,
-        entity: Entity,
-        ...components: TupleInstances<T>
-    ) => void
+    func: (delta: number, entity: Entity, ...components: TupleInstances<T>) => void,
 ): SysFn<TupleInstances<T>> {
     return [classes as any, func];
 }

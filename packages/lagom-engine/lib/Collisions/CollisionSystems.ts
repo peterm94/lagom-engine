@@ -1,16 +1,15 @@
-import {Util} from "../Common/Util";
-import {CollisionMatrix} from "./CollisionMatrix";
-import {Collisions, Result} from "detect-collisions";
-import {BodyType, Collider, LagomBody} from "./Colliders";
-import {GlobalSystem} from "../ECS/GlobalSystem";
-import {Rigidbody} from "./Rigidbody";
-import {Component} from "../ECS/Component";
+import { Util } from "../Common/Util";
+import { CollisionMatrix } from "./CollisionMatrix";
+import { Collisions, Result } from "detect-collisions";
+import { BodyType, Collider, LagomBody } from "./Colliders";
+import { GlobalSystem } from "../ECS/GlobalSystem";
+import { Rigidbody } from "./Rigidbody";
+import { Component } from "../ECS/Component";
 
 /**
  * Base class for collision systems.
  */
-export abstract class CollisionSystem<T extends Component[][]> extends GlobalSystem<T>
-{
+export abstract class CollisionSystem<T extends Component[][]> extends GlobalSystem<T> {
     // The inner detect system that will perform the collision checks.
     readonly detectSystem: Collisions = new Collisions();
 
@@ -18,8 +17,7 @@ export abstract class CollisionSystem<T extends Component[][]> extends GlobalSys
      * Creates a new Collision System.
      * @param collisionMatrix The collision matrix used for layer checking.
      */
-    constructor(readonly collisionMatrix: CollisionMatrix)
-    {
+    constructor(readonly collisionMatrix: CollisionMatrix) {
         super();
     }
 
@@ -27,8 +25,7 @@ export abstract class CollisionSystem<T extends Component[][]> extends GlobalSys
      * Add a body to the system.
      * @param body The body to add.
      */
-    addBody(body: Collider): void
-    {
+    addBody(body: Collider): void {
         this.detectSystem.insert(body.body);
         this.detectSystem.update();
     }
@@ -37,15 +34,13 @@ export abstract class CollisionSystem<T extends Component[][]> extends GlobalSys
      * Remove a body from the system.
      * @param body The body to remove.
      */
-    removeBody(body: Collider): void
-    {
+    removeBody(body: Collider): void {
         this.detectSystem.remove(body.body);
         this.detectSystem.update();
     }
 
     // TODO this needs a rewrite
-    placeFree(collider: Collider, dx: number, dy: number): boolean
-    {
+    placeFree(collider: Collider, dx: number, dy: number): boolean {
         // Try moving to the destination.
         const currX = collider.body.x;
         const currY = collider.body.y;
@@ -56,13 +51,10 @@ export abstract class CollisionSystem<T extends Component[][]> extends GlobalSys
         this.detectSystem.update();
 
         const potentials = collider.body.potentials();
-        for (const potential of potentials)
-        {
+        for (const potential of potentials) {
             const otherComp = (potential as unknown as LagomBody).lagomComponent as Collider;
 
-            if (this.collisionMatrix.canCollide(collider.layer, otherComp.layer)
-                && collider.body.collides(potential))
-            {
+            if (this.collisionMatrix.canCollide(collider.layer, otherComp.layer) && collider.body.collides(potential)) {
                 collider.body.x = currX;
                 collider.body.y = currY;
                 this.detectSystem.update();
@@ -80,30 +72,29 @@ export abstract class CollisionSystem<T extends Component[][]> extends GlobalSys
      * Do collision checks for the given colliders. Will fire off events if triggers occur.
      * @param colliders The colliders to do the checks for.
      */
-    protected doCollisionCheck(colliders: Collider[]): void
-    {
-        for (const collider of colliders)
-        {
+    protected doCollisionCheck(colliders: Collider[]): void {
+        for (const collider of colliders) {
             const triggersLastFrame = collider.triggersLastFrame;
             collider.triggersLastFrame = [];
 
             const potentials = collider.body.potentials();
-            for (const potential of potentials)
-            {
+            for (const potential of potentials) {
                 const otherComp = (potential as unknown as LagomBody).lagomComponent as Collider;
                 const result = new Result();
 
-                if (this.collisionMatrix.canCollide(collider.layer, otherComp.layer)
-                    && collider.body.collides(potential, result))
-                {
-                    if (triggersLastFrame.includes(otherComp))
-                    {
+                if (this.collisionMatrix.canCollide(collider.layer, otherComp.layer) && collider.body.collides(potential, result)) {
+                    if (triggersLastFrame.includes(otherComp)) {
                         // Still inside the trigger.
-                        collider.onTrigger.trigger(collider, {other: otherComp, result: result});
-                    } else
-                    {
+                        collider.onTrigger.trigger(collider, {
+                            other: otherComp,
+                            result: result,
+                        });
+                    } else {
                         // New event detected.
-                        collider.onTriggerEnter.trigger(collider, {other: otherComp, result: result});
+                        collider.onTriggerEnter.trigger(collider, {
+                            other: otherComp,
+                            result: result,
+                        });
                     }
 
                     Util.remove(triggersLastFrame, otherComp);
@@ -112,14 +103,12 @@ export abstract class CollisionSystem<T extends Component[][]> extends GlobalSys
             }
 
             // Trigger all exit events for remaining objects.
-            for (const pastColl of triggersLastFrame)
-            {
+            for (const pastColl of triggersLastFrame) {
                 collider.onTriggerExit.trigger(collider, pastColl);
             }
         }
     }
 }
-
 
 /**
  * Discrete system, no Rigidbody required. Entities can be moved by updating the transform as usual. On FixedUpdate,
@@ -127,24 +116,19 @@ export abstract class CollisionSystem<T extends Component[][]> extends GlobalSys
  *
  * Avoid fast moving objects, as they will easily clip through things. use the continuous implementation if required.
  */
-export class DiscreteCollisionSystem extends CollisionSystem<[Collider[]]>
-{
+export class DiscreteCollisionSystem extends CollisionSystem<[Collider[]]> {
     types = [Collider];
 
-    update(_: number): void
-    {
+    update(_: number): void {
         // This system operates in the fixed update.
     }
 
-    fixedUpdate(delta: number): void
-    {
+    fixedUpdate(delta: number): void {
         super.fixedUpdate(delta);
 
         this.runOnComponentsWithSystem((system: DiscreteCollisionSystem, colliders: Collider[]) => {
-
             // Move them all to their new positions. This uses the current transform position.
-            for (const collider of colliders)
-            {
+            for (const collider of colliders) {
                 collider.updatePosition();
             }
 
@@ -157,15 +141,13 @@ export class DiscreteCollisionSystem extends CollisionSystem<[Collider[]]>
     }
 }
 
-
 /**
  * Continuous system. We cannot apply movement straight away, need to increment positions and check on an interval.
  * This gets tricky, because we can have child bodies and colliders as well. Need to updated each 'body'
  * independently, cascading all effects to child components. Not sure how to deal with update order here, can think
  * about that later.
  */
-export class ContinuousCollisionSystem extends CollisionSystem<[Rigidbody[]]>
-{
+export class ContinuousCollisionSystem extends CollisionSystem<[Rigidbody[]]> {
     /**
      * Construct the collision system.
      *
@@ -173,32 +155,27 @@ export class ContinuousCollisionSystem extends CollisionSystem<[Rigidbody[]]>
      * @param step The step size used for moving objects. Make this low, but not super low or performance will be
      * greatly impacted.
      */
-    constructor(collisionMatrix: CollisionMatrix, readonly step: number = 10)
-    {
+    constructor(
+        collisionMatrix: CollisionMatrix,
+        readonly step: number = 10,
+    ) {
         super(collisionMatrix);
     }
 
     types = [Rigidbody];
 
-    update(_: number): void
-    {
+    update(_: number): void {
         // Fixed timestep
     }
 
-    fixedUpdate(delta: number): void
-    {
+    fixedUpdate(delta: number): void {
         super.fixedUpdate(delta);
 
         this.runOnComponentsWithSystem((system: ContinuousCollisionSystem, bodies: Rigidbody[]) => {
-
-            for (const body of bodies)
-            {
-                if (!body.active || body.bodyType === BodyType.Static)
-                {
+            for (const body of bodies) {
+                if (!body.active || body.bodyType === BodyType.Static) {
                     // Skip. Can't hit other statics. If something moves into me, it will trigger an event.
-                } else if (body.bodyType === BodyType.Discrete ||
-                    (body.pendingY === 0 && body.pendingX === 0 && body.pendingRotation === 0))
-                {
+                } else if (body.bodyType === BodyType.Discrete || (body.pendingY === 0 && body.pendingX === 0 && body.pendingRotation === 0)) {
                     // Discrete or not moving, just move to final position and do the checks.
                     // Move to final positions.
                     body.parent.transform.x += body.pendingX;
@@ -217,12 +194,10 @@ export class ContinuousCollisionSystem extends CollisionSystem<[Rigidbody[]]>
 
                     // Do checks.
                     this.doCollisionCheck(body.affectedColliders);
-                } else
-                {
+                } else {
                     // TODO could do this with trig instead of doing x/y independently, not sure if worth. Will slow it
                     //  down, but be more accurate for things moving off axis.
-                    while (body.active && (body.pendingX !== 0 || body.pendingY !== 0 || body.pendingRotation !== 0))
-                    {
+                    while (body.active && (body.pendingX !== 0 || body.pendingY !== 0 || body.pendingRotation !== 0)) {
                         // There is no delta usage here, we operate on a fixed timestep.
                         // Figure out the next movement. We do this in the loop so we can adapt to changes.
                         const xDir = Math.sign(body.pendingX);
@@ -267,27 +242,22 @@ export class ContinuousCollisionSystem extends CollisionSystem<[Rigidbody[]]>
  * <canvas id={"detect-render"} width={"512"} height={"512"} style={{border:"black", borderStyle:"solid"}}/>
  * ```
  */
-export class DebugCollisionSystem extends GlobalSystem<[]>
-{
+export class DebugCollisionSystem extends GlobalSystem<[]> {
     /**
      * Constructor.
      * @param system The system to draw.
      */
-    constructor(readonly system: CollisionSystem<any>)
-    {
+    constructor(readonly system: CollisionSystem<any>) {
         super();
     }
 
     types = [];
 
-    update(_: number): void
-    {
+    update(_: number): void {
         const canvas = document.getElementById("detect-render");
-        if (canvas !== null)
-        {
+        if (canvas !== null) {
             const context = (canvas as HTMLCanvasElement).getContext("2d");
-            if (context !== null)
-            {
+            if (context !== null) {
                 context.fillStyle = "#FFFFFF";
                 context.fillRect(0, 0, context.canvas.width, context.canvas.height);
                 context.beginPath();

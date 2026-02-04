@@ -1,24 +1,27 @@
-import {GlobalSystem} from "../ECS/GlobalSystem";
-import {Component} from "../ECS/Component";
-import {CollisionMatrix} from "./CollisionMatrix";
-import {Entity} from "../ECS/Entity";
-import {Log, Util} from "../Common/Util";
+import { GlobalSystem } from "../ECS/GlobalSystem";
+import { Component } from "../ECS/Component";
+import { CollisionMatrix } from "./CollisionMatrix";
+import { Entity } from "../ECS/Entity";
+import { Log, Util } from "../Common/Util";
 import * as SAT from "sat";
-import {Observable} from "../Common/Observer";
-import {CircleColliderOptions, PolyColliderInterface, RectColliderOptions} from "./Colliders";
+import { Observable } from "../Common/Observer";
+import { CircleColliderOptions, PolyColliderInterface, RectColliderOptions } from "./Colliders";
 
 export abstract class SatCollider extends Component {
+    abstract shape: SAT.Circle | SAT.Polygon;
 
-    abstract shape: SAT.Circle | SAT.Polygon
-
-    constructor(readonly layer: number, readonly xOff: number, readonly yOff: number) {
+    constructor(
+        readonly layer: number,
+        readonly xOff: number,
+        readonly yOff: number,
+    ) {
         super();
     }
 
     updatePosition() {
-        const worldPoint = this.parent.transform.getGlobalPosition()
-        this.shape.pos.x = worldPoint.x + this.xOff
-        this.shape.pos.y = worldPoint.y + this.yOff
+        const worldPoint = this.parent.transform.getGlobalPosition();
+        this.shape.pos.x = worldPoint.x + this.xOff;
+        this.shape.pos.y = worldPoint.y + this.yOff;
     }
 
     readonly onTrigger: Observable<SatCollider, { other: SatCollider; result: SatResponse }> = new Observable();
@@ -29,15 +32,15 @@ export abstract class SatCollider extends Component {
 export class PolySatCollider extends SatCollider {
     constructor(options: PolyColliderInterface) {
         super(options.layer, options.xOff ?? 0, options.yOff ?? 0);
-        const vec = options.points.map(value => new SAT.Vector(value[0], value[1]));
-        this.shape = new SAT.Polygon(new SAT.Vector(options.xOff, options.yOff), vec)
+        const vec = options.points.map((value) => new SAT.Vector(value[0], value[1]));
+        this.shape = new SAT.Polygon(new SAT.Vector(options.xOff, options.yOff), vec);
     }
 
     override shape: SAT.Polygon;
 }
 
 export class CircleSatCollider extends SatCollider {
-    override shape: SAT.Circle
+    override shape: SAT.Circle;
 
     constructor(options: CircleColliderOptions) {
         super(options.layer, options.xOff ?? 0, options.yOff ?? 0);
@@ -52,9 +55,14 @@ export class RectSatCollider extends PolySatCollider {
             xOff: options.xOff,
             yOff: options.yOff,
             layer: options.layer,
-            points: [[0, 0], [options.width, 0], [options.width, options.height], [0, options.height]],
-            rotation: options.rotation
-        })
+            points: [
+                [0, 0],
+                [options.width, 0],
+                [options.width, options.height],
+                [0, options.height],
+            ],
+            rotation: options.rotation,
+        });
     }
 }
 
@@ -82,14 +90,14 @@ export interface SatResponse {
 }
 
 function reverse(response: SAT.Response): SAT.Response {
-    let updated = new SAT.Response()
+    let updated = new SAT.Response();
     updated.a = response.b;
     updated.b = response.a;
     updated.bInA = response.aInB;
     updated.aInB = response.bInA;
     updated.overlap = response.overlap;
-    updated.overlapV = response.overlapV.reverse()
-    updated.overlapN = response.overlapN.reverse()
+    updated.overlapV = response.overlapV.reverse();
+    updated.overlapN = response.overlapN.reverse();
     return updated;
 }
 
@@ -110,14 +118,11 @@ export class SatCollisionSystem extends GlobalSystem<[SatCollider[]]> {
 
     private last_frame: Map<string, [SatCollider, SatCollider, SAT.Response]> = new Map();
 
-    update(_delta: number): void {
-
-    }
+    update(_delta: number): void {}
 
     fixedUpdate(_delta: number): void {
-
         // Update all positions.
-        this.colliders.forEach(v => v.forEach(coll => coll.updatePosition()))
+        this.colliders.forEach((v) => v.forEach((coll) => coll.updatePosition()));
 
         const hits: Map<string, [SatCollider, SatCollider, SAT.Response]> = new Map();
 
@@ -127,8 +132,7 @@ export class SatCollisionSystem extends GlobalSystem<[SatCollider[]]> {
             const colliders1 = this.colliders.get(l1);
             const colliders2 = this.colliders.get(l2);
 
-            if (colliders1 === undefined || colliders1.length === 0
-                || colliders2 === undefined || colliders2.length === 0) {
+            if (colliders1 === undefined || colliders1.length === 0 || colliders2 === undefined || colliders2.length === 0) {
                 continue;
             }
 
@@ -159,19 +163,22 @@ export class SatCollisionSystem extends GlobalSystem<[SatCollider[]]> {
         // Trigger all hit callbacks
         hits.forEach(([c1, c2, coll], key) => {
             if (this.last_frame.has(key)) {
-                c1.onTrigger.trigger(c1, {other: c2, result: coll});
-                c2.onTrigger.trigger(c2, {other: c1, result: reverse(coll)});
+                c1.onTrigger.trigger(c1, { other: c2, result: coll });
+                c2.onTrigger.trigger(c2, { other: c1, result: reverse(coll) });
             } else {
-                c1.onTriggerEnter.trigger(c1, {other: c2, result: coll});
-                c2.onTriggerEnter.trigger(c2, {other: c1, result: reverse(coll)});
+                c1.onTriggerEnter.trigger(c1, { other: c2, result: coll });
+                c2.onTriggerEnter.trigger(c2, {
+                    other: c1,
+                    result: reverse(coll),
+                });
             }
             this.last_frame.delete(key);
-        })
+        });
 
         this.last_frame.forEach(([c1, c2, coll], _key) => {
-            c1.onTriggerExit.trigger(c1, {other: c2, result: coll});
-            c2.onTriggerExit.trigger(c2, {other: c1, result: reverse(coll)});
-        })
+            c1.onTriggerExit.trigger(c1, { other: c2, result: coll });
+            c2.onTriggerExit.trigger(c2, { other: c1, result: reverse(coll) });
+        });
 
         this.last_frame = hits;
     }

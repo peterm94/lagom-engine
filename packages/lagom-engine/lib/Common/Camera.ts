@@ -1,11 +1,10 @@
-import {Scene} from "../ECS/Scene";
-import {MathUtil} from "./Util";
-import {Point} from "pixi.js"
+import { Scene } from "../ECS/Scene";
+import { MathUtil } from "./Util";
+import { Point } from "pixi.js";
 /**
  * Camera class for interacting with the viewport.
  */
-export class Camera
-{
+export class Camera {
     angle = 0;
     readonly scene: Scene;
     readonly width: number;
@@ -17,8 +16,7 @@ export class Camera
      * Parent scene for this camera.
      * @param scene The scene to register for this camera.
      */
-    constructor(scene: Scene)
-    {
+    constructor(scene: Scene) {
         this.scene = scene;
 
         this.width = scene.game.application.canvas.width;
@@ -34,8 +32,7 @@ export class Camera
      * @returns The world position.
      */
     // TODO this has not been tested since the change.
-    viewToWorld(x: number, y: number): Point
-    {
+    viewToWorld(x: number, y: number): Point {
         const point = new Point(x, y);
         this.scene.sceneNode.transform.toLocal(point);
 
@@ -49,8 +46,7 @@ export class Camera
      * Position of the camera in the world.
      * @returns A Point for the position of the camera.
      */
-    position(): Point
-    {
+    position(): Point {
         return new Point(-this.scene.sceneNode.transform.position.x, -this.scene.sceneNode.transform.position.y);
     }
 
@@ -61,8 +57,7 @@ export class Camera
      * @param offsetX Offset X amount.
      * @param offsetY Offset Y amount.
      */
-    move(x: number, y: number, offsetX = 0, offsetY = 0): void
-    {
+    move(x: number, y: number, offsetX = 0, offsetY = 0): void {
         // Move the scene the change amount
         this.scene.sceneNode.transform.position.x = -x + offsetX;
         this.scene.sceneNode.transform.position.y = -y + offsetY;
@@ -74,13 +69,11 @@ export class Camera
      * @param y Y point to move to.
      * @param lerpAmt The liner interpolation percentage to move.
      */
-    moveTowards(x: number, y: number, lerpAmt = 0.5): void
-    {
+    moveTowards(x: number, y: number, lerpAmt = 0.5): void {
         const xdist = x + this.scene.sceneNode.transform.position.x;
         const ydist = y + this.scene.sceneNode.transform.position.y;
 
-        this.translate(MathUtil.lerp(0, xdist, lerpAmt),
-                       MathUtil.lerp(0, ydist, lerpAmt));
+        this.translate(MathUtil.lerp(0, xdist, lerpAmt), MathUtil.lerp(0, ydist, lerpAmt));
     }
 
     /**
@@ -88,8 +81,7 @@ export class Camera
      * @param x X amount to move the camera.
      * @param y Y amount to move the camera.
      */
-    translate(x: number, y: number): void
-    {
+    translate(x: number, y: number): void {
         // Move the scene the change amount
         this.scene.sceneNode.transform.position.x -= x;
         this.scene.sceneNode.transform.position.y -= y;
@@ -99,8 +91,7 @@ export class Camera
      * Rotate the viewport. The rotation will be applied from the top left corner.
      * @param angle Angle in degrees to set the rotation to.
      */
-    rotate(angle: number): void
-    {
+    rotate(angle: number): void {
         this.scene.sceneNode.transform.angle = angle;
         this.angle = angle;
     }
@@ -109,8 +100,7 @@ export class Camera
      * TODO Remove this if it doesn't work. I think i was trying to rotate around the centre point instead of top left.
      * @param angle
      */
-    rotate2(angle: number): void
-    {
+    rotate2(angle: number): void {
         const rads = MathUtil.degToRad(angle);
 
         // Translate to top left corner (origin)
@@ -133,8 +123,7 @@ export class Camera
      * @param offsetX The X offset from the top left corner.
      * @param offsetY The Y offset from the top left corner.
      */
-    rotateAround(angle: number, offsetX = 0, offsetY = 0): void
-    {
+    rotateAround(angle: number, offsetX = 0, offsetY = 0): void {
         // TODO this does not work if the camera moves at all.
         // this.scene.sceneNode.transform.pivot.set(offsetX, offsetY);
         // this.scene.sceneNode.transform.angle = angle;
@@ -149,9 +138,10 @@ export class Camera
         this.scene.sceneNode.transform.position.y = topLeft[1];
     }
 
-    rotate_point(pointX: number, pointY: number, originX: number, originY: number, angle: number): number[]
-    {
-        return [Math.cos(angle) * (pointX - originX) - Math.sin(angle) * (pointY - originY) + originX,
-                Math.sin(angle) * (pointX - originX) + Math.cos(angle) * (pointY - originY) + originY];
+    rotate_point(pointX: number, pointY: number, originX: number, originY: number, angle: number): number[] {
+        return [
+            Math.cos(angle) * (pointX - originX) - Math.sin(angle) * (pointY - originY) + originX,
+            Math.sin(angle) * (pointX - originX) + Math.cos(angle) * (pointY - originY) + originY,
+        ];
     }
 }

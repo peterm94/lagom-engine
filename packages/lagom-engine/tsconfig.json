@@ -1,21 +1,21 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "declaration": true,
-    "declarationDir": "dist",
-    "outDir": "dist",
-    "moduleResolution": "Bundler",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "strict": true,
-    // TODO remove this when the mouse goes away
-    "allowJs": true,
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "declaration": true,
+        "declarationDir": "dist",
+        "outDir": "dist",
+        "moduleResolution": "Bundler",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "strict": true,
+        // TODO remove this when the mouse goes away
+        "allowJs": true
 
-//    /* Linting */
-//    "noUnusedLocals": true,
-//    "noUnusedParameters": true,
-//    "noFallthroughCasesInSwitch": true,
-  },
-  "include": ["lib"]
+        //    /* Linting */
+        //    "noUnusedLocals": true,
+        //    "noUnusedParameters": true,
+        //    "noFallthroughCasesInSwitch": true,
+    },
+    "include": ["lib"]
 }

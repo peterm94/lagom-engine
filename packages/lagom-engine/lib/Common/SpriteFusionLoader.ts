@@ -1,4 +1,4 @@
-import {Log} from "./Util";
+import { Log } from "./Util";
 
 /**
  * Map loader for SpriteFusion save files.
@@ -28,7 +28,7 @@ export class SpriteFusionLoader {
      * @param fn The function called for every tile loaded.
      */
     loadFn(layerName: string, fn: (tileId: number, x: number, y: number) => void): void {
-        const layer = this.map.layers.find(value => value.name === layerName);
+        const layer = this.map.layers.find((value) => value.name === layerName);
 
         Log.trace(`Loading layer ${layerName}`);
 
@@ -51,15 +51,14 @@ export class SpriteFusionLoader {
     }
 }
 
-
 /**
  * Type mappings for Tiled JSON maps.
  */
 interface FusionSave {
     id: string;
     name: string;
-    tileSize: number
-    layers: FusionLayer[]
+    tileSize: number;
+    layers: FusionLayer[];
 }
 
 /**
@@ -68,11 +67,11 @@ interface FusionSave {
 interface FusionLayer {
     id: string;
     name: string;
-    tiles: FusionTile[]
+    tiles: FusionTile[];
 }
 
 interface FusionTile {
     id: string;
-    x: number
-    y: number
+    x: number;
+    y: number;
 }

@@ -1,9 +1,8 @@
-import {AnimatedSpriteController, Button, Component, CType, Entity, Key, System, Timer} from "lagom-engine";
+import { AnimatedSpriteController, Button, Component, CType, Entity, Key, System, Timer } from "lagom-engine";
 
-import {GameTemplate} from "../GameTemplate";
+import { GameTemplate } from "../GameTemplate";
 
-class MuteComp extends Component {
-}
+class MuteComp extends Component {}
 
 class MuteListener extends System<[AnimatedSpriteController, MuteComp]> {
     types: [CType<AnimatedSpriteController>, CType<MuteComp>] = [AnimatedSpriteController, MuteComp];
@@ -12,7 +11,6 @@ class MuteListener extends System<[AnimatedSpriteController, MuteComp]> {
         if (this.scene.game.mouse.isButtonPressed(Button.LEFT)) {
             // TODO this is a bit cheeky, how can I do it now?
             // const pos = e.scene.game.canvas.plugins.interaction.mouse.global;
-
             // if (pos.x >= GameTemplate.GAME_WIDTH - 24 && pos.x <= GameTemplate.GAME_WIDTH - 8 && pos.y >= GameTemplate.GAME_HEIGHT - 24 && pos.y <= GameTemplate.GAME_HEIGHT - 8) {
             //     (e.scene.getEntityWithName("audio") as SoundManager).toggleMute();
             //     spr.setAnimation(Number(GameTemplate.muted));
@@ -34,14 +32,18 @@ export class SoundManager extends Entity {
         super.onAdded();
 
         this.addComponent(new MuteComp());
-        const spr = this.addComponent(new AnimatedSpriteController(Number(GameTemplate.muted), [
-            {
-                id: 0,
-                textures: [this.scene.game.getResource("mute_button").tileAt(0, 0)]
-            }, {
-                id: 1,
-                textures: [this.scene.game.getResource("mute_button").tileAt(1, 0)]
-            }]));
+        const spr = this.addComponent(
+            new AnimatedSpriteController(Number(GameTemplate.muted), [
+                {
+                    id: 0,
+                    textures: [this.scene.game.getResource("mute_button").tileAt(0, 0)],
+                },
+                {
+                    id: 1,
+                    textures: [this.scene.game.getResource("mute_button").tileAt(1, 0)],
+                },
+            ]),
+        );
 
         this.addComponent(new Timer(50, spr, false)).onTrigger.register((caller, data) => {
             data.setAnimation(Number(GameTemplate.muted));
@@ -95,6 +97,6 @@ export class SoundManager extends Entity {
             if (key === name) {
                 value.stop();
             }
-        })
+        });
     }
 }

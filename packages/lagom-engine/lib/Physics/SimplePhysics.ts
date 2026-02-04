@@ -1,9 +1,9 @@
-import {System} from "../ECS/System";
-import {Entity} from "../ECS/Entity";
-import {Rigidbody} from "../Collisions/Rigidbody";
-import {Component} from "../ECS/Component";
-import {CType} from "../ECS/FnSystemWrapper";
-import {MathUtil} from "../Common/Util";
+import { System } from "../ECS/System";
+import { Entity } from "../ECS/Entity";
+import { Rigidbody } from "../Collisions/Rigidbody";
+import { Component } from "../ECS/Component";
+import { CType } from "../ECS/FnSystemWrapper";
+import { MathUtil } from "../Common/Util";
 
 /**
  * Properties interface for SimplePhysics module.
@@ -119,16 +119,13 @@ export class SimplePhysics extends System<[Rigidbody, SimplePhysicsBody]> {
 
         // Apply movement, keeping within limits.
         if (movement.x) {
-            movement.xVel = MathUtil.clamp(movement.xVel + (movement.x * delta),
-                -movement.linCap, movement.linCap);
+            movement.xVel = MathUtil.clamp(movement.xVel + movement.x * delta, -movement.linCap, movement.linCap);
         }
         if (movement.y) {
-            movement.yVel = MathUtil.clamp(movement.yVel + (movement.y * delta),
-                -movement.linCap, movement.linCap);
+            movement.yVel = MathUtil.clamp(movement.yVel + movement.y * delta, -movement.linCap, movement.linCap);
         }
         if (movement.rotation) {
-            movement.angVel = MathUtil.clamp(movement.angVel + (movement.rotation * delta),
-                -movement.angCap, movement.angCap);
+            movement.angVel = MathUtil.clamp(movement.angVel + movement.rotation * delta, -movement.angCap, movement.angCap);
         }
 
         // Reset the input state.

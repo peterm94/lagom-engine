@@ -1,5 +1,5 @@
-import {Rectangle, Texture, TextureSource} from "pixi.js";
-import {Sprite, SpriteConfig} from "./Sprite/Sprite";
+import { Rectangle, Texture, TextureSource } from "pixi.js";
+import { Sprite, SpriteConfig } from "./Sprite/Sprite";
 
 export interface AssetOptions {
     tileWidth: number;
@@ -13,19 +13,22 @@ export class LTexture extends Texture {
 }
 
 export class ImageAsset {
-
     private readonly cols: number;
     private readonly rows: number;
     private readonly tileWidth: number;
     private readonly tileHeight: number;
 
-    constructor(readonly alias: string, readonly texture: TextureSource, options?: AssetOptions) {
+    constructor(
+        readonly alias: string,
+        readonly texture: TextureSource,
+        options?: AssetOptions,
+    ) {
         this.cols = options?.tileWidth ? texture.width / options.tileWidth : 1;
         this.rows = options?.tileHeight ? texture.height / options.tileHeight : 1;
 
         // Validate we divide cleanly
         if (!Number.isInteger(this.cols) || !Number.isInteger(this.rows)) {
-            throw new Error(`Sprite '${alias} has incorrect tile dimensions.`)
+            throw new Error(`Sprite '${alias} has incorrect tile dimensions.`);
         }
 
         this.tileWidth = options?.tileWidth ?? texture.width;
@@ -37,7 +40,10 @@ export class ImageAsset {
     }
 
     fromPoints(x: number, y: number, w: number, h: number): LTexture {
-        return new LTexture({source: this.texture, frame: new Rectangle(x, y, w, h)});
+        return new LTexture({
+            source: this.texture,
+            frame: new Rectangle(x, y, w, h),
+        });
     }
 
     tileIdx(index: number): LTexture {
@@ -45,7 +51,7 @@ export class ImageAsset {
     }
 
     tileSlice(firstIdx: number, lastIdx: number): LTexture[] {
-        return Array.from({length: lastIdx - firstIdx + 1}, (_, i) => this.tileIdx(firstIdx + i))
+        return Array.from({ length: lastIdx - firstIdx + 1 }, (_, i) => this.tileIdx(firstIdx + i));
     }
 
     allTiles(): LTexture[] {

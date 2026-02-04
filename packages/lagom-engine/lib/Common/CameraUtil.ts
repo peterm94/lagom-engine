@@ -1,11 +1,10 @@
-import {System} from "../ECS/System";
-import {Component} from "../ECS/Component";
-import {Camera} from "./Camera";
-import {Entity} from "../ECS/Entity";
-import {CType} from "../ECS/FnSystemWrapper";
+import { System } from "../ECS/System";
+import { Component } from "../ECS/Component";
+import { Camera } from "./Camera";
+import { Entity } from "../ECS/Entity";
+import { CType } from "../ECS/FnSystemWrapper";
 
-export class FollowMe extends Component {
-}
+export class FollowMe extends Component {}
 
 export interface CamOptions {
     centre?: boolean;
@@ -21,7 +20,6 @@ export class FollowCamera extends System<[FollowMe]> {
     xOffset = 0;
     yOffset = 0;
     lerpSpeed = 0.1;
-
 
     constructor(options?: CamOptions) {
         super();

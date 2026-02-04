@@ -1,4 +1,4 @@
-import {Util} from "./Util";
+import { Util } from "./Util";
 
 /**
  * Observable for custom events.
@@ -9,16 +9,14 @@ import {Util} from "./Util";
  * @param C The caller.
  * @param T The event data.
  */
-export class Observable<C, T>
-{
+export class Observable<C, T> {
     private readonly observers: Observer<C, T>[] = [];
 
     /**
      * Register an observer for this Observable event.
      * @param observer The observer to register.
      */
-    register(observer: Observer<C, T>): void
-    {
+    register(observer: Observer<C, T>): void {
         this.observers.push(observer);
     }
 
@@ -26,8 +24,7 @@ export class Observable<C, T>
      * Deregister an observer for this Observable event. Call this if the observer is destroyed or no longer required.
      * @param observer The observer to deregister.
      */
-    deregister(observer: Observer<C, T>): void
-    {
+    deregister(observer: Observer<C, T>): void {
         Util.remove(this.observers, observer);
     }
 
@@ -36,16 +33,14 @@ export class Observable<C, T>
      * @param caller The event caller.
      * @param data The data for the event.
      */
-    trigger(caller: C, data: T): void
-    {
-        this.observers.forEach(value => value(caller, data));
+    trigger(caller: C, data: T): void {
+        this.observers.forEach((value) => value(caller, data));
     }
 
     /**
      * Release all Observers on this observable.
      */
-    releaseAll(): void
-    {
+    releaseAll(): void {
         this.observers.length = 0;
     }
 }

@@ -1,8 +1,7 @@
 /**
  * Simple vector type, used by various systems.
  */
-export class Vector
-{
+export class Vector {
     /**
      * X component of the vector.
      */
@@ -18,8 +17,7 @@ export class Vector
      * @param x X component.
      * @param y Y component.
      */
-    constructor(x: number, y: number)
-    {
+    constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
     }
@@ -28,54 +26,48 @@ export class Vector
      * Creates a new vector of (0, 0);
      * @returns The created vector.
      */
-    static zero(): Vector
-    {
+    static zero(): Vector {
         return new Vector(0, 0);
-    };
+    }
 
     /**
      * Creates a new unit vector of (-1, 0);
      * @returns The created vector.
      */
-    static left(): Vector
-    {
+    static left(): Vector {
         return new Vector(-1, 0);
-    };
+    }
 
     /**
      * Creates a new unit vector of (1, 0);
      * @returns The created vector.
      */
-    static right(): Vector
-    {
+    static right(): Vector {
         return new Vector(1, 0);
-    };
+    }
 
     /**
      * Creates a new unit vector of (0, -1);
      * @returns The created vector.
      */
-    static up(): Vector
-    {
+    static up(): Vector {
         return new Vector(0, -1);
-    };
+    }
 
     /**
      * Creates a new unit vector of (0, 1);
      * @returns The created vector.
      */
-    static down(): Vector
-    {
+    static down(): Vector {
         return new Vector(0, 1);
-    };
+    }
 
     /**
      * Add the value of another vector to this vector.
      * @param other The vector to add.
      * @returns This vector, with modifications.
      */
-    add(other: Vector): Vector
-    {
+    add(other: Vector): Vector {
         this.x += other.x;
         this.y += other.y;
         return this;
@@ -86,8 +78,7 @@ export class Vector
      * @param other The vector to subtract.
      * @returns This vector, with modifications.
      */
-    sub(other: Vector): Vector
-    {
+    sub(other: Vector): Vector {
         this.x -= other.x;
         this.y -= other.y;
         return this;
@@ -97,17 +88,15 @@ export class Vector
      * Calculate the length (hypotenuse) of this vector.
      * @returns The length of the vector.
      */
-    length(): number
-    {
-        return Math.sqrt((this.x * this.x) + (this.y * this.y));
+    length(): number {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
     /**
      * Creates a new normalized vector without modifying the original.
      * @returns A newly created unit vector.
      */
-    asNormalized(): Vector
-    {
+    asNormalized(): Vector {
         let vec = new Vector(this.x, this.y);
         return vec.normalize();
     }
@@ -116,16 +105,13 @@ export class Vector
      * Normalize this vector.
      * @returns This vector, modified.
      */
-    normalize(): Vector
-    {
+    normalize(): Vector {
         const len = this.length();
         this.divide(len);
-        if (isNaN(this.x))
-        {
+        if (isNaN(this.x)) {
             this.x = 0;
         }
-        if (isNaN(this.y))
-        {
+        if (isNaN(this.y)) {
             this.y = 0;
         }
         return this;
@@ -136,8 +122,7 @@ export class Vector
      * @param scalar The value to divide the vector by.
      * @returns This vector, with modifications.
      */
-    divide(scalar: number): Vector
-    {
+    divide(scalar: number): Vector {
         this.x /= scalar;
         this.y /= scalar;
         return this;
@@ -148,8 +133,7 @@ export class Vector
      * @param scalar The value to multiply the vector by.
      * @returns This vector, with modifications.
      */
-    multiply(scalar: number): Vector
-    {
+    multiply(scalar: number): Vector {
         this.x *= scalar;
         this.y *= scalar;
         return this;

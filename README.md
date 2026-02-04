@@ -33,13 +33,13 @@ You can create a system in one of 2 ways. Either as a class, or as a function. T
 add it to a scene:
 
 ```ts
-    scene.addFnSystem([CompA, CompB], (delta, entity, compA, compB) => {
+scene.addFnSystem([CompA, CompB], (delta, entity, compA, compB) => {
     // logic here
 
     // or just make one and add it later.
     const a = newSystem([A], (delta, entity, a) => {
         a.destroy();
-    })
+    });
 
     this.addFnSystem(a);
 });
@@ -56,12 +56,11 @@ class Booster extends System<[Boost]> {
         this.runOnEntities((entity, booster) => {
             ThingMover.velocity += 0.005 * component.mod;
             component.destroy();
-        })
+        });
     }
 
     // You need to provide the types again for.
     types: [CType<Boost>] = [Boost];
-
 }
 ```
 
@@ -78,9 +77,7 @@ You also need to provide the generic types again in the `types` variable.
 These can only be defined as classes:
 
 ```ts
-
 export class ScreenShaker extends GlobalSystem<[ScreenShake[]]> {
-
     types = [ScreenShake];
 
     update(delta: number): void {
@@ -116,7 +113,7 @@ Audio files can be loaded using the `load` method.
 Example:
 
 ```typescript
-AudioAtlas.load("jump", require("./resources/jump.wav"))
+AudioAtlas.load("jump", require("./resources/jump.wav"));
 ```
 
 A file can then be simply played with the `AudioAtlas.play()` method, or `Howler` methods can be used directly for more
@@ -220,7 +217,12 @@ is set.
 ```ts
 export class Pong extends Game {
     constructor() {
-        super({width: 800, height: 600, resolution: 1, backgroundColor: 0x000000});
+        super({
+            width: 800,
+            height: 600,
+            resolution: 1,
+            backgroundColor: 0x000000,
+        });
         this.setScene(new MainScene(this));
     }
 }
@@ -229,7 +231,7 @@ export class Pong extends Game {
 Then, just instantiate the game and append the game's renderer to your web page.
 
 ```ts
-const main = document.querySelector<HTMLDivElement>('#main');
+const main = document.querySelector<HTMLDivElement>("#main");
 const game = new Pong();
 
 main.appendChild(game.renderer.view);
@@ -250,24 +252,25 @@ will be loaded before the game loop starts.
 // Game constructor excerpt:
 
 export class MyGame extends Game {
-  constructor() {
-      super({
-          width: VIEW_WIDTH,
-          height: GAME_HEIGHT,
-          resolution: 2,
-          backgroundColor: 0x0B0926
-      });
+    constructor() {
+        super({
+            width: VIEW_WIDTH,
+            height: GAME_HEIGHT,
+            resolution: 2,
+            backgroundColor: 0x0b0926,
+        });
 
-      this.addResource("mute_button", new SpriteSheet(muteButtonSpr, 16, 16));
-      this.addResource("tile", new SpriteSheet(tileSpr, 12, 12));
-  }
+        this.addResource("mute_button", new SpriteSheet(muteButtonSpr, 16, 16));
+        this.addResource("tile", new SpriteSheet(tileSpr, 12, 12));
+    }
 }
 ```
+
 Then to use it later:
+
 ```ts
 new Sprite(this.scene.game.getResource("tile").textureFromIndex(0));
 ```
-
 
 ## License
 

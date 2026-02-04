@@ -1,18 +1,17 @@
-import {Log, Util} from "../Common/Util";
-import {Entity} from "./Entity";
-import {Component} from "./Component";
-import {LagomType, LifecycleObject, Updatable} from "./LifecycleObject";
-import {Scene} from "./Scene";
+import { Log, Util } from "../Common/Util";
+import { Entity } from "./Entity";
+import { Component } from "./Component";
+import { LagomType, LifecycleObject, Updatable } from "./LifecycleObject";
+import { Scene } from "./Scene";
 
 /**
  * Global system base class. Designed to run on batches of Components. Will be run every update frame.
  */
-export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObject implements Updatable
-{
+export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObject implements Updatable {
     // The key type is technically wrong, but it works because types aren't real
-    private readonly runOn: Map<{ new(): Component }, Component[]> = new Map();
+    private readonly runOn: Map<{ new (): Component }, Component[]> = new Map();
 
-    scene !: Scene;
+    scene!: Scene;
 
     /**
      * Update will be called every game tick.
@@ -20,8 +19,7 @@ export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObj
      */
     abstract update(delta: number): void;
 
-    fixedUpdate(_: number): void
-    {
+    fixedUpdate(_: number): void {
         // Fixed update is called with a fixed data.
         // Default implementation provided because it isn't usually required.
     }
@@ -38,8 +36,7 @@ export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObj
      * types() returns [Sprite, Collider], the function will be passed two arrays, (sprites: Sprite[], colliders:
      * Collider[]).
      */
-    protected runOnComponents(f: (...components: T) => void): void
-    {
+    protected runOnComponents(f: (...components: T) => void): void {
         // @ts-ignore
         f(...Array.from(this.runOn.values()));
     }
@@ -51,14 +48,12 @@ export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObj
      * returned by types(). For example, if types() returns [Sprite, Collider], the function will be passed the
      * system and t hen two arrays, (system: GlobalSystem, sprites: Sprite[], colliders: Collider[]).
      */
-    protected runOnComponentsWithSystem(f: (system: this, ...components: T) => void): void
-    {
+    protected runOnComponentsWithSystem(f: (system: this, ...components: T) => void): void {
         // @ts-ignore
         f(this, ...Array.from(this.runOn.values()));
     }
 
-    private onComponentAdded(entity: Entity, component: Component): void
-    {
+    private onComponentAdded(entity: Entity, component: Component): void {
         // Check if we care about this type at all
         const type = this.types.find((val) => {
             return component instanceof val;
@@ -68,8 +63,7 @@ export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObj
 
         let compMap = this.runOn.get(type.prototype);
 
-        if (compMap === undefined)
-        {
+        if (compMap === undefined) {
             Log.warn("Expected component map does not exist on GlobalSystem.", this, type.prototype);
             compMap = [];
             this.runOn.set(type.prototype, compMap);
@@ -78,16 +72,11 @@ export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObj
         this.componentLoaded(entity, component);
     }
 
-    protected componentLoaded(_entity: Entity, _component: Component): void {
+    protected componentLoaded(_entity: Entity, _component: Component): void {}
 
-    }
+    protected componentRemoved(_entity: Entity, _component: Component): void {}
 
-    protected componentRemoved(_entity: Entity, _component: Component): void {
-
-    }
-
-    private onComponentRemoved(entity: Entity, component: Component): void
-    {
+    private onComponentRemoved(entity: Entity, component: Component): void {
         // Check if we care about this type at all
         const type = this.types.find((val) => {
             return component instanceof val;
@@ -102,26 +91,23 @@ export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObj
 
         // Get it out of the list if it is in it
         Util.remove(components, component);
-        this.componentRemoved(entity, component)
+        this.componentRemoved(entity, component);
     }
 
-    private onEntityAdded(_: Scene, entity: Entity): void
-    {
+    private onEntityAdded(_: Scene, entity: Entity): void {
         // Register for component changes
         entity.componentAddedEvent.register(this.onComponentAdded.bind(this));
         entity.componentRemovedEvent.register(this.onComponentRemoved.bind(this));
     }
 
-    private onEntityRemoved(_: Scene, entity: Entity): void
-    {
+    private onEntityRemoved(_: Scene, entity: Entity): void {
         entity.componentAddedEvent.deregister(this.onComponentAdded.bind(this));
         entity.componentRemovedEvent.deregister(this.onComponentRemoved.bind(this));
     }
 
-    addedToScene(scene: Scene): void
-    {
+    addedToScene(scene: Scene): void {
         // make each component map
-        this.types.forEach(type => {
+        this.types.forEach((type) => {
             this.runOn.set(type.prototype, []);
         });
 
@@ -146,8 +132,7 @@ export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObj
         this.onRemoved();
     }
 
-    onRemoved(): void
-    {
+    onRemoved(): void {
         super.onRemoved();
 
         const scene = this.getScene();
@@ -161,8 +146,7 @@ export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObj
      * Return the Scene object that this system belongs to.
      * @returns The parent Scene.
      */
-    getScene(): Scene
-    {
+    getScene(): Scene {
         return this.scene;
     }
 }

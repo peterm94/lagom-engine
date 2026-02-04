@@ -1,4 +1,4 @@
-import {Sound, sound} from "@pixi/sound";
+import { Sound, sound } from "@pixi/sound";
 
 // Stop pause on tab loss of focus
 sound.disableAutoPause = true;
@@ -6,8 +6,7 @@ sound.disableAutoPause = true;
 /**
  * Audio loader/atlas.
  */
-export class AudioAtlas
-{
+export class AudioAtlas {
     readonly sounds: Map<string, Sound> = new Map();
 
     /**
@@ -18,8 +17,7 @@ export class AudioAtlas
      * @param audioResource The resource to load.
      * @returns A Howl instance for the resource.
      */
-    load(key: string, audioResource: string): Sound
-    {
+    load(key: string, audioResource: string): Sound {
         const resource = sound.add(key, { url: audioResource });
 
         this.sounds.set(key, resource);
@@ -33,13 +31,10 @@ export class AudioAtlas
      * @param key The audio ID that it was loaded with.
      * @returns The Howl instance for the resource if found, otherwise undefined.
      */
-    play(key: string): Sound | undefined
-    {
+    play(key: string): Sound | undefined {
         const sound = this.sounds.get(key);
 
-
-        if (sound !== undefined)
-        {
+        if (sound !== undefined) {
             sound.play();
         }
 
@@ -51,8 +46,7 @@ export class AudioAtlas
      * @param key The audio ID that resource was loaded with.
      * @returns The Howl instance for the resource if found, otherwise undefined.
      */
-    get(key: string): Sound | undefined
-    {
+    get(key: string): Sound | undefined {
         return this.sounds.get(key);
     }
 }

@@ -1,9 +1,9 @@
-import {TextDisp} from "./PIXIComponents";
-import {Entity} from "../ECS/Entity";
-import {System} from "../ECS/System";
-import {Component} from "../ECS/Component";
-import {Game} from "../ECS/Game";
-import {CType} from "../ECS/FnSystemWrapper";
+import { TextDisp } from "./PIXIComponents";
+import { Entity } from "../ECS/Entity";
+import { System } from "../ECS/System";
+import { Component } from "../ECS/Component";
+import { Game } from "../ECS/Game";
+import { CType } from "../ECS/FnSystemWrapper";
 
 /**
  * FPS tracking component.
@@ -51,31 +51,29 @@ class FpsUpdater extends System<[TextDisp, FpsTracker]> {
     }
 
     runOnEntities(delta: number, _entity: Entity, text: TextDisp, tracker: FpsTracker): void {
-
-        if ((this.frameCount % this.printFrame) !== 0) {
+        if (this.frameCount % this.printFrame !== 0) {
             return;
         }
         text.pixiObj.text = `${this.avgUpdateDt.toFixed(2)}`;
 
         if (tracker.verbose) {
             text.pixiObj.text =
-                `U: ${delta.toFixed(2)}ms `
-                + `// ${(1000 / delta).toFixed(2)}hz `
-                + `// ${this.avgUpdateDt.toFixed(2)}hz`
-                + `\nFixedU: ${this.fixedDt.toFixed(2)}ms `
-                + `// ${(1000 / this.fixedDt).toFixed(2)}hz `
-                + `// ${this.avgFixedUpdateDt.toFixed(2)}hz`
-                + `\nUpdateTime: ${this.game.diag.updateTime.toFixed(2)}ms `
-                + `// ${this.avgUpdate.toFixed(2)}ms`
-                + `\nFixedUpdateTime: ${this.game.diag.fixedUpdateTime.toFixed(2)}ms `
-                + `// ${this.avgFixedUpdate.toFixed(2)}ms`
-                + `\nRenderTime: ${this.game.diag.renderTime.toFixed(2)}ms `
-                + `// ${this.avgRender.toFixed(2)}ms`
-                + `\nTotalFrameTime: ${this.game.diag.totalFrameTime.toFixed(2)}ms `
-                + `// ${this.avgFrame.toFixed(2)}ms`
-                + `\nEntities: ${this.game.currentScene.entities.size}`;
+                `U: ${delta.toFixed(2)}ms ` +
+                `// ${(1000 / delta).toFixed(2)}hz ` +
+                `// ${this.avgUpdateDt.toFixed(2)}hz` +
+                `\nFixedU: ${this.fixedDt.toFixed(2)}ms ` +
+                `// ${(1000 / this.fixedDt).toFixed(2)}hz ` +
+                `// ${this.avgFixedUpdateDt.toFixed(2)}hz` +
+                `\nUpdateTime: ${this.game.diag.updateTime.toFixed(2)}ms ` +
+                `// ${this.avgUpdate.toFixed(2)}ms` +
+                `\nFixedUpdateTime: ${this.game.diag.fixedUpdateTime.toFixed(2)}ms ` +
+                `// ${this.avgFixedUpdate.toFixed(2)}ms` +
+                `\nRenderTime: ${this.game.diag.renderTime.toFixed(2)}ms ` +
+                `// ${this.avgRender.toFixed(2)}ms` +
+                `\nTotalFrameTime: ${this.game.diag.totalFrameTime.toFixed(2)}ms ` +
+                `// ${this.avgFrame.toFixed(2)}ms` +
+                `\nEntities: ${this.game.currentScene.entities.size}`;
         }
-
     }
 
     update(delta: number): void {
@@ -95,7 +93,6 @@ class FpsUpdater extends System<[TextDisp, FpsTracker]> {
     }
 }
 
-
 /**
  * Entity that adds FPS information to the canvas.
  */
@@ -104,7 +101,12 @@ export class Diagnostics extends Entity {
         super.onAdded();
 
         this.addComponent(new FpsTracker(this.verbose));
-        this.addComponent(new TextDisp(0, 0, "", {fontSize: this.textSize, fill: this.textCol}));
+        this.addComponent(
+            new TextDisp(0, 0, "", {
+                fontSize: this.textSize,
+                fill: this.textCol,
+            }),
+        );
 
         const scene = this.getScene();
         scene.addSystem(new FpsUpdater());
@@ -116,9 +118,11 @@ export class Diagnostics extends Entity {
      * @param textSize Size of the debug text.
      * @param verbose Set to true for more information. False will just display simple FPS.
      */
-    constructor(private readonly textCol: string,
-                private readonly textSize: number = 10,
-                private verbose: boolean = false) {
+    constructor(
+        private readonly textCol: string,
+        private readonly textSize: number = 10,
+        private verbose: boolean = false,
+    ) {
         super("diagnostics");
     }
 }

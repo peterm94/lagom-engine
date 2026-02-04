@@ -1,13 +1,11 @@
-import {Button} from "./Button";
+import { Button } from "./Button";
 import PixiMouse from "./PixiMouse";
 
-export class Mouse
-{
+export class Mouse {
     readonly pixi_mouse: PixiMouse;
 
-    constructor(readonly canvas: HTMLCanvasElement)
-    {
-        this.pixi_mouse = new PixiMouse(this.canvas)
+    constructor(readonly canvas: HTMLCanvasElement) {
+        this.pixi_mouse = new PixiMouse(this.canvas);
     }
 
     /**
@@ -15,9 +13,8 @@ export class Mouse
      * @param button The button to check for.
      * @returns True if they button has been pressed this frame.
      */
-    isButtonPressed(button: Button): boolean
-    {
-        return this.pixi_mouse.isButtonPressed(button)
+    isButtonPressed(button: Button): boolean {
+        return this.pixi_mouse.isButtonPressed(button);
     }
 
     /**
@@ -25,8 +22,7 @@ export class Mouse
      * @param button The button to check for.
      * @returns True if they button is down this frame.
      */
-    isButtonDown(button: Button): boolean
-    {
+    isButtonDown(button: Button): boolean {
         return this.pixi_mouse.isButtonDown(button);
     }
 
@@ -35,8 +31,7 @@ export class Mouse
      * @param button The button to check for.
      * @returns True if they button has been released this frame.
      */
-    isButtonReleased(button: Button): boolean
-    {
+    isButtonReleased(button: Button): boolean {
         return this.pixi_mouse.isButtonReleased(button);
     }
 
@@ -44,8 +39,7 @@ export class Mouse
      * Get the current mouse X position.
      * @returns The current X position of the mouse.
      */
-    getPosX(): number
-    {
+    getPosX(): number {
         return this.pixi_mouse.getPosX();
     }
 
@@ -53,8 +47,7 @@ export class Mouse
      * Get the current mouse Y position.
      * @returns The current Y position of the mouse.
      */
-    getPosY(): number
-    {
+    getPosY(): number {
         return this.pixi_mouse.getPosY();
     }
 }

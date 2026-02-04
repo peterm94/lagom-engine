@@ -1,11 +1,11 @@
-import {Assets, Texture} from "pixi.js";
-import {AssetOptions, ImageAsset} from "./ImageAsset";
+import { Assets, Texture } from "pixi.js";
+import { AssetOptions, ImageAsset } from "./ImageAsset";
 
 export class ResourceLoader {
     private resources: Map<string, ImageAsset> = new Map<string, ImageAsset>();
 
     async addResource(name: string, path: string, options?: AssetOptions): Promise<ImageAsset> {
-        const texture: Texture = await Assets.load({alias: name, src: path})
+        const texture: Texture = await Assets.load({ alias: name, src: path });
         const asset = new ImageAsset(name, texture.source, options);
         this.resources.set(asset.alias, asset);
         console.log("loaded asset ", name);

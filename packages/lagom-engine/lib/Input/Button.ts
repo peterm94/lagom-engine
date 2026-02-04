@@ -1,11 +1,10 @@
 /**
  * Mouse buttons.
  */
-export enum Button
-{
+export enum Button {
     LEFT,
     MIDDLE,
     RIGHT,
     FOURTH,
-    FIFTH
+    FIFTH,
 }

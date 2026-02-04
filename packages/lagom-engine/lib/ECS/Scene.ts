@@ -1,13 +1,13 @@
-import {LagomType, LifecycleObject, Updatable} from "./LifecycleObject";
-import {Entity} from "./Entity";
-import {System} from "./System";
-import {GlobalSystem} from "./GlobalSystem";
-import {Observable} from "../Common/Observer";
-import {Game} from "./Game";
-import {Camera} from "../Common/Camera";
-import {Log, Util} from "../Common/Util";
-import {CType, FnSystemWrapper, SysFn} from "./FnSystemWrapper";
-import {Container} from "pixi.js";
+import { LagomType, LifecycleObject, Updatable } from "./LifecycleObject";
+import { Entity } from "./Entity";
+import { System } from "./System";
+import { GlobalSystem } from "./GlobalSystem";
+import { Observable } from "../Common/Observer";
+import { Game } from "./Game";
+import { Camera } from "../Common/Camera";
+import { Log, Util } from "../Common/Util";
+import { CType, FnSystemWrapper, SysFn } from "./FnSystemWrapper";
+import { Container } from "pixi.js";
 
 /**
  * Scene object type. Contains the root nodes for the entity trees, and runs all Systems and GlobalSystems.
@@ -175,11 +175,7 @@ export class Scene extends LifecycleObject implements Updatable {
      */
     addFnSystem<T extends any[]>(classes: { [K in keyof T]: CType<T[K]> }, func: (delta: number, entity: Entity, ...components: T) => void, fixed: boolean): void;
 
-    addFnSystem<T extends any[]>(
-        sysFn: SysFn<T> | { [K in keyof T]: CType<T[K]> },
-        func?: (delta: number, entity: Entity, ...components: T) => void,
-        fixed?: boolean
-    ): void {
+    addFnSystem<T extends any[]>(sysFn: SysFn<T> | { [K in keyof T]: CType<T[K]> }, func?: (delta: number, entity: Entity, ...components: T) => void, fixed?: boolean): void {
         if (func) {
             const sysInstance = new FnSystemWrapper([sysFn as { [K in keyof T]: CType<T[K]> }, func], fixed ?? false);
             this.addSystem(sysInstance);
@@ -190,7 +186,7 @@ export class Scene extends LifecycleObject implements Updatable {
     }
 
     addFixedFnSystem<T extends any[]>(system: SysFn<T>): void {
-        this.addFnSystem(system[0], system[1], true)
+        this.addFnSystem(system[0], system[1], true);
     }
 
     /**
@@ -254,7 +250,7 @@ export class Scene extends LifecycleObject implements Updatable {
         const node = this.sceneNode.findChildWithName(name);
 
         // If not found, check GUI nodes, otherwise just return the found one.
-        return (node === null) ? this.guiNode.findChildWithName(name) : node as T;
+        return node === null ? this.guiNode.findChildWithName(name) : (node as T);
     }
 
     /**

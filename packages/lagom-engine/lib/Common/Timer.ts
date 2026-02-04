@@ -1,12 +1,11 @@
-import {Component} from "../ECS/Component";
-import {GlobalSystem} from "../ECS/GlobalSystem";
-import {Observable} from "./Observer";
+import { Component } from "../ECS/Component";
+import { GlobalSystem } from "../ECS/GlobalSystem";
+import { Observable } from "./Observer";
 
 /**
  * Frame synced timer. Requires the TimerSystem to be updated.
  */
-export class Timer<T> extends Component
-{
+export class Timer<T> extends Component {
     /**
      * Event that is triggered when the timer is completed.
      */
@@ -23,8 +22,7 @@ export class Timer<T> extends Component
      * @param payload What will be delivered in the trigger event.
      * @param repeat Set to true to repeat the timer after it triggers.
      */
-    constructor(lengthMs: number, payload: T, repeat = false)
-    {
+    constructor(lengthMs: number, payload: T, repeat = false) {
         super();
         this.timerLengthMs = lengthMs;
         this.remainingMs = lengthMs;
@@ -32,8 +30,7 @@ export class Timer<T> extends Component
         this.repeat = repeat;
     }
 
-    onRemoved(): void
-    {
+    onRemoved(): void {
         super.onRemoved();
         this.onTrigger.releaseAll();
     }
@@ -42,27 +39,20 @@ export class Timer<T> extends Component
 /**
  * System used to drive the Timer.
  */
-export class TimerSystem extends GlobalSystem<[Timer<unknown>[]]>
-{
+export class TimerSystem extends GlobalSystem<[Timer<unknown>[]]> {
     types = [Timer];
 
-    update(delta: number): void
-    {
+    update(delta: number): void {
         this.runOnComponents((timers: Timer<unknown>[]) => {
-            for (const timer of timers)
-            {
+            for (const timer of timers) {
                 timer.remainingMs -= delta;
 
-                if (timer.remainingMs <= 0)
-                {
+                if (timer.remainingMs <= 0) {
                     timer.onTrigger.trigger(timer, timer.payload);
-                    if (!timer.repeat)
-                    {
+                    if (!timer.repeat) {
                         timer.destroy();
-                    }
-                    else
-                    {
-                      timer.remainingMs = timer.timerLengthMs;
+                    } else {
+                        timer.remainingMs = timer.timerLengthMs;
                     }
                 }
             }
@@ -73,8 +63,7 @@ export class TimerSystem extends GlobalSystem<[Timer<unknown>[]]>
 /**
  * Non frame-synced timer. Not controlled by the ECS at all. Be careful with references that may expire.
  */
-export class AsyncTimer
-{
+export class AsyncTimer {
     private remainingMS: number;
     private readonly callback: () => void;
 
@@ -83,24 +72,19 @@ export class AsyncTimer
      * @param lengthMS Timer duration in milliseconds.
      * @param triggerCallback Callback that is called when the timer is triggered.
      */
-    constructor(lengthMS: number, triggerCallback: () => void)
-    {
+    constructor(lengthMS: number, triggerCallback: () => void) {
         this.remainingMS = lengthMS;
         this.callback = triggerCallback;
 
         this.update(0);
     }
 
-    private update(elapsedMS: number): void
-    {
+    private update(elapsedMS: number): void {
         this.remainingMS -= elapsedMS;
 
-        if (this.remainingMS <= 0)
-        {
+        if (this.remainingMS <= 0) {
             this.callback();
-        }
-        else
-        {
+        } else {
             requestAnimationFrame(this.update.bind(this));
         }
     }

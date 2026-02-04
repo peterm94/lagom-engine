@@ -1,21 +1,19 @@
-import {Entity} from "./Entity";
-import {LifecycleObject} from "./LifecycleObject";
-import {Scene} from "./Scene";
-import {Container, PointData} from "pixi.js";
+import { Entity } from "./Entity";
+import { LifecycleObject } from "./LifecycleObject";
+import { Scene } from "./Scene";
+import { Container, PointData } from "pixi.js";
 
 /**
  * Component base class.
  */
-export abstract class Component extends LifecycleObject
-{
+export abstract class Component extends LifecycleObject {
     parent!: Entity;
 
     /**
      * Get the entity that owns this component.
      * @returns The entity that this component is attached to.
      */
-    getEntity(): Entity
-    {
+    getEntity(): Entity {
         return this.parent;
     }
 
@@ -23,13 +21,11 @@ export abstract class Component extends LifecycleObject
      * Get the scene that the parent entity is part of.
      * @returns The parent scene.
      */
-    getScene(): Scene
-    {
+    getScene(): Scene {
         return this.getEntity().getScene();
     }
 
-    destroy(): void
-    {
+    destroy(): void {
         super.destroy();
         this.getEntity().removeComponent(this);
     }
@@ -38,24 +34,20 @@ export abstract class Component extends LifecycleObject
 /**
  * PIXI Component base class. More for convenience than anything else, will add to the PIXI tree.
  */
-export abstract class PIXIComponent<T extends Container> extends Component
-{
+export abstract class PIXIComponent<T extends Container> extends Component {
     readonly pixiObj: T;
 
-    protected constructor(pixiComp: T)
-    {
+    protected constructor(pixiComp: T) {
         super();
         this.pixiObj = pixiComp;
     }
 
-    onAdded(): void
-    {
+    onAdded(): void {
         super.onAdded();
         this.getEntity().transform.addChild(this.pixiObj);
     }
 
-    onRemoved(): void
-    {
+    onRemoved(): void {
         super.onRemoved();
         this.getEntity().transform.removeChild(this.pixiObj);
     }
@@ -65,11 +57,9 @@ export abstract class PIXIComponent<T extends Container> extends Component
      * @param skipUpdate True to skip the PIXI positional update.
      * @returns The calculated point.
      */
-    globalPos(skipUpdate = false): PointData
-    {
+    globalPos(skipUpdate = false): PointData {
         // This function is scary, it takes into account view changes, as does getGlobalPosition().
         // We need to offset the camera position, because it actually shifts everything in the scene.
         return this.pixiObj.toGlobal(this.getScene().camera.position(), undefined, skipUpdate);
     }
 }
-

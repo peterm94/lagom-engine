@@ -1,8 +1,8 @@
-import {Entity} from "./Entity";
-import {Component} from "./Component";
-import {LifecycleObject, Updatable} from "./LifecycleObject";
-import {Scene} from "./Scene";
-import {CType} from "./FnSystemWrapper";
+import { Entity } from "./Entity";
+import { Component } from "./Component";
+import { LifecycleObject, Updatable } from "./LifecycleObject";
+import { Scene } from "./Scene";
+import { CType } from "./FnSystemWrapper";
 
 /**
  * System base class. Systems should be used to run on groups of components.
@@ -12,13 +12,13 @@ import {CType} from "./FnSystemWrapper";
 export abstract class System<T extends Component[]> extends LifecycleObject implements Updatable {
     private readonly runOn: Map<Entity, Component[]> = new Map();
 
-    scene !: Scene;
+    scene!: Scene;
 
     /**
      * Provide the types that this system runs on. Due to runtime type system limitations, this needs to be provided as
      * well as the generic types. Make sure the values match, it will not compile if the order is not preserved.
      */
-    abstract types: { [K in keyof T]: CType<T[K]> }
+    abstract types: { [K in keyof T]: CType<T[K]> };
 
     /**
      * A function that will be called with the requested components passed through as parameters. The
@@ -33,7 +33,7 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
 
     runOnEntitiesFixed(_delta: number, _entity: Entity, ..._args: T): void {
         // Default empty impl
-    };
+    }
 
     private onComponentAdded(entity: Entity, component: Component): void {
         // Check if we care about this type at all
@@ -108,7 +108,7 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
         scene.entityRemovedEvent.register(this.onEntityRemoved.bind(this));
 
         // We need to scan everything that already exists
-        scene.entities.forEach(entity => {
+        scene.entities.forEach((entity) => {
             // Register listener for entity
             this.onEntityAdded(scene, entity);
 
@@ -142,13 +142,13 @@ export abstract class System<T extends Component[]> extends LifecycleObject impl
      */
     update(delta: number): void {
         this.runOn.forEach((values: Component[], key: Entity) => {
-            this.runOnEntities(delta, key, ...values as T);
+            this.runOnEntities(delta, key, ...(values as T));
         });
     }
 
     fixedUpdate(delta: number): void {
         this.runOn.forEach((values: Component[], key: Entity) => {
-            this.runOnEntitiesFixed(delta, key, ...values as T);
+            this.runOnEntitiesFixed(delta, key, ...(values as T));
         });
     }
 

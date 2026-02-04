@@ -1,11 +1,10 @@
-import {PIXIComponent} from "../ECS/Component";
-import {Graphics, Point, Text, TextStyle} from "pixi.js";
+import { PIXIComponent } from "../ECS/Component";
+import { Graphics, Point, Text, TextStyle } from "pixi.js";
 
 /**
  * Text renderer component.
  */
-export class TextDisp extends PIXIComponent<Text>
-{
+export class TextDisp extends PIXIComponent<Text> {
     /**
      * Creates a new text renderer.
      * @param xOff Positional X offset.
@@ -13,8 +12,7 @@ export class TextDisp extends PIXIComponent<Text>
      * @param text The text to display.
      * @param options Styling options for the text.
      */
-    constructor(xOff: number, yOff: number, text: string, options?: Partial<TextStyle>)
-    {
+    constructor(xOff: number, yOff: number, text: string, options?: Partial<TextStyle>) {
         super(new Text(text, new TextStyle(options)));
 
         this.pixiObj.x = xOff;
@@ -25,9 +23,8 @@ export class TextDisp extends PIXIComponent<Text>
 /**
  * Base component for drawing PIXI primitives.
  */
-export abstract class PIXIGraphicsComponent extends PIXIComponent<Graphics>
-{
-    static readonly defaultLine = 0xFF3300;
+export abstract class PIXIGraphicsComponent extends PIXIComponent<Graphics> {
+    static readonly defaultLine = 0xff3300;
     static readonly defaultFill = null;
 
     /**
@@ -35,14 +32,12 @@ export abstract class PIXIGraphicsComponent extends PIXIComponent<Graphics>
      * @param fillColour The inner fill colour. Null for transparent.
      * @param lineColour The colour of the line.
      */
-    protected constructor(fillColour: number | null, lineColour: number)
-    {
+    protected constructor(fillColour: number | null, lineColour: number) {
         super(new Graphics());
 
-        this.pixiObj.setStrokeStyle({width: 1, color: lineColour, alpha: 1});
+        this.pixiObj.setStrokeStyle({ width: 1, color: lineColour, alpha: 1 });
 
-        if (fillColour !== null)
-        {
+        if (fillColour !== null) {
             this.pixiObj.fill(fillColour);
         }
     }
@@ -51,8 +46,7 @@ export abstract class PIXIGraphicsComponent extends PIXIComponent<Graphics>
 /**
  * Draws a circle.
  */
-export class RenderCircle extends PIXIGraphicsComponent
-{
+export class RenderCircle extends PIXIGraphicsComponent {
     /**
      * Create a new circle.
      *
@@ -62,12 +56,7 @@ export class RenderCircle extends PIXIGraphicsComponent
      * @param fillColour The inner fill colour. Null for transparent.
      * @param lineColour The colour of the line.
      */
-    constructor(xOff: number,
-                yOff: number,
-                radius: number,
-                fillColour: number | null = PIXIGraphicsComponent.defaultFill,
-                lineColour: number = PIXIGraphicsComponent.defaultLine)
-    {
+    constructor(xOff: number, yOff: number, radius: number, fillColour: number | null = PIXIGraphicsComponent.defaultFill, lineColour: number = PIXIGraphicsComponent.defaultLine) {
         super(fillColour, lineColour);
         this.pixiObj.circle(xOff, yOff, radius).stroke();
     }
@@ -76,8 +65,7 @@ export class RenderCircle extends PIXIGraphicsComponent
 /**
  * Draws a rectangle.
  */
-export class RenderRect extends PIXIGraphicsComponent
-{
+export class RenderRect extends PIXIGraphicsComponent {
     /**
      * Create a new rectangle.
      *
@@ -88,13 +76,14 @@ export class RenderRect extends PIXIGraphicsComponent
      * @param fillColour The inner fill colour. Null for transparent.
      * @param lineColour The colour of the line.
      */
-    constructor(xOff: number,
-                yOff: number,
-                width: number,
-                height: number,
-                fillColour: number | null = PIXIGraphicsComponent.defaultFill,
-                lineColour: number = PIXIGraphicsComponent.defaultLine)
-    {
+    constructor(
+        xOff: number,
+        yOff: number,
+        width: number,
+        height: number,
+        fillColour: number | null = PIXIGraphicsComponent.defaultFill,
+        lineColour: number = PIXIGraphicsComponent.defaultLine,
+    ) {
         super(fillColour, lineColour);
         this.pixiObj.rect(xOff, yOff, width, height).stroke();
     }
@@ -103,8 +92,7 @@ export class RenderRect extends PIXIGraphicsComponent
 /**
  * Draws a polygon.
  */
-export class RenderPoly extends PIXIGraphicsComponent
-{
+export class RenderPoly extends PIXIGraphicsComponent {
     /**
      * Create a new Polygon.
      *
@@ -112,10 +100,7 @@ export class RenderPoly extends PIXIGraphicsComponent
      * @param fillColour The inner fill colour. Null for transparent.
      * @param lineColour The colour of the line.
      */
-    constructor(points: Point[],
-                fillColour: number | null = PIXIGraphicsComponent.defaultFill,
-                lineColour: number = PIXIGraphicsComponent.defaultLine)
-    {
+    constructor(points: Point[], fillColour: number | null = PIXIGraphicsComponent.defaultFill, lineColour: number = PIXIGraphicsComponent.defaultLine) {
         super(fillColour, lineColour);
         this.pixiObj.poly(points).stroke();
     }

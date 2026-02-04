@@ -1,4 +1,4 @@
-import {SCALE_MODES, Texture} from "pixi.js";
+import { SCALE_MODES, Texture } from "pixi.js";
 
 /**
  * Convenient way to load multiple sprites from a single Sprite Sheet.
@@ -12,7 +12,11 @@ export class SpriteSheet {
      * @param tileWidth The width of the tiles on the sheet.
      * @param tileHeight The height of the tiles on the sheet.
      */
-    constructor(resource: string, private readonly tileWidth: number, private readonly tileHeight: number) {
+    constructor(
+        resource: string,
+        private readonly tileWidth: number,
+        private readonly tileHeight: number,
+    ) {
         this.sheetTexture = Texture.from(resource);
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
@@ -25,7 +29,7 @@ export class SpriteSheet {
 
     public async load(): Promise<unknown> {
         // TODO look into this assets thing more
-        return {}
+        return {};
         // return await Assets.load(this.sheetTexture);
     }
 

@@ -1,13 +1,12 @@
-import {Log} from "../Util";
-import {FrameTrigger} from "../FrameTrigger";
-import {AnimatedSprite, AnimatedSpriteConfig} from "./AnimatedSprite";
-import {Texture} from "pixi.js";
+import { Log } from "../Util";
+import { FrameTrigger } from "../FrameTrigger";
+import { AnimatedSprite, AnimatedSpriteConfig } from "./AnimatedSprite";
+import { Texture } from "pixi.js";
 
 /**
  * Configured SpriteAnimation. Used for AnimatedSprite states.
  */
-export interface SpriteAnimation
-{
+export interface SpriteAnimation {
     /**
      * Animation ID.
      */
@@ -30,13 +29,11 @@ export interface SpriteAnimation
  * Extended version of AnimatedSprite. This allows for different animations to be played, as well as synchronizing
  * events to specific frames.
  */
-export class AnimatedSpriteController extends AnimatedSprite
-{
+export class AnimatedSpriteController extends AnimatedSprite {
     /**
      * Get the currently playing state.
      */
-    public get currentState(): number
-    {
+    public get currentState(): number {
         return this._currentState;
     }
 
@@ -51,45 +48,39 @@ export class AnimatedSpriteController extends AnimatedSprite
      * @param initialState The initial animation state.
      * @param animations An array of all animations that this controller will manage.
      */
-    constructor(private initialState: number, animations: SpriteAnimation[])
-    {
+    constructor(
+        private initialState: number,
+        animations: SpriteAnimation[],
+    ) {
         super(animations[0].textures);
         this._currentState = initialState;
 
         // Store the animations
-        animations.forEach(anim => this.animationStates.set(anim.id, anim));
+        animations.forEach((anim) => this.animationStates.set(anim.id, anim));
     }
 
-    onAdded(): void
-    {
+    onAdded(): void {
         super.onAdded();
         const config = this.animationStates.get(this._currentState);
-        if (config !== undefined)
-        {
+        if (config !== undefined) {
             this.onTrigger.register(this.spriteChangeFrame.bind(this));
             this.setAnimation(this._currentState, true);
-        }
-        else
-        {
+        } else {
             Log.error("An animation was not added for the requested state: " + this.initialState);
         }
     }
 
-    private spriteChangeFrame(_: FrameTrigger<number>, animationFrame: number): void
-    {
+    private spriteChangeFrame(_: FrameTrigger<number>, animationFrame: number): void {
         const eventMap = this.animationStates.get(this._currentState)?.events;
 
-        if (eventMap !== undefined)
-        {
+        if (eventMap !== undefined) {
             eventMap[animationFrame]?.call(this);
         }
 
         // TODO can I remove this? I don't think it is being used or works atm
-        if (this.currentEventMap !== null)
-        {
+        if (this.currentEventMap !== null) {
             const event = this.currentEventMap.get(animationFrame);
-            if (event !== undefined)
-            {
+            if (event !== undefined) {
                 event();
             }
         }
@@ -102,15 +93,13 @@ export class AnimatedSpriteController extends AnimatedSprite
      * @param reset Force reset. If true, will reset the animation. Otherwise, if the specified state is already
      * active, will do nothing.
      */
-    public setAnimation(stateId: number, reset = false): void
-    {
+    public setAnimation(stateId: number, reset = false): void {
         // Check if we are already in the desired state.
         if (this._currentState === stateId && !reset) return;
 
         // Create the new sprite using the factory.
         const loadedConfig = this.animationStates.get(stateId) || null;
-        if (loadedConfig !== null)
-        {
+        if (loadedConfig !== null) {
             // Apply the configuration to the sprite and set the texture
             this.textures = loadedConfig.textures;
             if (loadedConfig.config) this.applyConfig(loadedConfig.config);
@@ -127,15 +116,11 @@ export class AnimatedSpriteController extends AnimatedSprite
      * @param event The event to fire.
      */
     // TODO this needs to come in with the SpriteAnimation object.
-    addEvent(animationId: number, frame: number, event: () => void): void
-    {
+    addEvent(animationId: number, frame: number, event: () => void): void {
         const animation = this.events.get(animationId);
-        if (animation === undefined)
-        {
+        if (animation === undefined) {
             Log.warn("Expected animation does not exist on AnimatedSpriteController.", this, animationId);
-        }
-        else
-        {
+        } else {
             animation.set(frame, event);
         }
     }

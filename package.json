@@ -1,5 +1,12 @@
 {
-  "name": "lagom-engine-monorepo",
-  "private": true,
-  "packageManager": "pnpm@10.15.1"
+    "name": "lagom-engine-monorepo",
+    "private": true,
+    "packageManager": "pnpm@10.15.1",
+    "devDependencies": {
+        "prettier": "3.8.1"
+    },
+    "prettier": {
+        "tabWidth": 4,
+        "printWidth": 180
+    }
 }

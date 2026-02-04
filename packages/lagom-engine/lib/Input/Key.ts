@@ -3,8 +3,7 @@
  * This is a partial list taken from https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code/code_values/.
  * Only the Chrome/Firefox supported keys have been listed, but others may be available depending on platform.
  */
-export enum Key
-{
+export enum Key {
     Escape = "Escape",
     Digit0 = "Digit0",
     Digit1 = "Digit1",

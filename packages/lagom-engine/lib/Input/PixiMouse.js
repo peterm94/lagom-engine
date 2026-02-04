@@ -2,22 +2,24 @@
 // TODO rewrite as Typescript.
 export default class PixiMouse {
     constructor(canvasElement) {
-
         setTimeout(() => {
             canvasElement.addEventListener("mousemove", (event) => {
                 if (this.posLocalX !== event.clientX || this.posLocalY !== event.clientY) {
-                    this.posLocalX = event.clientX; this.posLocalY = event.clientY;
+                    this.posLocalX = event.clientX;
+                    this.posLocalY = event.clientY;
                 }
 
                 if (this.posGlobalX !== event.screenX || this.posGlobalY !== event.screenY) {
-                    this.posGlobalX = event.screenX; this.posGlobalY = event.screenY;
+                    this.posGlobalX = event.screenX;
+                    this.posGlobalY = event.screenY;
                 }
             });
 
             canvasElement.addEventListener("mousedown", (event) => {
                 let buttonCode = event.button;
                 if (!this.buttonStates.get(buttonCode)) {
-                    event.posLocalX = this.getPosLocalX(); event.posLocalY = this.getPosLocalY();
+                    event.posLocalX = this.getPosLocalX();
+                    event.posLocalY = this.getPosLocalY();
                     this.buttonStates.set(buttonCode, event);
                 }
             });
@@ -67,17 +69,15 @@ export default class PixiMouse {
             const event = this.buttonStates.get(buttonCode);
 
             event.alreadyPressed = true;
-            if (event.wasReleased)
-                this.buttonStates.delete(buttonCode);
+            if (event.wasReleased) this.buttonStates.delete(buttonCode);
         });
     }
 
     isButtonDown(...args) {
         let result = false;
-        for(let buttonCode of args) {
+        for (let buttonCode of args) {
             const key = this.buttonStates.get(buttonCode);
-            if (key && !key.wasReleased)
-                result = true;
+            if (key && !key.wasReleased) result = true;
         }
 
         return result;
@@ -90,13 +90,11 @@ export default class PixiMouse {
     isButtonPressed(...args) {
         let result = false;
 
-        if (args.length === 0)
-            return false;
+        if (args.length === 0) return false;
 
-        for(let buttonCode of args) {
+        for (let buttonCode of args) {
             const event = this.buttonStates.get(buttonCode);
-            if (event && !event.wasReleased && !event.alreadyPressed)
-                result = true;
+            if (event && !event.wasReleased && !event.alreadyPressed) result = true;
         }
 
         return result;
@@ -105,13 +103,11 @@ export default class PixiMouse {
     isButtonReleased(...args) {
         let result = false;
 
-        if (args.length === 0)
-            return false;
+        if (args.length === 0) return false;
 
-        for(let buttonCode of args) {
+        for (let buttonCode of args) {
             const event = this.buttonStates.get(buttonCode);
-            if (event && event.wasReleased)
-                result = true;
+            if (event && event.wasReleased) result = true;
         }
 
         return result;

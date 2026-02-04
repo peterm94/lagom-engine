@@ -1,17 +1,16 @@
-import {PIXIComponent} from "../../ECS/Component";
-import {Filter, Sprite as PixiSprite, Texture} from "pixi.js";
+import { PIXIComponent } from "../../ECS/Component";
+import { Filter, Sprite as PixiSprite, Texture } from "pixi.js";
+
 /**
  * Simple Sprite Component.
  */
-export class Sprite extends PIXIComponent<PixiSprite>
-{
+export class Sprite extends PIXIComponent<PixiSprite> {
     /**
      * Create a new Sprite.
      * @param texture The Texture for the Sprite.
      * @param config Configuration for the Sprite.
      */
-    constructor(texture: Texture, config: SpriteConfig | null = null)
-    {
+    constructor(texture: Texture, config: SpriteConfig | null = null) {
         super(new PixiSprite(texture));
 
         if (config) this.applyConfig(config);
@@ -21,8 +20,7 @@ export class Sprite extends PIXIComponent<PixiSprite>
      * Apply a set of configuration to the Sprite.
      * @param config Configuration to apply.
      */
-    public applyConfig(config: SpriteConfig): void
-    {
+    public applyConfig(config: SpriteConfig): void {
         if (config.xOffset !== undefined) this.pixiObj.x = config.xOffset;
         if (config.yOffset !== undefined) this.pixiObj.y = config.yOffset;
         if (config.xAnchor !== undefined) this.pixiObj.anchor.x = config.xAnchor;
@@ -38,8 +36,7 @@ export class Sprite extends PIXIComponent<PixiSprite>
 /**
  * Configuration options for the Sprite.
  */
-export interface SpriteConfig
-{
+export interface SpriteConfig {
     /** X offset from the entity position. */
     xOffset?: number;
     /** Y offset from the entity position. */
