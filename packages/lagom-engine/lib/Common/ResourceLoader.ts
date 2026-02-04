@@ -84,7 +84,6 @@ export class ResourceLoader {
             eager: true,
             import: "default",
         });
-        console.log("found files", textures);
         for (const [path, url] of Object.entries(textures)) {
             const filename = path.split("/").pop()!;
             const base = filename.replace(/\.[^.]+$/, "");

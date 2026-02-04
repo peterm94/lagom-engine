@@ -7,12 +7,11 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   </div>
   <!--  <canvas id="detect-render" width="768" height="768""></canvas>-->
 `;
-
 const main = document.querySelector<HTMLDivElement>("#main")!;
-
 // const game = new Platformer();
 const game = new GameTemplate();
 
-await game.start();
-main.appendChild(game.application.canvas);
-game.application.canvas.focus();
+game.start().then(() => {
+    main.appendChild(game.application.canvas);
+    game.application.canvas.focus();
+});
