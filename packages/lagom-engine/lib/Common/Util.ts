@@ -142,6 +142,15 @@ export class MathUtil {
     }
 
     /**
+     * Rolls a number between 0-100 and returns true if it is within the given percentage.
+     * @param percentage A number (0-100).
+     * @returns True if rolls in range, false otherwise.
+     */
+    static chance(percentage: number): boolean {
+        return this.randomRange(0, 100) < percentage;
+    }
+
+    /**
      * Clamp a number by two given bounds.
      * @param value The value to clamp.
      * @param min The lower bound.
@@ -195,15 +204,6 @@ export class Util {
      */
     static choose<T>(...options: T[]): T {
         return options[MathUtil.randomRange(0, options.length)];
-    }
-
-    /**
-     * Returns the last element from a given array without removing it.
-     * @param arr The array.
-     * @returns The last element of the array.
-     */
-    static last<T>(arr: T[]): T {
-        return arr[arr.length - 1];
     }
 }
 
