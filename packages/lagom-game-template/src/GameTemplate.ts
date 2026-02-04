@@ -1,6 +1,5 @@
 import { ActionOnPress, AudioAtlas, Entity, FrameTriggerSystem, Game, Log, LogLevel, Scene, TextDisp, TimerSystem } from "lagom-engine";
 import WebFont from "webfontloader";
-import muteButtonSpr from "./art/mute_button.png";
 import { SoundManager } from "./util/SoundManager";
 
 class TitleScene extends Scene {
@@ -46,10 +45,11 @@ class MainScene extends Scene {
 export class GameTemplate extends Game {
     startScene = () => new TitleScene(this);
     resourceLoad = async () => {
-        await this.resourceLoader.addResource("mute_button", muteButtonSpr, {
-            tileHeight: 16,
-            tileWidth: 16,
-        });
+        await this.resourceLoader.autoLoad()
+        // await this.resourceLoader.addResource("mute_button", muteButtonSpr, {
+        //     tileHeight: 16,
+        //     tileWidth: 16,
+        // });
     };
     static GAME_WIDTH = 512;
     static GAME_HEIGHT = 512;
@@ -67,7 +67,7 @@ export class GameTemplate extends Game {
         });
 
         // Set the global log level
-        Log.logLevel = LogLevel.WARN;
+        Log.logLevel = LogLevel.INFO;
 
         // Load an empty scene while we async load the resources for the main one
         // this.setScene(new Scene(this));

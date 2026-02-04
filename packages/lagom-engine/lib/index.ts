@@ -20,7 +20,6 @@ export * from "./Common/SpriteFusionLoader";
 export * from "./Common/TiledMapLoader";
 export * from "./Common/Timer";
 export * from "./Common/Util";
-export * from "./Common/Vector";
 
 export * from "./Collisions/Colliders";
 export * from "./Collisions/CollisionMatrix";
