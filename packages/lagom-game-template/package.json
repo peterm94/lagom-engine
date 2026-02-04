@@ -9,13 +9,11 @@
         "deploy": "tsc && vite build && butler push dist USERNAME/GAMENAME:html5"
     },
     "dependencies": {
-        "lagom-engine": "workspace:^",
-        "webfontloader": "^1.6.28"
+        "lagom-engine": "workspace:^"
     },
     "devDependencies": {
-        "@types/webfontloader": "^1.6.34",
         "typescript": "^5.6.2",
-        "vite": "^7.1.5"
+        "vite": "7.1.11"
     },
     "packageManager": "pnpm@10.15.1"
 }

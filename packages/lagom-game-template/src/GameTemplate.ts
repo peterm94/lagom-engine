@@ -1,5 +1,4 @@
 import { ActionOnPress, AudioAtlas, Entity, FrameTriggerSystem, Game, Log, LogLevel, Scene, TextDisp, TimerSystem } from "lagom-engine";
-import WebFont from "webfontloader";
 import { SoundManager } from "./util/SoundManager";
 
 class TitleScene extends Scene {
@@ -45,7 +44,10 @@ class MainScene extends Scene {
 export class GameTemplate extends Game {
     startScene = () => new TitleScene(this);
     resourceLoad = async () => {
-        await this.resourceLoader.autoLoad()
+        await this.resourceLoader.autoLoad();
+
+        this.resourceLoader.getSound("flip").play();
+        console.log("loaded all resources");
         // await this.resourceLoader.addResource("mute_button", muteButtonSpr, {
         //     tileHeight: 16,
         //     tileWidth: 16,
@@ -78,16 +80,5 @@ export class GameTemplate extends Game {
         //     .loop(true)
         //     .volume(0.3);
 
-        // Import fonts. See index.html for examples of how to add new ones.
-        const fonts = new Promise<void>((resolve, _) => {
-            WebFont.load({
-                custom: {
-                    families: ["pixeloid", "retro"],
-                },
-                active() {
-                    resolve();
-                },
-            });
-        });
     }
 }
