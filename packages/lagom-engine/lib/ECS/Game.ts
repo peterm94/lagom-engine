@@ -4,7 +4,7 @@ import { ResourceLoader } from "../Common/ResourceLoader";
 import { Keyboard } from "../Input/Keyboard";
 import { Mouse } from "../Input/Mouse";
 import { Application } from "pixi.js";
-import { ImageAsset } from "../Common/ImageAsset";
+import { TextureAsset } from "../Common/TextureAsset";
 
 class Diag {
     renderTime = 0;
@@ -62,7 +62,7 @@ export abstract class Game {
             const totalUpdateStart = now;
             this.deltaTime = now - this.lastFrameTime;
 
-            // TODO there is probably a better way, but this stops catchup issues when the tab isn't in focus.
+            // This stops catchup issues when the tab is suspended, essentially pauses the game (will not do audio!)
             if (this.deltaTime > 100) {
                 Log.warn("DeltaTime registered at " + this.deltaTime + "ms. Capping at " + 100);
                 this.deltaTime = 100;
@@ -155,7 +155,7 @@ export abstract class Game {
         return scene;
     }
 
-    getResource(name: string): ImageAsset {
+    getResource(name: string): TextureAsset {
         return this.resourceLoader.get(name);
     }
 }

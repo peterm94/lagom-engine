@@ -11,7 +11,7 @@ export * from "./Common/Camera";
 export * from "./Common/CameraUtil";
 export * from "./Common/Debug";
 export * from "./Common/FrameTrigger";
-export * from "./Common/ImageAsset";
+export * from "./Common/TextureAsset";
 export * from "./Common/Observer";
 export * from "./Common/PIXIComponents";
 export * from "./Common/ResourceLoader";

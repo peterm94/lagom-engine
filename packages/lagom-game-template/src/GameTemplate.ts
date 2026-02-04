@@ -1,4 +1,4 @@
-import { ActionOnPress, AudioAtlas, Entity, FrameTriggerSystem, Game, ImageAsset, Log, LogLevel, Scene, SpriteSheet, TextDisp, TimerSystem } from "lagom-engine";
+import { ActionOnPress, AudioAtlas, Entity, FrameTriggerSystem, Game, Log, LogLevel, Scene, TextDisp, TimerSystem } from "lagom-engine";
 import WebFont from "webfontloader";
 import muteButtonSpr from "./art/mute_button.png";
 import { SoundManager } from "./util/SoundManager";

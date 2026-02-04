@@ -1,32 +1,33 @@
 import { Assets, Texture } from "pixi.js";
-import { AssetOptions, ImageAsset } from "./ImageAsset";
+import { AssetOptions, TextureAsset } from "./TextureAsset";
 
 export class ResourceLoader {
-    private resources: Map<string, ImageAsset> = new Map<string, ImageAsset>();
+    private resources: Map<string, TextureAsset> = new Map<string, TextureAsset>();
 
-    async addResource(name: string, path: string, options?: AssetOptions): Promise<ImageAsset> {
+    /**
+     * Add a resource to be loaded. Should be done in the resourceLoad method in a Game.
+     * @param name Resource key. Used for retrieval.
+     * @param path Path to resource. If using vite, import and pass through like this:
+     * import muteButtonSpr from "./art/mute_button.png";
+     * @param options Asset options for tiling or sprite sheets.
+     */
+    async addResource(name: string, path: string, options?: AssetOptions): Promise<TextureAsset> {
         const texture: Texture = await Assets.load({ alias: name, src: path });
-        const asset = new ImageAsset(name, texture.source, options);
+        const asset = new TextureAsset(name, texture.source, options);
         this.resources.set(asset.alias, asset);
         console.log("loaded asset ", name);
         return Promise.resolve(asset);
     }
 
-    get(name: string): ImageAsset {
+    /**
+     * Load a resource.
+     * @param name Resource key.
+     */
+    get(name: string): TextureAsset {
         const resource = this.resources.get(name);
         if (resource !== undefined) {
             return resource;
         }
         throw new Error(`Resource ${name} not defined.`);
-    }
-
-    // TODO delete?
-    loadAll(): Promise<unknown> {
-        return Promise.all([]);
-        // const promises: Promise<unknown>[] = [];
-        //
-        // this.resources.forEach(value => promises.push(value.loader));
-        //
-        // return Promise.all(promises);
     }
 }
