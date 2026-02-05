@@ -43,6 +43,24 @@ export abstract class PIXIGraphicsComponent extends PIXIComponent<Graphics> {
     }
 }
 
+export interface OffsetShape {
+    xOff?: number;
+    yOff?: number;
+}
+
+export interface CircleOptions extends OffsetShape {
+    radius: number;
+}
+
+export interface RectOptions extends OffsetShape {
+    width: number;
+    height: number;
+}
+
+export interface PolyOptions extends OffsetShape {
+    points: Point[];
+}
+
 /**
  * Draws a circle.
  */
@@ -50,9 +68,7 @@ export class RenderCircle extends PIXIGraphicsComponent {
     /**
      * Create a new circle.
      *
-     * @param xOff Positional X offset.
-     * @param yOff Positional Y offset.
-     * @param radius Radius of the circle.
+     * @param options Circle draw options.
      * @param fillColour The inner fill colour. Null for transparent.
      * @param lineColour The colour of the line.
      */
@@ -60,6 +76,11 @@ export class RenderCircle extends PIXIGraphicsComponent {
         super(fillColour, lineColour);
         this.pixiObj.circle(xOff, yOff, radius).stroke();
     }
+
+    //     constructor(options: CircleOptions, fillColour: number | null = PIXIGraphicsComponent.defaultFill, lineColour: number = PIXIGraphicsComponent.defaultLine) {
+    //         super(fillColour, lineColour);
+    //         this.pixiObj.circle(options.xOff ?? 0, options.yOff ?? 0, options.radius).stroke();
+    //     }
 }
 
 /**
@@ -69,10 +90,7 @@ export class RenderRect extends PIXIGraphicsComponent {
     /**
      * Create a new rectangle.
      *
-     * @param xOff Positional X offset.
-     * @param yOff Positional Y offset.
-     * @param width Width of the rectangle.
-     * @param height Height of the rectangle.
+     * @param options Rectangle definition.
      * @param fillColour The inner fill colour. Null for transparent.
      * @param lineColour The colour of the line.
      */
@@ -87,6 +105,11 @@ export class RenderRect extends PIXIGraphicsComponent {
         super(fillColour, lineColour);
         this.pixiObj.rect(xOff, yOff, width, height).stroke();
     }
+
+    //     constructor(options: RectOptions, fillColour: number | null = PIXIGraphicsComponent.defaultFill, lineColour: number = PIXIGraphicsComponent.defaultLine) {
+    //         super(fillColour, lineColour);
+    //         this.pixiObj.rect(options.xOff ?? 0, options.yOff ?? 0, options.width, options.height).stroke();
+    //     }
 }
 
 /**
