@@ -72,15 +72,10 @@ export class RenderCircle extends PIXIGraphicsComponent {
      * @param fillColour The inner fill colour. Null for transparent.
      * @param lineColour The colour of the line.
      */
-    constructor(xOff: number, yOff: number, radius: number, fillColour: number | null = PIXIGraphicsComponent.defaultFill, lineColour: number = PIXIGraphicsComponent.defaultLine) {
+    constructor(options: CircleOptions, fillColour: number | null = PIXIGraphicsComponent.defaultFill, lineColour: number = PIXIGraphicsComponent.defaultLine) {
         super(fillColour, lineColour);
-        this.pixiObj.circle(xOff, yOff, radius).stroke();
+        this.pixiObj.circle(options.xOff ?? 0, options.yOff ?? 0, options.radius).stroke();
     }
-
-    //     constructor(options: CircleOptions, fillColour: number | null = PIXIGraphicsComponent.defaultFill, lineColour: number = PIXIGraphicsComponent.defaultLine) {
-    //         super(fillColour, lineColour);
-    //         this.pixiObj.circle(options.xOff ?? 0, options.yOff ?? 0, options.radius).stroke();
-    //     }
 }
 
 /**
@@ -94,22 +89,10 @@ export class RenderRect extends PIXIGraphicsComponent {
      * @param fillColour The inner fill colour. Null for transparent.
      * @param lineColour The colour of the line.
      */
-    constructor(
-        xOff: number,
-        yOff: number,
-        width: number,
-        height: number,
-        fillColour: number | null = PIXIGraphicsComponent.defaultFill,
-        lineColour: number = PIXIGraphicsComponent.defaultLine,
-    ) {
+    constructor(options: RectOptions, fillColour: number | null = PIXIGraphicsComponent.defaultFill, lineColour: number = PIXIGraphicsComponent.defaultLine) {
         super(fillColour, lineColour);
-        this.pixiObj.rect(xOff, yOff, width, height).stroke();
+        this.pixiObj.rect(options.xOff ?? 0, options.yOff ?? 0, options.width, options.height).stroke();
     }
-
-    //     constructor(options: RectOptions, fillColour: number | null = PIXIGraphicsComponent.defaultFill, lineColour: number = PIXIGraphicsComponent.defaultLine) {
-    //         super(fillColour, lineColour);
-    //         this.pixiObj.rect(options.xOff ?? 0, options.yOff ?? 0, options.width, options.height).stroke();
-    //     }
 }
 
 /**

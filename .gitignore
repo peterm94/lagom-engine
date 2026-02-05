@@ -10,6 +10,7 @@
 
 # production
 /build
+dist
 
 # misc
 .DS_Store
@@ -69,8 +70,6 @@ build/Release
 node_modules/
 jspm_packages/
 
-dist/
-
 # TypeScript v1 declaration files
 typings/
 
@@ -113,19 +112,6 @@ typings/
 
 # DynamoDB Local files
 .dynamodb/
-
-### Web ###
-*.asp
-*.cer
-*.csr
-*.css
-*.htm
-*.html
-*.js
-*.jsp
-*.php
-*.rss
-*.xhtml
 
 ### WebStorm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm

@@ -74,16 +74,16 @@ class MainScene extends Scene {
                 grounded.onGround = false;
             }
         });
-        groundChild.addComponent(new RenderCircle(0, 0, 2, 0x00ffff, undefined));
+        groundChild.addComponent(new RenderCircle({ radius: 2 }, 0x00ffff, undefined));
 
-        e2.addComponent(new RenderCircle(0, 0, 10));
+        e2.addComponent(new RenderCircle({ radius: 10 }));
 
         e2.addComponent(new MoveMe());
         e2.addComponent(new Gravity());
 
         const floor = this.addEntity(new Entity("floor", 0, 150));
         floor.addComponent(new RectSatCollider({ layer: Layers.Wall, height: 10, width: 200 }));
-        floor.addComponent(new RenderRect(0, 0, 200, 10));
+        floor.addComponent(new RenderRect({ width: 200, height: 10 }));
 
         this.addFnSystem(
             newSystem([MoveMe], (d, e, moveme) => {
