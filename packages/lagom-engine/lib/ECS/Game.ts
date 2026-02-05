@@ -134,7 +134,7 @@ export abstract class Game {
         this.currentScene.update(delta);
 
         this.keyboard.update();
-        this.mouse.pixi_mouse.update();
+        this.mouse.update();
     }
 
     private fixedUpdateInternal(delta: number): void {

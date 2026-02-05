@@ -1,6 +1,6 @@
 import { ButtonState } from "./Button";
 
-export class Pointer {
+export class Mouse {
     // See Button class for mappings.
     private readonly buttons: Map<number, ButtonState> = new Map();
 
