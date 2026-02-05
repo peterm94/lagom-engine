@@ -16,8 +16,6 @@ export class Mouse {
         // Using pointer events means we can capture touch as well as mouse
         // I haven't really tested it but should work
         canvas.addEventListener("pointerdown", (e: PointerEvent) => {
-            e.preventDefault();
-
             this.activePointerId = e.pointerId;
             this.isActive = true;
 
@@ -41,8 +39,6 @@ export class Mouse {
 
         // Pointer up
         canvas.addEventListener("pointerup", (e: PointerEvent) => {
-            e.preventDefault();
-
             // If the latest touch event is released, set inactive.
             if (this.activePointerId === e.pointerId) {
                 this.isActive = false;
