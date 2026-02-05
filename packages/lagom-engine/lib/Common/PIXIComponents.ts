@@ -13,7 +13,7 @@ export class TextDisp extends PIXIComponent<Text> {
      * @param options Styling options for the text.
      */
     constructor(xOff: number, yOff: number, text: string, options?: Partial<TextStyle>) {
-        super(new Text(text, new TextStyle(options)));
+        super(new Text({ text, style: options }));
 
         this.pixiObj.x = xOff;
         this.pixiObj.y = yOff;
