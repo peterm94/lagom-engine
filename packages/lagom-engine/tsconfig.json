@@ -9,8 +9,6 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "strict": true,
-        // TODO remove this when the mouse goes away
-        "allowJs": true
 
         //    /* Linting */
         //    "noUnusedLocals": true,

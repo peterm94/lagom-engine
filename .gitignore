@@ -241,4 +241,3 @@ $RECYCLE.BIN/
 
 # Keep specific js files.
 !config-overrides.js
-!PixiMouse.js

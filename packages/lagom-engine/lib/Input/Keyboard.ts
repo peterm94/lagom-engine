@@ -1,9 +1,4 @@
-export enum ButtonState {
-    UP,
-    DOWN,
-    PRESSED,
-    RELEASED,
-}
+import { ButtonState } from "./Button";
 
 /**
  * Class storing all player keyboard inputs.

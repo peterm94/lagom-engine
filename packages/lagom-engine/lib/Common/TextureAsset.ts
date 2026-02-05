@@ -7,7 +7,6 @@ export interface AssetOptions {
 }
 
 export class LTexture extends Texture {
-
     /**
      * Create a sprite from this texture slice.
      * @param config Sprite config.

@@ -37,6 +37,7 @@ export * from "./ECS/FnSystemWrapper";
 
 export * from "./Input/Button";
 export * from "./Input/Key";
+export * from "./Input/Keyboard";
 export * from "./Input/Mouse";
 
 export * from "./Physics/SimplePhysics";

@@ -8,3 +8,10 @@ export enum Button {
     FOURTH,
     FIFTH,
 }
+
+export enum ButtonState {
+    UP,
+    DOWN,
+    PRESSED,
+    RELEASED,
+}
