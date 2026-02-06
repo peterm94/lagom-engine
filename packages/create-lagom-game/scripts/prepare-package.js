@@ -19,7 +19,7 @@ const enginePkg = JSON.parse(fs.readFileSync(enginePkgPath, "utf8"));
 const excluded = path.resolve(templateSrc, "node_modules");
 
 // Copy the template repo
-fs.remove(templateDir)
+fs.removeSync(templateDir)
 fs.copySync(templateSrc, templateDir, { filter: (src) => !src.startsWith(excluded) });
 
 // Write the version to a file
