@@ -173,7 +173,7 @@ export class Scene extends LifecycleObject implements Updatable {
      * @param classes An array of component types to support.
      * @param func The system update() method. Requires each component type as an added parameter to the function.
      */
-    addFnSystem<T extends any[]>(classes: { [K in keyof T]: CType<T[K]> }, func: (delta: number, entity: Entity, ...components: T) => void, fixed: boolean): void;
+    addFnSystem<T extends any[]>(classes: { [K in keyof T]: CType<T[K]> }, func: (delta: number, entity: Entity, ...components: T) => void, fixed?: boolean): void;
 
     addFnSystem<T extends any[]>(sysFn: SysFn<T> | { [K in keyof T]: CType<T[K]> }, func?: (delta: number, entity: Entity, ...components: T) => void, fixed?: boolean): void {
         if (func) {

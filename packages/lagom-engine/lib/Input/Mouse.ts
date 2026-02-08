@@ -1,4 +1,7 @@
 import { ButtonState } from "./Button";
+import { Vector } from "../Common/Vector";
+import { Camera } from "../Common/Camera";
+import { Point } from "pixi.js";
 
 export class Mouse {
     // See Button class for mappings.
@@ -7,6 +10,14 @@ export class Mouse {
     // Position in canvas coordinates. To put it in world space, convert using a Camera object.
     public x = 0;
     public y = 0;
+
+    public canvasPos(): Vector {
+        return new Vector(this.x, this.y);
+    }
+
+    public worldPos(camera: Camera): Point {
+        return camera.viewToWorld(this.x, this.y);
+    }
 
     // Useful for touch controls, we want to just know if a finger is down.
     public isActive = false;

@@ -169,7 +169,7 @@ export class MathUtil {
  */
 export class Util {
     /**
-     * Convenience list removal function.
+     * Convenience list removal function. Note: This will change the order of elements in the list.
      * @param list The list to remove an element from.
      * @param element The element to remove.
      * @returns True on successful deletion, false if the element did not exist.
@@ -178,7 +178,10 @@ export class Util {
         const idx = list.indexOf(element);
 
         if (idx > -1) {
-            list.splice(idx, 1);
+            // list.splice(idx, 1);
+            // TODO this will change the order of elements.
+            list[idx] = list[list.length - 1];
+            list.pop();
             return true;
         }
 

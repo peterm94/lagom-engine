@@ -1,12 +1,13 @@
 import "./main.css";
 import { InputTesting } from "./InputTesting";
+import { CollisionTesting } from "./CollisionTesting";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div id="main" style="align-items: center; justify-content: center; height: 100%; display: flex">
   </div>
 `;
 const main = document.querySelector<HTMLDivElement>("#main")!;
-const game = new InputTesting();
+const game = new CollisionTesting();
 
 game.start().then(() => {
     main.appendChild(game.application.canvas);

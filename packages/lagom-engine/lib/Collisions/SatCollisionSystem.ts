@@ -4,7 +4,7 @@ import { CollisionMatrix } from "./CollisionMatrix";
 import { Entity } from "../ECS/Entity";
 import { Log, Util } from "../Common/Util";
 import * as SAT from "sat";
-import { Observable } from "../Common/Observer";
+import { Observable, Observer } from "../Common/Observer";
 import { CircleColliderOptions, PolyColliderInterface, RectColliderOptions } from "./Colliders";
 
 export abstract class SatCollider extends Component {
@@ -27,6 +27,45 @@ export abstract class SatCollider extends Component {
     readonly onTrigger: Observable<SatCollider, { other: SatCollider; result: SatResponse }> = new Observable();
     readonly onTriggerEnter: Observable<SatCollider, { other: SatCollider; result: SatResponse }> = new Observable();
     readonly onTriggerExit: Observable<SatCollider, { other: SatCollider; result: SatResponse }> = new Observable();
+
+    /**
+     * Convenience function to register an onTrigger observer with a specific layer.
+     * @param layer Layer to trigger a collision with.
+     * @param observer The observer function.
+     */
+    public onTriggerWithLayer(layer: number, observer: Observer<SatCollider, { other: SatCollider; result: SatResponse }>) {
+        this.onTrigger.register((caller, data) => {
+            if (data.other.layer === layer) {
+                observer(caller, data);
+            }
+        });
+    }
+
+    /**
+     * Convenience function to register an onTriggerEnter observer with a specific layer.
+     * @param layer Layer to trigger a collision with.
+     * @param observer The observer function.
+     */
+    public onTriggerEnterWthLayer(layer: number, observer: Observer<SatCollider, { other: SatCollider; result: SatResponse }>) {
+        this.onTriggerEnter.register((caller, data) => {
+            if (data.other.layer === layer) {
+                observer(caller, data);
+            }
+        });
+    }
+
+    /**
+     * Convenience function to register an onTriggerExit observer with a specific layer.
+     * @param layer Layer to trigger a collision with.
+     * @param observer The observer function.
+     */
+    public onTriggerExitWithLayer(layer: number, observer: Observer<SatCollider, { other: SatCollider; result: SatResponse }>) {
+        this.onTriggerExit.register((caller, data) => {
+            if (data.other.layer === layer) {
+                observer(caller, data);
+            }
+        });
+    }
 }
 
 export class PolySatCollider extends SatCollider {

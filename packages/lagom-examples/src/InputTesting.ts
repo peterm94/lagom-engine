@@ -31,18 +31,16 @@ class MainScene extends Scene {
         e.addComponent(new RenderCircle({ radius: 50 }));
         e.addComponent(new KeyTest());
 
-        this.addFnSystem(
-            newSystem([RenderCircle, KeyTest], (delta, e, circle) => {
-                if (this.game.keyboard.isKeyPressed(Key.KeyA, Key.Space)) {
-                    console.log("Key pressed");
-                    circle.setStyle({ fillColour: 0xff0000, lineColour: 0xff0000 });
-                }
-                if (this.game.keyboard.isKeyReleased(Key.KeyA, Key.Space)) {
-                    console.log("Key released");
-                    circle.setStyle({ fillColour: 0x00ffff, lineColour: 0x00ffff });
-                }
-            }),
-        );
+        this.addFnSystem([RenderCircle, KeyTest], (delta, e, circle, kt) => {
+            if (this.game.keyboard.isKeyPressed(Key.KeyA, Key.Space)) {
+                console.log("Key pressed");
+                circle.setStyle({ fillColour: 0xff0000, lineColour: 0xff0000 });
+            }
+            if (this.game.keyboard.isKeyReleased(Key.KeyA, Key.Space)) {
+                console.log("Key released");
+                circle.setStyle({ fillColour: 0x00ffff, lineColour: 0x00ffff });
+            }
+        });
 
         class MouseOnTop extends Component {
             constructor(public state = false) {
@@ -65,39 +63,37 @@ class MainScene extends Scene {
             mouseOnTop.state = false;
         });
 
-        this.addFnSystem(
-            newSystem([TextDisp, RenderRect, MouseOnTop], (delta, entity, text, rect: RenderRect, mouse: MouseOnTop) => {
-                const speed = 0.1;
-                // move camera with arrows
-                if (this.game.keyboard.isKeyDown(Key.ArrowLeft)) {
-                    this.camera.translate(delta * speed, 0);
-                }
-                if (this.game.keyboard.isKeyDown(Key.ArrowRight)) {
-                    this.camera.translate(delta * -speed, 0);
-                }
-                if (this.game.keyboard.isKeyDown(Key.ArrowUp)) {
-                    this.camera.translate(0, delta * speed);
-                }
-                if (this.game.keyboard.isKeyDown(Key.ArrowDown)) {
-                    this.camera.translate(0, delta * -speed);
-                }
+        this.addFnSystem([TextDisp, RenderRect, MouseOnTop], (delta, entity, text, rect, mouse) => {
+            const speed = 0.1;
+            // move camera with arrows
+            if (this.game.keyboard.isKeyDown(Key.ArrowLeft)) {
+                this.camera.translate(delta * speed, 0);
+            }
+            if (this.game.keyboard.isKeyDown(Key.ArrowRight)) {
+                this.camera.translate(delta * -speed, 0);
+            }
+            if (this.game.keyboard.isKeyDown(Key.ArrowUp)) {
+                this.camera.translate(0, delta * speed);
+            }
+            if (this.game.keyboard.isKeyDown(Key.ArrowDown)) {
+                this.camera.translate(0, delta * -speed);
+            }
 
-                if (this.game.mouse.isButtonDown(Button.LEFT) && mouse.state) {
-                    rect.setStyle({ fillColour: 0x0030ff });
-                }
-                if (this.game.mouse.isButtonReleased(Button.LEFT)) {
-                    rect.setStyle({ fillColour: null });
-                }
+            if (this.game.mouse.isButtonDown(Button.LEFT) && mouse.state) {
+                rect.setStyle({ fillColour: 0x0030ff });
+            }
+            if (this.game.mouse.isButtonReleased(Button.LEFT)) {
+                rect.setStyle({ fillColour: null });
+            }
 
-                const mx = this.game.mouse.x;
-                const my = this.game.mouse.y;
-                const world = this.camera.viewToWorld(mx, my);
-                (text as TextDisp).pixiObj.text =
-                    `view_x: ${mx.toFixed(0)}\nview_y: ${my.toFixed(0)}\n` +
-                    `world_x: ${world.x.toFixed(0)}\nworld_y: ${world.y.toFixed(0)}\n` +
-                    `cam_x: ${this.camera.position().x.toFixed(0)}\ncam_y: ${this.camera.position().y.toFixed(0)}`;
-            }),
-        );
+            const mx = this.game.mouse.x;
+            const my = this.game.mouse.y;
+            const world = this.camera.viewToWorld(mx, my);
+            (text as TextDisp).pixiObj.text =
+                `view_x: ${mx.toFixed(0)}\nview_y: ${my.toFixed(0)}\n` +
+                `world_x: ${world.x.toFixed(0)}\nworld_y: ${world.y.toFixed(0)}\n` +
+                `cam_x: ${this.camera.position().x.toFixed(0)}\ncam_y: ${this.camera.position().y.toFixed(0)}`;
+        });
 
         class PointerTest extends Component {}
 
@@ -106,12 +102,11 @@ class MainScene extends Scene {
         pointer.addComponent(new PointerTest());
         pointer.addComponent(new RenderCircle({ radius: 1 }));
 
-        this.addFnSystem(
-            newSystem([CircleSatCollider, PointerTest], (delta, e) => {
-                e.transform.x = this.game.mouse.x;
-                e.transform.y = this.game.mouse.y;
-            }),
-        );
+        this.addFnSystem([CircleSatCollider, PointerTest], (delta, e, _1, _2) => {
+            const pos = this.game.mouse.worldPos(this.camera);
+            e.transform.x = pos.x;
+            e.transform.y = pos.y;
+        });
     }
 }
 
