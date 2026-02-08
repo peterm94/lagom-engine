@@ -20,6 +20,10 @@ export class TextDisp extends PIXIComponent<Text> {
     }
 }
 
+export interface ShapeStyle {
+    fillColour?: number | null;
+    lineColour?: number;
+}
 /**
  * Base component for drawing PIXI primitives.
  */
@@ -32,14 +36,26 @@ export abstract class PIXIGraphicsComponent extends PIXIComponent<Graphics> {
      * @param fillColour The inner fill colour. Null for transparent.
      * @param lineColour The colour of the line.
      */
-    protected constructor(fillColour: number | null, lineColour: number) {
+    protected constructor(
+        protected fillColour: number | null,
+        protected lineColour: number,
+    ) {
         super(new Graphics());
+    }
 
-        this.pixiObj.setStrokeStyle({ width: 1, color: lineColour, alpha: 1 });
+    protected abstract draw(): void;
 
-        if (fillColour !== null) {
-            this.pixiObj.fill(fillColour);
+    public setStyle(shapeStyle: ShapeStyle): void {
+        this.pixiObj.clear();
+        this.fillColour = shapeStyle.fillColour !== undefined ? shapeStyle.fillColour : this.fillColour;
+        this.lineColour = shapeStyle.lineColour !== undefined ? shapeStyle.lineColour : this.lineColour;
+
+        this.pixiObj.setStrokeStyle({ width: 1, color: this.lineColour, alpha: 1 });
+
+        if (this.fillColour !== null) {
+            this.pixiObj.setFillStyle({ color: this.fillColour, alpha: 1 });
         }
+        this.draw();
     }
 }
 
@@ -65,6 +81,13 @@ export interface PolyOptions extends OffsetShape {
  * Draws a circle.
  */
 export class RenderCircle extends PIXIGraphicsComponent {
+    protected draw(): void {
+        const shape = this.pixiObj.circle(this.options.xOff ?? 0, this.options.yOff ?? 0, this.options.radius);
+        if (this.fillColour !== null) {
+            shape.fill();
+        }
+        shape.stroke();
+    }
     /**
      * Create a new circle.
      *
@@ -72,9 +95,13 @@ export class RenderCircle extends PIXIGraphicsComponent {
      * @param fillColour The inner fill colour. Null for transparent.
      * @param lineColour The colour of the line.
      */
-    constructor(options: CircleOptions, fillColour: number | null = PIXIGraphicsComponent.defaultFill, lineColour: number = PIXIGraphicsComponent.defaultLine) {
+    constructor(
+        readonly options: CircleOptions,
+        fillColour: number | null = PIXIGraphicsComponent.defaultFill,
+        lineColour: number = PIXIGraphicsComponent.defaultLine,
+    ) {
         super(fillColour, lineColour);
-        this.pixiObj.circle(options.xOff ?? 0, options.yOff ?? 0, options.radius).stroke();
+        this.draw();
     }
 }
 
@@ -82,6 +109,13 @@ export class RenderCircle extends PIXIGraphicsComponent {
  * Draws a rectangle.
  */
 export class RenderRect extends PIXIGraphicsComponent {
+    protected draw(): void {
+        let shape = this.pixiObj.rect(this.options.xOff ?? 0, this.options.yOff ?? 0, this.options.width, this.options.height);
+        if (this.fillColour !== null) {
+            shape.fill();
+        }
+        shape.stroke();
+    }
     /**
      * Create a new rectangle.
      *
@@ -89,9 +123,13 @@ export class RenderRect extends PIXIGraphicsComponent {
      * @param fillColour The inner fill colour. Null for transparent.
      * @param lineColour The colour of the line.
      */
-    constructor(options: RectOptions, fillColour: number | null = PIXIGraphicsComponent.defaultFill, lineColour: number = PIXIGraphicsComponent.defaultLine) {
+    constructor(
+        readonly options: RectOptions,
+        fillColour: number | null = PIXIGraphicsComponent.defaultFill,
+        lineColour: number = PIXIGraphicsComponent.defaultLine,
+    ) {
         super(fillColour, lineColour);
-        this.pixiObj.rect(options.xOff ?? 0, options.yOff ?? 0, options.width, options.height).stroke();
+        this.draw();
     }
 }
 
@@ -99,6 +137,13 @@ export class RenderRect extends PIXIGraphicsComponent {
  * Draws a polygon.
  */
 export class RenderPoly extends PIXIGraphicsComponent {
+    protected draw(): void {
+        let shape = this.pixiObj.poly(this.points);
+        if (this.fillColour !== null) {
+            shape.fill();
+        }
+        shape.stroke();
+    }
     /**
      * Create a new Polygon.
      *
@@ -106,8 +151,12 @@ export class RenderPoly extends PIXIGraphicsComponent {
      * @param fillColour The inner fill colour. Null for transparent.
      * @param lineColour The colour of the line.
      */
-    constructor(points: Point[], fillColour: number | null = PIXIGraphicsComponent.defaultFill, lineColour: number = PIXIGraphicsComponent.defaultLine) {
+    constructor(
+        readonly points: Point[],
+        fillColour: number | null = PIXIGraphicsComponent.defaultFill,
+        lineColour: number = PIXIGraphicsComponent.defaultLine,
+    ) {
         super(fillColour, lineColour);
-        this.pixiObj.poly(points).stroke();
+        this.draw();
     }
 }

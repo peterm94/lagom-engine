@@ -10,13 +10,11 @@ export class Mouse {
 
     // Useful for touch controls, we want to just know if a finger is down.
     public isActive = false;
-    private activePointerId: number | null = null;
 
     constructor(canvas: HTMLCanvasElement) {
         // Using pointer events means we can capture touch as well as mouse
         // I haven't really tested it but should work
         canvas.addEventListener("pointerdown", (e: PointerEvent) => {
-            this.activePointerId = e.pointerId;
             this.isActive = true;
 
             const curr = this.buttons.get(e.button) || ButtonState.UP;
@@ -32,18 +30,13 @@ export class Mouse {
 
         // Pointer move
         canvas.addEventListener("pointermove", (e: PointerEvent) => {
-            if (this.activePointerId === e.pointerId) {
-                this.updatePosition(e, canvas);
-            }
+            this.updatePosition(e, canvas);
         });
 
         // Pointer up
         canvas.addEventListener("pointerup", (e: PointerEvent) => {
             // If the latest touch event is released, set inactive.
-            if (this.activePointerId === e.pointerId) {
-                this.isActive = false;
-                this.activePointerId = null;
-            }
+            this.isActive = false;
 
             const curr = this.buttons.get(e.button) || ButtonState.UP;
             if (curr === ButtonState.DOWN || curr === ButtonState.PRESSED) {
@@ -57,7 +50,6 @@ export class Mouse {
 
         canvas.addEventListener("pointercancel", () => {
             this.isActive = false;
-            this.activePointerId = null;
             this.buttons.clear();
         });
 
