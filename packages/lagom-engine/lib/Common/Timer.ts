@@ -11,10 +11,19 @@ export class Timer<T> extends Component {
      */
     onTrigger: Observable<Timer<T>, T> = new Observable();
 
-    timerLengthMs: number;
-    remainingMs: number;
+    timerLengthMs: number = 0;
+    remainingMs: number = 0;
     payload: T;
     repeat: boolean;
+
+    /**
+     * Reset this timer. The original payload will be used.
+     * @param lengthMs New timer value.
+     */
+    public reset(lengthMs: number) {
+        this.timerLengthMs = lengthMs;
+        this.remainingMs = lengthMs;
+    }
 
     /**
      * Create a new timer.
@@ -24,8 +33,7 @@ export class Timer<T> extends Component {
      */
     constructor(lengthMs: number, payload: T, repeat = false) {
         super();
-        this.timerLengthMs = lengthMs;
-        this.remainingMs = lengthMs;
+        this.reset(lengthMs);
         this.payload = payload;
         this.repeat = repeat;
     }
@@ -49,7 +57,8 @@ export class TimerSystem extends GlobalSystem<[Timer<unknown>[]]> {
 
                 if (timer.remainingMs <= 0) {
                     timer.onTrigger.trigger(timer, timer.payload);
-                    if (!timer.repeat) {
+                    // Check again for remaining time, reset() may have been called in the timer.
+                    if (!timer.repeat && timer.timerLengthMs <= 0) {
                         timer.destroy();
                     } else {
                         timer.remainingMs = timer.timerLengthMs;
