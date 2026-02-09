@@ -22,7 +22,7 @@ export interface SpriteAnimation {
      */
     config?: AnimatedSpriteConfig;
 
-    events?: { [key: number]: () => void };
+    events?: { [key: number]: (controller: AnimatedSpriteController) => void };
 }
 
 /**
@@ -38,9 +38,9 @@ export class AnimatedSpriteController extends AnimatedSprite {
     }
 
     private readonly animationStates: Map<number, SpriteAnimation> = new Map();
-    private readonly events: Map<number, Map<number, () => void>> = new Map();
+    private readonly events: Map<number, Map<number, (controller: AnimatedSpriteController) => void>> = new Map();
 
-    private currentEventMap: Map<number, () => void> | null = null;
+    private currentEventMap: Map<number, (controller: AnimatedSpriteController) => void> | null = null;
     private _currentState: number;
 
     /**
@@ -74,14 +74,14 @@ export class AnimatedSpriteController extends AnimatedSprite {
         const eventMap = this.animationStates.get(this._currentState)?.events;
 
         if (eventMap !== undefined) {
-            eventMap[animationFrame]?.call(this);
+            eventMap[animationFrame]?.call(this, this);
         }
 
         // TODO can I remove this? I don't think it is being used or works atm
         if (this.currentEventMap !== null) {
             const event = this.currentEventMap.get(animationFrame);
             if (event !== undefined) {
-                event();
+                event(this);
             }
         }
     }

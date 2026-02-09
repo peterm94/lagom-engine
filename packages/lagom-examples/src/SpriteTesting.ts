@@ -1,4 +1,19 @@
-import { AnimatedSprite, AnimationEnd, Component, Entity, FrameTriggerSystem, Game, Log, LogLevel, MathUtil, Scene, Sprite } from "lagom-engine";
+import {
+    AnimatedSprite,
+    AnimatedSpriteController,
+    AnimationEnd,
+    Component,
+    Entity,
+    FrameTriggerSystem,
+    Game,
+    Log,
+    LogLevel,
+    MathUtil,
+    Scene,
+    Sprite,
+    Timer,
+    TimerSystem,
+} from "lagom-engine";
 
 class MoveMe extends Component {
     dir = MathUtil.randomRange(0, 360);
@@ -8,21 +23,22 @@ class MainScene extends Scene {
     onAdded() {
         super.onAdded();
 
+        const sheet = this.game.getResource("sheet");
+
         this.addGlobalSystem(new FrameTriggerSystem());
-        this.addEntity(new Entity("single")).addComponent(new Sprite(this.game.getResource("sheet").tileIdx(0)));
+        this.addGlobalSystem(new TimerSystem());
+        this.addEntity(new Entity("single")).addComponent(new Sprite(sheet.tileIdx(0)));
 
         for (let i = 0; i < 12; i++) {
-            this.addEntity(new Entity(i.toString(), i * 40, 40)).addComponent(new Sprite(this.game.getResource("sheet").tileIdx(i)));
+            this.addEntity(new Entity(i.toString(), i * 40, 40)).addComponent(new Sprite(sheet.tileIdx(i)));
         }
 
-        this.addEntity(new Entity("offset", 0, 80)).addComponent(new Sprite(this.game.getResource("sheet").fromPoints(16, 16, 32, 32)));
+        this.addEntity(new Entity("offset", 0, 80)).addComponent(new Sprite(sheet.fromPoints(16, 16, 32, 32)));
 
-        this.addEntity(new Entity("animated", 0, 120)).addComponent(new AnimatedSprite(this.game.getResource("sheet").allTiles(), { animationSpeed: 600 }));
-        this.addEntity(new Entity("animated", 40, 120)).addComponent(
-            new AnimatedSprite(this.game.getResource("sheet").allTiles(), { animationSpeed: 600, animationEndAction: AnimationEnd.REVERSE }),
-        );
+        this.addEntity(new Entity("animated", 0, 120)).addComponent(new AnimatedSprite(sheet.allTiles(), { animationSpeed: 600 }));
+        this.addEntity(new Entity("animated", 40, 120)).addComponent(new AnimatedSprite(sheet.allTiles(), { animationSpeed: 600, animationEndAction: AnimationEnd.REVERSE }));
         this.addEntity(new Entity("animated", 80, 120)).addComponent(
-            new AnimatedSprite(this.game.getResource("sheet").allTiles(), {
+            new AnimatedSprite(sheet.allTiles(), {
                 animationSpeed: 200,
                 xAnchor: 0.5,
                 yAnchor: 0.5,
@@ -34,6 +50,50 @@ class MainScene extends Scene {
                 },
             }),
         );
+
+        const e = this.addEntity(new Entity("controller", 0, 160));
+        const controller = e.addComponent(
+            new AnimatedSpriteController(0, [
+                {
+                    id: 0,
+                    textures: sheet.tileSlice(0, 5),
+                    config: { animationSpeed: 400, xScale: 0.2, yScale: 0.2 },
+                    events: {
+                        0: (controller) => {
+                            controller.applyConfig({ xScale: 0.4, yScale: 0.4 });
+                        },
+                        1: (controller) => {
+                            controller.applyConfig({ xScale: 0.6, yScale: 0.6 });
+                        },
+                        2: (controller) => {
+                            controller.applyConfig({ xScale: 0.8, yScale: 0.8 });
+                        },
+                        3: (controller) => {
+                            controller.applyConfig({ xScale: 1, yScale: 1 });
+                        },
+                        4: (controller) => {
+                            controller.applyConfig({ xScale: 1.2, yScale: 1.2 });
+                        },
+                        5: (controller) => {
+                            controller.applyConfig({ xScale: 0.2, yScale: 0.2 });
+                        },
+                    },
+                },
+                {
+                    id: 1,
+                    textures: sheet.tileSlice(5, 6),
+                    config: { animationSpeed: 400, xScale: 2.5, yScale: 2.5, alpha: 0.5 },
+                },
+            ]),
+        );
+        e.addComponent(new Timer(MathUtil.randomRange(2000, 5000), controller)).onTrigger.register((caller, data) => {
+            if (data.currentState === 0) {
+                data.setAnimation(1);
+            } else {
+                data.setAnimation(0);
+            }
+            caller.reset(MathUtil.randomRange(2000, 5000));
+        });
     }
 }
 
