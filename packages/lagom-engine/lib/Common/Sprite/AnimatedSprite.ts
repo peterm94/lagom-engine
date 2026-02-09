@@ -36,7 +36,7 @@ export interface AnimatedSpriteConfig extends SpriteConfig {
      */
     animationEndAction?: AnimationEnd;
 
-    animationEndEvent?: () => void;
+    animationEndEvent?: (sprite: AnimatedSprite) => void;
 }
 
 /**
@@ -44,7 +44,7 @@ export interface AnimatedSpriteConfig extends SpriteConfig {
  */
 export class AnimatedSprite extends FrameTrigger<number> {
     animationEndAction: AnimationEnd = AnimationEnd.LOOP;
-    animationEndEvent?: () => void;
+    animationEndEvent?: (config: AnimatedSprite) => void;
 
     private frameIndex = -1;
     private frameAdvancer = 1;
@@ -60,7 +60,7 @@ export class AnimatedSprite extends FrameTrigger<number> {
         // Do animated sprite stuff
         if (config.animationSpeed !== undefined) this.triggerInterval = config.animationSpeed;
         if (config.animationEndAction !== undefined) this.animationEndAction = config.animationEndAction;
-        this.animationEndEvent = config.animationEndEvent;
+        if (config.animationEndEvent !== undefined) this.animationEndEvent = config.animationEndEvent;
     }
 
     /**
@@ -117,7 +117,7 @@ export class AnimatedSprite extends FrameTrigger<number> {
 
             // Last frame, call the trigger if it is defined.
             if (lastFrame) {
-                this.animationEndEvent?.call(this);
+                this.animationEndEvent?.call(this, this);
             }
         });
     }

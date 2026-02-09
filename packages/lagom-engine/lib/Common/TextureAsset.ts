@@ -76,7 +76,7 @@ export class TextureAsset {
      * @param index Tile index.
      */
     tileIdx(index: number): LTexture {
-        return this.tileAt(index % this.cols, Math.floor(index / this.rows));
+        return this.tileAt(index % this.cols, Math.floor(index / this.cols));
     }
 
     /**
@@ -92,6 +92,6 @@ export class TextureAsset {
      * Return all tiles in the texture, loaded as rows before column order.
      */
     allTiles(): LTexture[] {
-        return this.tileSlice(0, this.rows * this.cols);
+        return this.tileSlice(0, this.rows * this.cols - 1);
     }
 }
