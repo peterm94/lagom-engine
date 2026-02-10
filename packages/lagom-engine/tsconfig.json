@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "declaration": true,
+        "declarationDir": "dist",
+        "outDir": "dist",
+        "moduleResolution": "Bundler",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "strict": true,
+
+        //    /* Linting */
+        //    "noUnusedLocals": true,
+        //    "noUnusedParameters": true,
+        //    "noFallthroughCasesInSwitch": true,
+    },
+    "include": ["lib"]
+}

@@ -1,0 +1,8 @@
+packages:
+    - packages/lagom-engine
+    - packages/lagom-game-template
+    - packages/lagom-examples
+    - packages/create-lagom-game
+
+onlyBuiltDependencies:
+    - esbuild

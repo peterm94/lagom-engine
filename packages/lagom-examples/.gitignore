@@ -10,7 +10,6 @@
 
 # production
 /build
-dist
 
 # misc
 .DS_Store
@@ -225,5 +224,5 @@ $RECYCLE.BIN/
 
 # End of https://www.gitignore.io/api/web,node,windows,webstorm
 
-# Keep specific js files.
+Keep config-overrides.js
 !config-overrides.js

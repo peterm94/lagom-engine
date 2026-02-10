@@ -1,0 +1,19 @@
+{
+    "name": "lagom-game-template",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "preview": "vite preview",
+        "deploy": "tsc && vite build && butler push dist USERNAME/GAMENAME:html5"
+    },
+    "dependencies": {
+        "lagom-engine": "workspace:^"
+    },
+    "devDependencies": {
+        "typescript": "^5.6.2",
+        "vite": "7.1.11"
+    },
+    "packageManager": "pnpm@10.15.1"
+}

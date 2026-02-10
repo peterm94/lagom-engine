@@ -1,0 +1,20 @@
+{
+    "name": "create-lagom-game",
+    "version": "0.0.1-beta.9",
+    "type": "module",
+    "bin": {
+        "create-lagom-game": "bin/create-lagom-game.js"
+    },
+    "scripts": {
+        "prepack": "node scripts/prepare-package.js"
+    },
+    "files": [
+        "bin",
+        "template"
+    ],
+    "dependencies": {
+        "prompts": "^2.4.2",
+        "fs-extra": "^11.3.3"
+    },
+    "packageManager": "pnpm@10.15.1"
+}

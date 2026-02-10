@@ -1,0 +1,161 @@
+import { Scene } from "./Scene";
+import { Log } from "../Common/Util";
+import { ResourceLoader } from "../Common/ResourceLoader";
+import { Keyboard } from "../Input/Keyboard";
+import { Mouse } from "../Input/Mouse";
+import { Application } from "pixi.js";
+import { TextureAsset } from "../Common/TextureAsset";
+
+class Diag {
+    renderTime = 0;
+    fixedUpdateTime = 0;
+    updateTime = 0;
+    totalFrameTime = 0;
+}
+
+export interface GameOptions {
+    width: number;
+    height: number;
+    resolution: number;
+    backgroundColor: number;
+}
+
+/**
+ * Game class, containing all high level framework references. Sets up the render window and controls updating the ECS.
+ */
+export abstract class Game {
+    // Get keyboard events. Updated every update() frame.
+    keyboard!: Keyboard;
+
+    // Get mouse events. Updated every update() frame.
+    mouse!: Mouse;
+
+    // Set this to true to end the game
+    gameOver = false;
+
+    canvas!: HTMLCanvasElement;
+    readonly application: Application;
+
+    readonly resourceLoader: ResourceLoader = new ResourceLoader();
+
+    // Currently loaded scene.
+    currentScene!: Scene;
+
+    // Track total time
+    // private timeMs = 0;
+
+    // Time since last frame was triggered
+    private lastFrameTime = Date.now();
+
+    // Accumulated time since the last update. Used to keep the framerate fixed independently of the elapsed time.
+    private elapsedSinceUpdate = 0;
+
+    // Fixed timestep rate for logic updates (60hz)
+    private readonly fixedDeltaMS = 1000 / 60;
+
+    // Delta since the last frame update. This is *not* the delta of the ECS update, but the render loop.
+    deltaTime = 0;
+
+    private updateLoop(): void {
+        if (!this.gameOver) {
+            let now = Date.now();
+            const totalUpdateStart = now;
+            this.deltaTime = now - this.lastFrameTime;
+
+            // This stops catchup issues when the tab is suspended, essentially pauses the game (will not do audio!)
+            if (this.deltaTime > 100) {
+                Log.warn("DeltaTime registered at " + this.deltaTime + "ms. Capping at " + 100);
+                this.deltaTime = 100;
+            }
+
+            this.lastFrameTime = now;
+
+            this.elapsedSinceUpdate += this.deltaTime;
+
+            while (this.elapsedSinceUpdate >= this.fixedDeltaMS) {
+                // call FixedUpdate() for the ECS
+                this.fixedUpdateInternal(this.fixedDeltaMS);
+
+                this.elapsedSinceUpdate -= this.fixedDeltaMS;
+                // this.timeMs += this.fixedDeltaMS;
+            }
+            this.diag.fixedUpdateTime = Date.now() - now;
+            // Call update() for the ECS
+            now = Date.now();
+            this.updateInternal(this.deltaTime);
+            this.diag.updateTime = Date.now() - now;
+
+            now = Date.now();
+            this.application.renderer.render(this.currentScene.pixiStage);
+            this.diag.renderTime = Date.now() - now;
+            this.diag.totalFrameTime = Date.now() - totalUpdateStart;
+
+            requestAnimationFrame(this.updateLoop.bind(this));
+        }
+    }
+
+    readonly diag: Diag = new Diag();
+
+    /**
+     * Create a new Game.
+     * @param options Options for the PIXI Renderer.
+     */
+    protected constructor(readonly options?: GameOptions) {
+        this.application = new Application();
+    }
+
+    /**
+     * Start the game loop.
+     */
+    async start(): Promise<void> {
+        await this.application.init(this.options).then(() => {
+            this.canvas = this.application.canvas;
+            this.keyboard = new Keyboard(this.canvas);
+            this.mouse = new Mouse(this.canvas);
+        });
+        await this.resourceLoad();
+
+        this.setScene(this.startScene());
+        this.startInternal();
+    }
+
+    abstract startScene: () => Scene;
+    abstract resourceLoad: () => Promise<any>;
+
+    private startInternal(): void {
+        Log.info("Game started.");
+
+        // Start the update loop
+        this.lastFrameTime = Date.now();
+        this.updateLoop();
+    }
+
+    private updateInternal(delta: number): void {
+        this.currentScene.update(delta);
+
+        this.keyboard.update();
+        this.mouse.update();
+    }
+
+    private fixedUpdateInternal(delta: number): void {
+        this.currentScene.fixedUpdate(delta);
+    }
+
+    /**
+     * Set a scene to load. Will be started instantly.
+     * @param scene The Scene to load.
+     * @returns The scene.
+     */
+    setScene<T extends Scene>(scene: T): T {
+        // TODO clean up old scene?
+        this.currentScene = scene;
+
+        Log.debug("Setting scene for game.", scene);
+        scene.onAdded();
+        return scene;
+    }
+
+    getResource(name: string): TextureAsset {
+        return this.resourceLoader.get(name);
+    }
+}
