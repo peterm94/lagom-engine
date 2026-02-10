@@ -31,7 +31,6 @@ export class Camera {
      * @param y The y position on the view.
      * @returns The world position.
      */
-    // TODO this has not been tested since the change.
     viewToWorld(x: number, y: number): Point {
         const point = new Point(x, y);
         this.scene.sceneNode.transform.toLocal(point);

@@ -27,7 +27,7 @@ class MainScene extends Scene {
 
         this.addGlobalSystem(new FrameTriggerSystem());
         this.addGlobalSystem(new TimerSystem());
-        this.addEntity(new Entity("single")).addComponent(new Sprite(sheet.tileIdx(0)));
+        this.addEntity(new Entity("single")).addComponent(sheet.tileIdx(0).sprite());
 
         for (let i = 0; i < 12; i++) {
             this.addEntity(new Entity(i.toString(), i * 40, 40)).addComponent(new Sprite(sheet.tileIdx(i)));

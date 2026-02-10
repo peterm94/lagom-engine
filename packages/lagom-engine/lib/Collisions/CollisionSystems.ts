@@ -115,6 +115,8 @@ export abstract class CollisionSystem<T extends Component[][]> extends GlobalSys
  * move all colliders to their world position.
  *
  * Avoid fast moving objects, as they will easily clip through things. use the continuous implementation if required.
+ *
+ * @deprecated Use SatCollisionSystem.
  */
 export class DiscreteCollisionSystem extends CollisionSystem<[Collider[]]> {
     types = [Collider];
@@ -146,6 +148,8 @@ export class DiscreteCollisionSystem extends CollisionSystem<[Collider[]]> {
  * This gets tricky, because we can have child bodies and colliders as well. Need to updated each 'body'
  * independently, cascading all effects to child components. Not sure how to deal with update order here, can think
  * about that later.
+ *
+ * @deprecated Use SatCollisionSystem.
  */
 export class ContinuousCollisionSystem extends CollisionSystem<[Rigidbody[]]> {
     /**
@@ -241,6 +245,7 @@ export class ContinuousCollisionSystem extends CollisionSystem<[Rigidbody[]]> {
  * ```
  * <canvas id={"detect-render"} width={"512"} height={"512"} style={{border:"black", borderStyle:"solid"}}/>
  * ```
+ * @deprecated Use SatCollisionSystem.
  */
 export class DebugCollisionSystem extends GlobalSystem<[]> {
     /**
