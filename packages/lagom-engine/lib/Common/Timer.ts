@@ -58,7 +58,7 @@ export class TimerSystem extends GlobalSystem<[Timer<unknown>[]]> {
                 if (timer.remainingMs <= 0) {
                     timer.onTrigger.trigger(timer, timer.payload);
                     // Check again for remaining time, reset() may have been called in the timer.
-                    if (!timer.repeat && timer.timerLengthMs <= 0) {
+                    if (!timer.repeat && timer.remainingMs <= 0) {
                         timer.destroy();
                     } else {
                         timer.remainingMs = timer.timerLengthMs;

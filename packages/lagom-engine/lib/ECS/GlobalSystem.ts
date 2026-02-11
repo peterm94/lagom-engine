@@ -94,15 +94,21 @@ export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObj
         this.componentRemoved(entity, component);
     }
 
+
+    protected entityAdded(entity: Entity): void {}
+    protected entityRemoved(entity: Entity): void {}
+
     private onEntityAdded(_: Scene, entity: Entity): void {
         // Register for component changes
         entity.componentAddedEvent.register(this.onComponentAdded.bind(this));
         entity.componentRemovedEvent.register(this.onComponentRemoved.bind(this));
+        this.entityAdded(entity);
     }
 
     private onEntityRemoved(_: Scene, entity: Entity): void {
         entity.componentAddedEvent.deregister(this.onComponentAdded.bind(this));
         entity.componentRemovedEvent.deregister(this.onComponentRemoved.bind(this));
+        this.entityRemoved(entity);
     }
 
     addedToScene(scene: Scene): void {
