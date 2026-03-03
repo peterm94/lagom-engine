@@ -3,6 +3,7 @@ import { Component } from "../ECS/Component";
 import { LagomType } from "../ECS/LifecycleObject";
 import { GlobalSystem } from "../ECS/GlobalSystem";
 import { Entity } from "../ECS/Entity";
+import { ReadonlyField, VisibleField } from "./Decorators";
 
 /**
  * This is a system that listens to all component events for all instances.
@@ -52,96 +53,46 @@ export class DebugSystem extends GlobalSystem<Component[][]> {
 }
 
 function bindComponentFields(pane: FolderApi, component: any): void {
-    for (const key of Object.keys(component)) {
+    if (component == undefined) {
+        return;
+    }
+    const fields = getVisibleFields(component);
+    for (const key of fields) {
         const value = component[key];
         const valueType = typeof value;
 
-        // Skip functions
-        if (valueType === "function") continue;
-
-        // Tweakpane only binds primitives or simple objects
-        if (isBindable(value, key)) {
-            pane.addBinding(component, key, { readonly: false });
+        // Skip anything unbindable
+        if (!doBind(component, key, valueType)) {
+            continue;
         }
+
+        const readonly = isReadonly(component, key);
+        pane.addBinding(component, key, { readonly });
     }
 }
 
-// function isBindable(component: any, key: string): boolean {
-//     if (component === null || component === undefined) {
-//         return false;
-//     }
-//     const type = typeof component;
-//
-//     // primitives always bindable
-//     if (type === "number" || type === "boolean" || type === "string") {
-//         return true;
-//     }
-//
-//     // objects require explicit annotation
-//     const proto = Object.getPrototypeOf(component);
-//     const bindableSet: Set<string | symbol> | undefined = proto?.[BindableObject];
-//
-//     if (bindableSet && bindableSet.has(key)) {
-//         return true;
-//     }
-//
-//     return false;
-// }
+function doBind(component: any, propertyKey: string, valueType: string): boolean {
+    if (valueType === "function") return false;
 
-function isBindable(component: any, key: string): boolean {
-    if (component === null || component === undefined) {
-        return false;
-    }
-
-    const hiddenSet = getMetaSet(component, HiddenField);
-    if (hiddenSet?.has(key)) return false;
-
-    const type = typeof component;
-
-    if (type === "function") return false;
-
-    if (type === "number" || type === "boolean" || type === "string") {
+    if (valueType === "number" || valueType === "boolean" || valueType === "string") {
         return true;
     }
 
-    const bindableSet = getMetaSet(component, BindableObject);
-    if (bindableSet?.has(key)) return true;
-
-    return false;
+    // Objects need some work, but we will allow it for now.
+    return true;
 }
 
-const BindableObject = Symbol("BindableObject");
-const ReadonlyField = Symbol("ReadonlyField");
-const HiddenField = Symbol("HiddenField");
-
-export function bindableObject(): PropertyDecorator {
-    return (target: any, propertyKey: string | symbol) => {
-        if (!target[BindableObject]) {
-            target[BindableObject] = new Set<string | symbol>();
-        }
-        target[BindableObject].add(propertyKey);
-    };
-}
-
-export function readonly(): PropertyDecorator {
-    return (target: Object, propertyKey: string | symbol): void => {
-        const proto = target as any;
-        (proto[ReadonlyField] ??= new Set()).add(propertyKey);
-    };
-}
-
-
-// TODO write these by hand the robot is shit
-export function hidden(): PropertyDecorator {
-    return (target: any, propertyKey: string | symbol) => {
-        if (!target[HiddenField]) {
-            target[HiddenField] = new Set();
-        }
-        target[HiddenField].add(propertyKey);
-    };
-}
-
-function getMetaSet(obj: any, symbol: symbol): Set<string | symbol> | undefined {
+function getVisibleFields(obj: any): Set<string> {
     const proto = Object.getPrototypeOf(obj);
-    return proto?.[symbol];
+    const visible: Set<string> = proto?.[VisibleField] ?? new Set();
+    const readonly: Set<string> = proto?.[ReadonlyField];
+    if (readonly) {
+        return visible.union(readonly);
+    }
+    return visible;
+}
+
+function isReadonly(obj: any, field: string): boolean {
+    const proto = Object.getPrototypeOf(obj);
+    return proto?.[ReadonlyField]?.has(field) ?? false;
 }

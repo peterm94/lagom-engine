@@ -3,6 +3,7 @@ packages:
     - packages/lagom-game-template
     - packages/lagom-examples
     - packages/create-lagom-game
+    - ../LD58
 
 onlyBuiltDependencies:
     - esbuild
