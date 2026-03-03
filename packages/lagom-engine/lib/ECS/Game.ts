@@ -39,7 +39,7 @@ export abstract class Game {
     readonly resourceLoader: ResourceLoader = new ResourceLoader();
 
     // Currently loaded scene.
-    currentScene!: Scene;
+    currentScene: Scene | undefined;
 
     // Track total time
     // private timeMs = 0;
@@ -86,7 +86,7 @@ export abstract class Game {
             this.diag.updateTime = Date.now() - now;
 
             now = Date.now();
-            this.application.renderer.render(this.currentScene.pixiStage);
+            this.application.renderer.render(this.currentScene!.pixiStage);
             this.diag.renderTime = Date.now() - now;
             this.diag.totalFrameTime = Date.now() - totalUpdateStart;
 
@@ -131,14 +131,14 @@ export abstract class Game {
     }
 
     private updateInternal(delta: number): void {
-        this.currentScene.update(delta);
+        this.currentScene?.update(delta);
 
         this.keyboard.update();
         this.mouse.update();
     }
 
     private fixedUpdateInternal(delta: number): void {
-        this.currentScene.fixedUpdate(delta);
+        this.currentScene?.fixedUpdate(delta);
     }
 
     /**
@@ -147,7 +147,7 @@ export abstract class Game {
      * @returns The scene.
      */
     setScene<T extends Scene>(scene: T): T {
-        // TODO clean up old scene?
+        this.currentScene?.destroy();
         this.currentScene = scene;
 
         Log.debug("Setting scene for game.", scene);

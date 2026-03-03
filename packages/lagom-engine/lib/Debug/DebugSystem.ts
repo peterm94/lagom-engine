@@ -32,15 +32,22 @@ export class DebugSystem extends GlobalSystem<Component[][]> {
     }
 
     protected entityAdded(entity: Entity) {
-        const folder = this.pane.addFolder({ title: `${entity.name} (${entity.id})` });
+        const folder = this.pane.addFolder({ title: `${entity.name} (id: ${entity.id})` });
         const components: Map<number, any> = new Map();
         this.sceneEntities.set(entity.id, folder);
+
+        // Add entity properties
+        const entityProps = folder.addFolder({ title: `Entity Properties`, expanded: false });
+        entityProps.addBinding(entity, "layer", { format: (v) => v.toFixed(0) });
+        entityProps.addBinding(entity.transform, "position");
+        entityProps.addBinding(entity.transform, "angle");
+        entityProps.addBinding(entity.transform, "scale");
 
         entity.componentAddedEvent.register((_, component) => {
             const params = {
                 type: component.constructor.name,
             };
-            const compFolder = folder.addFolder({ title: `${component.constructor.name} (${component.id})` });
+            const compFolder = folder.addFolder({ title: `${component.constructor.name} (sid: ${component.id})`, expanded: false });
             bindComponentFields(compFolder, component);
             components.set(component.id, compFolder);
         });

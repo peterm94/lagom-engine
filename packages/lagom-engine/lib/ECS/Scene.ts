@@ -261,6 +261,15 @@ export class Scene extends LifecycleObject implements Updatable {
         return this.game;
     }
 
+    destroy() {
+        super.destroy();
+
+        this.sceneNode.destroy();
+        this.guiNode.destroy();
+        this.systems.values().forEach((system) => system.destroy());
+        this.globalSystems.values().forEach((system) => system.destroy());
+    }
+
     onRemoved(): void {
         super.onRemoved();
 
