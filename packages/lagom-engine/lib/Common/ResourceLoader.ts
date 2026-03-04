@@ -1,4 +1,4 @@
-import { Assets, Texture } from "pixi.js";
+import { Assets, SCALE_MODES, Texture } from "pixi.js";
 import { AssetOptions, TextureAsset } from "./TextureAsset";
 import { Log } from "./Util";
 import { Sound, sound } from "@pixi/sound";
@@ -22,6 +22,7 @@ export class ResourceLoader {
      */
     async loadTexture(name: string, path: string, options?: AssetOptions): Promise<TextureAsset> {
         const texture: Texture = await Assets.load({ alias: name, src: path });
+        texture.source.scaleMode = "nearest";
         const asset = new TextureAsset(name, texture.source, options);
         this.textureResources.set(asset.alias, asset);
         Log.info(`Loaded asset '${name}' with config`, options);
