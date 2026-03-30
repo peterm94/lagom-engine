@@ -1,5 +1,6 @@
 import { PIXIComponent } from "../ECS/Component";
 import { Graphics, Point, Text, TextStyle } from "pixi.js";
+import { visible } from "../Debug/Decorators";
 
 /**
  * Text renderer component.
@@ -12,9 +13,23 @@ export class TextDisp extends PIXIComponent<Text> {
      * @param text The text to display.
      * @param options Styling options for the text.
      */
+
+    private _text: string;
+
+    @visible
+    public set text(text: string) {
+        this._text = text;
+        this.pixiObj.text = text;
+    }
+
+    public get text(): string {
+        return this._text;
+    }
+
     constructor(xOff: number, yOff: number, text: string, options?: Partial<TextStyle>) {
         super(new Text({ text, style: options }));
 
+        this._text = text;
         this.pixiObj.x = xOff;
         this.pixiObj.y = yOff;
     }

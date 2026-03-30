@@ -54,10 +54,10 @@ class FpsUpdater extends System<[TextDisp, FpsTracker]> {
         if (this.frameCount % this.printFrame !== 0) {
             return;
         }
-        text.pixiObj.text = `${this.avgUpdateDt.toFixed(2)}`;
+        text.text = `${this.avgUpdateDt.toFixed(2)}`;
 
         if (tracker.verbose) {
-            text.pixiObj.text =
+            text.text =
                 `U: ${delta.toFixed(2)}ms ` +
                 `// ${(1000 / delta).toFixed(2)}hz ` +
                 `// ${this.avgUpdateDt.toFixed(2)}hz` +
@@ -72,7 +72,7 @@ class FpsUpdater extends System<[TextDisp, FpsTracker]> {
                 `// ${this.avgRender.toFixed(2)}ms` +
                 `\nTotalFrameTime: ${this.game.diag.totalFrameTime.toFixed(2)}ms ` +
                 `// ${this.avgFrame.toFixed(2)}ms` +
-                `\nEntities: ${this.game.currentScene.entities.size}`;
+                `\nEntities: ${this.game.currentScene?.entities.size}`;
         }
     }
 

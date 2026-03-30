@@ -20,6 +20,11 @@ export interface GameOptions {
     backgroundColor: number;
 }
 
+interface DebugControl {
+    paused: boolean;
+    step: boolean;
+}
+
 /**
  * Game class, containing all high level framework references. Sets up the render window and controls updating the ECS.
  */
@@ -40,6 +45,11 @@ export abstract class Game {
 
     // Currently loaded scene.
     currentScene: Scene | undefined;
+
+    debug: DebugControl = {
+        paused: false,
+        step: false,
+    };
 
     // Track total time
     // private timeMs = 0;
@@ -70,20 +80,23 @@ export abstract class Game {
 
             this.lastFrameTime = now;
 
-            this.elapsedSinceUpdate += this.deltaTime;
+            if (!this.debug.paused || this.debug.step) {
+                this.debug.step = false;
+                this.elapsedSinceUpdate += this.deltaTime;
 
-            while (this.elapsedSinceUpdate >= this.fixedDeltaMS) {
-                // call FixedUpdate() for the ECS
-                this.fixedUpdateInternal(this.fixedDeltaMS);
+                while (this.elapsedSinceUpdate >= this.fixedDeltaMS) {
+                    // call FixedUpdate() for the ECS
+                    this.fixedUpdateInternal(this.fixedDeltaMS);
 
-                this.elapsedSinceUpdate -= this.fixedDeltaMS;
-                // this.timeMs += this.fixedDeltaMS;
+                    this.elapsedSinceUpdate -= this.fixedDeltaMS;
+                    // this.timeMs += this.fixedDeltaMS;
+                }
+                this.diag.fixedUpdateTime = Date.now() - now;
+                // Call update() for the ECS
+                now = Date.now();
+                this.updateInternal(this.deltaTime);
+                this.diag.updateTime = Date.now() - now;
             }
-            this.diag.fixedUpdateTime = Date.now() - now;
-            // Call update() for the ECS
-            now = Date.now();
-            this.updateInternal(this.deltaTime);
-            this.diag.updateTime = Date.now() - now;
 
             now = Date.now();
             this.application.renderer.render(this.currentScene!.pixiStage);

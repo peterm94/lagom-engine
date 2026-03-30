@@ -39,6 +39,9 @@ importers:
       '@pixi/sound':
         specifier: ^6.0.1
         version: 6.0.1(pixi.js@8.15.0)
+      '@tweakpane/plugin-essentials':
+        specifier: ^0.2.1
+        version: 0.2.1(tweakpane@4.0.5)
       detect-collisions:
         specifier: ^2.6.0
         version: 2.7.0
@@ -523,6 +526,11 @@ packages:
   '@tweakpane/core@2.0.5':
     resolution: {integrity: sha512-punBgD5rKCF5vcNo6BsSOXiDR/NSs9VM7SG65QSLJIxfRaGgj54ree9zQW6bO3pNFf3AogiGgaNODUVQRk9YqQ==}
 
+  '@tweakpane/plugin-essentials@0.2.1':
+    resolution: {integrity: sha512-VbFU1/uD+CJNFQdfLXUOLjeG5HyUZH97Ox9CxmyVetg1hqjVun3C83HAGFULyhKzl8tSgii8jr304r8QpdHwzQ==}
+    peerDependencies:
+      tweakpane: ^4.0.0
+
   '@types/css-font-loading-module@0.0.12':
     resolution: {integrity: sha512-x2tZZYkSxXqWvTDgveSynfjq/T2HyiZHXb00j/+gy19yp70PHCizM48XFdjBCWH7eHBD0R5i/pw9yMBP/BH5uA==}
 
@@ -981,6 +989,10 @@ snapshots:
     optional: true
 
   '@tweakpane/core@2.0.5': {}
+
+  '@tweakpane/plugin-essentials@0.2.1(tweakpane@4.0.5)':
+    dependencies:
+      tweakpane: 4.0.5
 
   '@types/css-font-loading-module@0.0.12': {}
 
