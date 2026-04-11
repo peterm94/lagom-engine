@@ -10,14 +10,14 @@ import { Util } from "./Util";
  * @param T The event data.
  */
 export class Observable<C, T> {
-    private readonly observers: Observer<C, T>[] = [];
+    private readonly observers: Set<Observer<C, T>> = new Set<Observer<C, T>>();
 
     /**
      * Register an observer for this Observable event.
      * @param observer The observer to register.
      */
     register(observer: Observer<C, T>): void {
-        this.observers.push(observer);
+        this.observers.add(observer);
     }
 
     /**
@@ -25,7 +25,7 @@ export class Observable<C, T> {
      * @param observer The observer to deregister.
      */
     deregister(observer: Observer<C, T>): void {
-        Util.remove(this.observers, observer);
+        this.observers.delete(observer);
     }
 
     /**
@@ -34,6 +34,7 @@ export class Observable<C, T> {
      * @param data The data for the event.
      */
     trigger(caller: C, data: T): void {
+        // Sets actually preserve insertion order for iteration.
         this.observers.forEach((value) => value(caller, data));
     }
 
@@ -41,7 +42,7 @@ export class Observable<C, T> {
      * Release all Observers on this observable.
      */
     releaseAll(): void {
-        this.observers.length = 0;
+        this.observers.clear();
     }
 }
 
