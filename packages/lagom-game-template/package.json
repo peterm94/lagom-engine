@@ -12,8 +12,8 @@
         "lagom-engine": "workspace:^"
     },
     "devDependencies": {
-        "typescript": "^5.6.2",
-        "vite": "7.1.11"
+        "typescript": "^5.9.3",
+        "vite": "^8.0.8"
     },
     "packageManager": "pnpm@10.15.1"
 }

@@ -1,6 +1,6 @@
 {
     "name": "lagom-engine",
-    "version": "2.0.0-beta.1",
+    "version": "2.0.0-beta.2",
     "description": "Lagom Game Engine",
     "type": "module",
     "main": "dist/index.js",
@@ -24,7 +24,7 @@
     },
     "devDependencies": {
         "@types/sat": "^0.0.35",
-        "typescript": "^5.8.3",
+        "typescript": "^5.9.3",
         "@tweakpane/core": "^2.0.5"
     },
     "files": [
