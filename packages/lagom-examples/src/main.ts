@@ -1,6 +1,4 @@
 import "./main.css";
-import { InputTesting } from "./InputTesting";
-import { CollisionTesting } from "./CollisionTesting";
 import { SpriteTesting } from "./SpriteTesting";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `

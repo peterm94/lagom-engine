@@ -9,7 +9,7 @@ import { Scene } from "./Scene";
  */
 export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObject implements Updatable {
     // The key type is technically wrong, but it works because types aren't real
-    private readonly runOn: Map<{ new (): Component }, Component[]> = new Map();
+    private readonly runOn: Map<{ new (): Component }, Set<Component>> = new Map();
 
     scene!: Scene;
 
@@ -65,10 +65,10 @@ export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObj
 
         if (compMap === undefined) {
             Log.warn("Expected component map does not exist on GlobalSystem.", this, type.prototype);
-            compMap = [];
+            compMap = new Set();
             this.runOn.set(type.prototype, compMap);
         }
-        compMap.push(component);
+        compMap.add(component);
         this.componentLoaded(entity, component);
     }
 
@@ -89,8 +89,8 @@ export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObj
         // Nothing registered, return
         if (components === undefined) return;
 
-        // Get it out of the list if it is in it
-        Util.remove(components, component);
+        // Get it out of the set if it is in it
+        components.delete(component);
         this.componentRemoved(entity, component);
     }
 
@@ -114,7 +114,7 @@ export abstract class GlobalSystem<T extends Component[][]> extends LifecycleObj
     addedToScene(scene: Scene): void {
         // make each component map
         this.types.forEach((type) => {
-            this.runOn.set(type.prototype, []);
+            this.runOn.set(type.prototype, new Set());
         });
 
         scene.entityAddedEvent.register(this.onEntityAdded.bind(this));

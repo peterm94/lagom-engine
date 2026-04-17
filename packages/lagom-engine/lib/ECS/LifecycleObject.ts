@@ -3,7 +3,6 @@
  */
 export abstract class LifecycleObject {
     private static _next_id = 0;
-
     readonly id = LifecycleObject._next_id++;
 
     active = true;

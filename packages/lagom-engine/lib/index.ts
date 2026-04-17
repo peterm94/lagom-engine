@@ -1,4 +1,6 @@
-export * from "./Audio/AudioAtlas";
+export * from "./Debug/Decorators";
+
+export * from "./Audio/AudioManager";
 
 export * from "./Common/Sprite/AnimatedSprite";
 export * from "./Common/Sprite/AnimatedSpriteController";
@@ -43,3 +45,5 @@ export * from "./Input/Mouse";
 export * from "./Physics/SimplePhysics";
 
 export * from "./Collisions/SatCollisionSystem";
+
+export * from "./Debug/DebugSystem";

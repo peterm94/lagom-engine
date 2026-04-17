@@ -5,6 +5,7 @@ import { Keyboard } from "../Input/Keyboard";
 import { Mouse } from "../Input/Mouse";
 import { Application } from "pixi.js";
 import { TextureAsset } from "../Common/TextureAsset";
+import { AudioManager } from "../Audio/AudioManager";
 
 class Diag {
     renderTime = 0;
@@ -20,15 +21,20 @@ export interface GameOptions {
     backgroundColor: number;
 }
 
+interface DebugControl {
+    paused: boolean;
+    step: boolean;
+}
+
 /**
  * Game class, containing all high level framework references. Sets up the render window and controls updating the ECS.
  */
 export abstract class Game {
     // Get keyboard events. Updated every update() frame.
-    keyboard!: Keyboard;
+    static keyboard: Keyboard;
 
     // Get mouse events. Updated every update() frame.
-    mouse!: Mouse;
+    static mouse: Mouse;
 
     // Set this to true to end the game
     gameOver = false;
@@ -36,10 +42,19 @@ export abstract class Game {
     canvas!: HTMLCanvasElement;
     readonly application: Application;
 
-    readonly resourceLoader: ResourceLoader = new ResourceLoader();
+    static resourceLoader: ResourceLoader;
+    static audio: AudioManager;
 
     // Currently loaded scene.
-    currentScene!: Scene;
+    currentScene: Scene | undefined;
+
+    debug: DebugControl = {
+        paused: false,
+        step: false,
+    };
+
+    static GAME_WIDTH: number = 0;
+    static GAME_HEIGHT: number = 0;
 
     // Track total time
     // private timeMs = 0;
@@ -70,23 +85,26 @@ export abstract class Game {
 
             this.lastFrameTime = now;
 
-            this.elapsedSinceUpdate += this.deltaTime;
+            if (!this.debug.paused || this.debug.step) {
+                this.debug.step = false;
+                this.elapsedSinceUpdate += this.deltaTime;
 
-            while (this.elapsedSinceUpdate >= this.fixedDeltaMS) {
-                // call FixedUpdate() for the ECS
-                this.fixedUpdateInternal(this.fixedDeltaMS);
+                while (this.elapsedSinceUpdate >= this.fixedDeltaMS) {
+                    // call FixedUpdate() for the ECS
+                    this.fixedUpdateInternal(this.fixedDeltaMS);
 
-                this.elapsedSinceUpdate -= this.fixedDeltaMS;
-                // this.timeMs += this.fixedDeltaMS;
+                    this.elapsedSinceUpdate -= this.fixedDeltaMS;
+                    // this.timeMs += this.fixedDeltaMS;
+                }
+                this.diag.fixedUpdateTime = Date.now() - now;
+                // Call update() for the ECS
+                now = Date.now();
+                this.updateInternal(this.deltaTime);
+                this.diag.updateTime = Date.now() - now;
             }
-            this.diag.fixedUpdateTime = Date.now() - now;
-            // Call update() for the ECS
-            now = Date.now();
-            this.updateInternal(this.deltaTime);
-            this.diag.updateTime = Date.now() - now;
 
             now = Date.now();
-            this.application.renderer.render(this.currentScene.pixiStage);
+            this.application.renderer.render(this.currentScene!.pixiStage);
             this.diag.renderTime = Date.now() - now;
             this.diag.totalFrameTime = Date.now() - totalUpdateStart;
 
@@ -100,8 +118,13 @@ export abstract class Game {
      * Create a new Game.
      * @param options Options for the PIXI Renderer.
      */
-    protected constructor(readonly options?: GameOptions) {
+    protected constructor(readonly options: GameOptions) {
         this.application = new Application();
+        Game.GAME_WIDTH = options.width;
+        Game.GAME_HEIGHT = options.height;
+
+        Game.resourceLoader = new ResourceLoader();
+        Game.audio = new AudioManager();
     }
 
     /**
@@ -110,8 +133,8 @@ export abstract class Game {
     async start(): Promise<void> {
         await this.application.init(this.options).then(() => {
             this.canvas = this.application.canvas;
-            this.keyboard = new Keyboard(this.canvas);
-            this.mouse = new Mouse(this.canvas);
+            Game.keyboard = new Keyboard(this.canvas);
+            Game.mouse = new Mouse(this.canvas);
         });
         await this.resourceLoad();
 
@@ -131,14 +154,14 @@ export abstract class Game {
     }
 
     private updateInternal(delta: number): void {
-        this.currentScene.update(delta);
+        this.currentScene?.update(delta);
 
-        this.keyboard.update();
-        this.mouse.update();
+        Game.keyboard.update();
+        Game.mouse.update();
     }
 
     private fixedUpdateInternal(delta: number): void {
-        this.currentScene.fixedUpdate(delta);
+        this.currentScene?.fixedUpdate(delta);
     }
 
     /**
@@ -147,7 +170,7 @@ export abstract class Game {
      * @returns The scene.
      */
     setScene<T extends Scene>(scene: T): T {
-        // TODO clean up old scene?
+        this.currentScene?.destroy();
         this.currentScene = scene;
 
         Log.debug("Setting scene for game.", scene);
@@ -155,7 +178,7 @@ export abstract class Game {
         return scene;
     }
 
-    getResource(name: string): TextureAsset {
-        return this.resourceLoader.get(name);
+    getTexture(name: string): TextureAsset {
+        return Game.resourceLoader.get(name);
     }
 }

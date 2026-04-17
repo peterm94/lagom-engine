@@ -6,8 +6,10 @@ import { Log, Util } from "../Common/Util";
 import * as SAT from "sat";
 import { Observable, Observer } from "../Common/Observer";
 import { CircleColliderOptions, PolyColliderInterface, RectColliderOptions } from "./Colliders";
+import { visible } from "../Debug/Decorators";
 
 export abstract class SatCollider extends Component {
+    @visible
     abstract shape: SAT.Circle | SAT.Polygon;
 
     constructor(

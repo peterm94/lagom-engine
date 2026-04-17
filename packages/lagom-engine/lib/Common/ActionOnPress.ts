@@ -1,6 +1,7 @@
 import { Key } from "../Input/Key";
 import { System } from "../ECS/System";
 import { Entity } from "../ECS/Entity";
+import { Game } from "../ECS/Game";
 
 /**
  * Run a function on keypress. Key list is configurable.
@@ -17,7 +18,7 @@ export class ActionOnPress extends System<[]> {
 
     update(delta: number): void {
         super.update(delta);
-        if (this.scene.game.keyboard.isKeyPressed(...this.keys)) {
+        if (Game.keyboard.isKeyPressed(...this.keys)) {
             this.action();
         }
     }

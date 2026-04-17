@@ -8,8 +8,6 @@ import {
     Key,
     Log,
     LogLevel,
-    Mouse,
-    newSystem,
     RectSatCollider,
     RenderCircle,
     RenderRect,
@@ -32,11 +30,11 @@ class MainScene extends Scene {
         e.addComponent(new KeyTest());
 
         this.addFnSystem([RenderCircle, KeyTest], (delta, e, circle, kt) => {
-            if (this.game.keyboard.isKeyPressed(Key.KeyA, Key.Space)) {
+            if (Game.keyboard.isKeyPressed(Key.KeyA, Key.Space)) {
                 console.log("Key pressed");
                 circle.setStyle({ fillColour: 0xff0000, lineColour: 0xff0000 });
             }
-            if (this.game.keyboard.isKeyReleased(Key.KeyA, Key.Space)) {
+            if (Game.keyboard.isKeyReleased(Key.KeyA, Key.Space)) {
                 console.log("Key released");
                 circle.setStyle({ fillColour: 0x00ffff, lineColour: 0x00ffff });
             }
@@ -66,28 +64,28 @@ class MainScene extends Scene {
         this.addFnSystem([TextDisp, RenderRect, MouseOnTop], (delta, entity, text, rect, mouse) => {
             const speed = 0.1;
             // move camera with arrows
-            if (this.game.keyboard.isKeyDown(Key.ArrowLeft)) {
+            if (Game.keyboard.isKeyDown(Key.ArrowLeft)) {
                 this.camera.translate(delta * speed, 0);
             }
-            if (this.game.keyboard.isKeyDown(Key.ArrowRight)) {
+            if (Game.keyboard.isKeyDown(Key.ArrowRight)) {
                 this.camera.translate(delta * -speed, 0);
             }
-            if (this.game.keyboard.isKeyDown(Key.ArrowUp)) {
+            if (Game.keyboard.isKeyDown(Key.ArrowUp)) {
                 this.camera.translate(0, delta * speed);
             }
-            if (this.game.keyboard.isKeyDown(Key.ArrowDown)) {
+            if (Game.keyboard.isKeyDown(Key.ArrowDown)) {
                 this.camera.translate(0, delta * -speed);
             }
 
-            if (this.game.mouse.isButtonDown(Button.LEFT) && mouse.state) {
+            if (Game.mouse.isButtonDown(Button.LEFT) && mouse.state) {
                 rect.setStyle({ fillColour: 0x0030ff });
             }
-            if (this.game.mouse.isButtonReleased(Button.LEFT)) {
+            if (Game.mouse.isButtonReleased(Button.LEFT)) {
                 rect.setStyle({ fillColour: null });
             }
 
-            const mx = this.game.mouse.x;
-            const my = this.game.mouse.y;
+            const mx = Game.mouse.x;
+            const my = Game.mouse.y;
             const world = this.camera.viewToWorld(mx, my);
             (text as TextDisp).pixiObj.text =
                 `view_x: ${mx.toFixed(0)}\nview_y: ${my.toFixed(0)}\n` +
@@ -103,7 +101,7 @@ class MainScene extends Scene {
         pointer.addComponent(new RenderCircle({ radius: 1 }));
 
         this.addFnSystem([CircleSatCollider, PointerTest], (delta, e, _1, _2) => {
-            const pos = this.game.mouse.worldPos(this.camera);
+            const pos = Game.mouse.worldPos(this.camera);
             e.transform.x = pos.x;
             e.transform.y = pos.y;
         });

@@ -10,6 +10,7 @@ export class ResourceLoader {
     private textureResources: Map<string, TextureAsset> = new Map<string, TextureAsset>();
 
     private static SOUND_PREFIX = "lagom_sound__";
+    allSounds = new Set<string>();
 
     constructor() {}
 
@@ -22,6 +23,7 @@ export class ResourceLoader {
      */
     async loadTexture(name: string, path: string, options?: AssetOptions): Promise<TextureAsset> {
         const texture: Texture = await Assets.load({ alias: name, src: path });
+        texture.source.scaleMode = "nearest";
         const asset = new TextureAsset(name, texture.source, options);
         this.textureResources.set(asset.alias, asset);
         Log.info(`Loaded asset '${name}' with config`, options);
@@ -29,6 +31,7 @@ export class ResourceLoader {
     }
 
     async loadSound(name: string, path: string, volume = 1.0): Promise<Sound> {
+        this.allSounds.add(name);
         const alias = `${ResourceLoader.SOUND_PREFIX}${name}`;
         const sound: Sound = await Assets.load({ alias, src: path });
         sound.volume = volume;
@@ -80,7 +83,7 @@ export class ResourceLoader {
 
         // Textures
         // @ts-ignore This only works with vite, which isn't actually a dependency of the engine.
-        const textures = import.meta.glob("/src/assets/*.{png,gif,bmp,jpg,webp,avif,svg}", {
+        const textures = import.meta.glob("/src/assets/**/*.{png,gif,bmp,jpg,webp,avif,svg}", {
             eager: true,
             import: "default",
         });
@@ -100,7 +103,7 @@ export class ResourceLoader {
 
         // Fonts
         // @ts-ignore
-        const fonts = import.meta.glob("/src/assets/*.{ttf,otf,woff,woff2}", {
+        const fonts = import.meta.glob("/src/assets/**/*.{ttf,otf,woff,woff2}", {
             eager: true,
             import: "default",
         });
@@ -112,7 +115,7 @@ export class ResourceLoader {
 
         // Sounds
         // @ts-ignore
-        const sounds = import.meta.glob("/src/assets/*.{aiff,caf,mid,mp3,mpeg,oga,ogg,opus,wav,wma}", {
+        const sounds = import.meta.glob("/src/assets/**/*.{aiff,caf,mid,mp3,mpeg,oga,ogg,opus,wav,wma}", {
             eager: true,
             import: "default",
         });
