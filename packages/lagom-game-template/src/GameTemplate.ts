@@ -1,4 +1,4 @@
-import { ActionOnPress, AudioAtlas, Entity, FrameTriggerSystem, Game, Log, LogLevel, Scene, TextDisp, TimerSystem } from "lagom-engine";
+import { ActionOnPress, Entity, FrameTriggerSystem, Game, Log, LogLevel, Scene, TextDisp, TimerSystem } from "lagom-engine";
 import { SoundManager } from "./util/SoundManager";
 
 class TitleScene extends Scene {
@@ -38,47 +38,27 @@ class MainScene extends Scene {
                 fill: 0xffffff,
             }),
         );
+
+        // Game.audio.startMusic("music", true);
     }
 }
 
 export class GameTemplate extends Game {
     startScene = () => new TitleScene(this);
     resourceLoad = async () => {
-        await this.resourceLoader.autoLoad();
-
-        this.resourceLoader.getSound("flip").play();
+        await Game.resourceLoader.autoLoad();
         console.log("loaded all resources");
-        // await this.resourceLoader.addResource("mute_button", muteButtonSpr, {
-        //     tileHeight: 16,
-        //     tileWidth: 16,
-        // });
     };
-    static GAME_WIDTH = 512;
-    static GAME_HEIGHT = 512;
-
-    static muted = false;
-    static musicPlaying = false;
-    static audioAtlas: AudioAtlas = new AudioAtlas();
 
     constructor() {
         super({
-            width: GameTemplate.GAME_WIDTH,
-            height: GameTemplate.GAME_HEIGHT,
+            width: 512,
+            height: 512,
             resolution: 1,
             backgroundColor: 0x200140,
         });
 
         // Set the global log level
         Log.logLevel = LogLevel.INFO;
-
-        // Load an empty scene while we async load the resources for the main one
-        // this.setScene(new Scene(this));
-
-        // TODO sound loader and font loader need to go in the actual loader
-        // Import sounds and set their properties
-        // const music = GameTemplate.audioAtlas.load("music", "src/assets/ADD_ME")
-        //     .loop(true)
-        //     .volume(0.3);
-
     }
 }

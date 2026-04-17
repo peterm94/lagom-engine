@@ -1,6 +1,6 @@
 export * from "./Debug/Decorators";
 
-export * from "./Audio/AudioAtlas";
+export * from "./Audio/AudioManager";
 
 export * from "./Common/Sprite/AnimatedSprite";
 export * from "./Common/Sprite/AnimatedSpriteController";

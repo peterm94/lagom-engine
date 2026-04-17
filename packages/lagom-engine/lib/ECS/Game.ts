@@ -5,6 +5,7 @@ import { Keyboard } from "../Input/Keyboard";
 import { Mouse } from "../Input/Mouse";
 import { Application } from "pixi.js";
 import { TextureAsset } from "../Common/TextureAsset";
+import { AudioManager } from "../Audio/AudioManager";
 
 class Diag {
     renderTime = 0;
@@ -30,10 +31,10 @@ interface DebugControl {
  */
 export abstract class Game {
     // Get keyboard events. Updated every update() frame.
-    keyboard!: Keyboard;
+    static keyboard: Keyboard;
 
     // Get mouse events. Updated every update() frame.
-    mouse!: Mouse;
+    static mouse: Mouse;
 
     // Set this to true to end the game
     gameOver = false;
@@ -41,7 +42,8 @@ export abstract class Game {
     canvas!: HTMLCanvasElement;
     readonly application: Application;
 
-    readonly resourceLoader: ResourceLoader = new ResourceLoader();
+    static resourceLoader: ResourceLoader;
+    static audio: AudioManager;
 
     // Currently loaded scene.
     currentScene: Scene | undefined;
@@ -50,6 +52,9 @@ export abstract class Game {
         paused: false,
         step: false,
     };
+
+    static GAME_WIDTH: number = 0;
+    static GAME_HEIGHT: number = 0;
 
     // Track total time
     // private timeMs = 0;
@@ -113,8 +118,13 @@ export abstract class Game {
      * Create a new Game.
      * @param options Options for the PIXI Renderer.
      */
-    protected constructor(readonly options?: GameOptions) {
+    protected constructor(readonly options: GameOptions) {
         this.application = new Application();
+        Game.GAME_WIDTH = options.width;
+        Game.GAME_HEIGHT = options.height;
+
+        Game.resourceLoader = new ResourceLoader();
+        Game.audio = new AudioManager();
     }
 
     /**
@@ -123,8 +133,8 @@ export abstract class Game {
     async start(): Promise<void> {
         await this.application.init(this.options).then(() => {
             this.canvas = this.application.canvas;
-            this.keyboard = new Keyboard(this.canvas);
-            this.mouse = new Mouse(this.canvas);
+            Game.keyboard = new Keyboard(this.canvas);
+            Game.mouse = new Mouse(this.canvas);
         });
         await this.resourceLoad();
 
@@ -146,8 +156,8 @@ export abstract class Game {
     private updateInternal(delta: number): void {
         this.currentScene?.update(delta);
 
-        this.keyboard.update();
-        this.mouse.update();
+        Game.keyboard.update();
+        Game.mouse.update();
     }
 
     private fixedUpdateInternal(delta: number): void {
@@ -168,7 +178,7 @@ export abstract class Game {
         return scene;
     }
 
-    getResource(name: string): TextureAsset {
-        return this.resourceLoader.get(name);
+    getTexture(name: string): TextureAsset {
+        return Game.resourceLoader.get(name);
     }
 }

@@ -37,6 +37,11 @@ class Grounded extends Component {
 }
 
 class MainScene extends Scene {
+    makeBlock(x: number, y: number, w: number, h: number) {
+        const floor = this.addEntity(new Entity("floor", x, y));
+        floor.addComponent(new RectSatCollider({ layer: Layers.Wall, height: h, width: w }));
+        floor.addComponent(new RenderRect({ width: w, height: h }));
+    }
     onAdded() {
         super.onAdded();
 
@@ -46,12 +51,10 @@ class MainScene extends Scene {
         this.addGlobalSystem(new SatCollisionSystem(matrix));
 
         const e2 = this.addEntity(new Entity("", 105, 100));
-        e2.addComponent(new CircleSatCollider({ layer: Layers.Guy, radius: 10 })).onTrigger.register((caller, data) => {
-            if (data.other.layer == Layers.Wall) {
-                // console.log("hit")
-                caller.parent.transform.x -= data.result.overlapV.x;
-                caller.parent.transform.y -= data.result.overlapV.y;
-            }
+        e2.addComponent(new CircleSatCollider({ layer: Layers.Guy, radius: 10 })).onTriggerWithLayer(Layers.Wall, (caller, data) => {
+            console.log("player in wall");
+            caller.parent.transform.x -= data.result.overlapV.x;
+            caller.parent.transform.y -= data.result.overlapV.y + 1;
         });
         const grounded = e2.addComponent(new Grounded());
         const groundChild = e2.addChild(new Entity("groundCheck", 0, 12));
@@ -62,15 +65,15 @@ class MainScene extends Scene {
             }),
         );
         groundCheck.onTriggerEnter.register((caller, data) => {
-            console.log("grounded");
             if (data.other.layer == Layers.Wall) {
+                console.log("grounded");
                 grounded.onGround = true;
             }
         });
 
         groundCheck.onTriggerExit.register((caller, data) => {
-            console.log("no grounded");
             if (data.other.layer == Layers.Wall) {
+                console.log("no grounded");
                 grounded.onGround = false;
             }
         });
@@ -81,31 +84,36 @@ class MainScene extends Scene {
         e2.addComponent(new MoveMe());
         e2.addComponent(new Gravity());
 
-        const floor = this.addEntity(new Entity("floor", 0, 150));
-        floor.addComponent(new RectSatCollider({ layer: Layers.Wall, height: 10, width: 200 }));
-        floor.addComponent(new RenderRect({ width: 200, height: 10 }));
+        this.makeBlock(0, 150, 200, 10);
+        this.makeBlock(100, 100, 200, 10);
+        this.makeBlock(130, 100, 200, 100);
 
         this.addFnSystem(
             newSystem([MoveMe], (d, e, moveme) => {
-                if (this.game.keyboard.isKeyDown(Key.KeyA)) {
+                if (Game.keyboard.isKeyDown(Key.KeyA)) {
                     e.transform.position.x -= d * 0.1;
                 }
-                if (this.game.keyboard.isKeyDown(Key.KeyD)) {
+                if (Game.keyboard.isKeyDown(Key.KeyD)) {
                     e.transform.position.x += d * 0.1;
                 }
-                if (this.game.keyboard.isKeyPressed(Key.KeyW) && grounded.onGround) {
+                if (Game.keyboard.isKeyPressed(Key.KeyW) && grounded.onGround) {
                     moveme.vel = -50;
                 }
             }),
         );
 
+        // Gravity
         this.addFixedFnSystem(
-            newSystem(types(MoveMe, Gravity), (delta, entity, moveme, gravity) => {
+            newSystem(types(MoveMe, Gravity, Grounded), (delta, entity, moveme, gravity, grounded) => {
+                // if (grounded.onGround) {
+                //     return;
+                // }
                 moveme.vel += delta * 0.2;
                 if (moveme.vel > 20) {
                     moveme.vel = 20;
                 }
-                entity.transform.y += moveme.vel * delta * 0.01;
+
+                entity.transform.position.y += moveme.vel * delta * 0.01;
             }),
         );
 

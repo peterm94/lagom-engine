@@ -23,7 +23,7 @@ class MainScene extends Scene {
     onAdded() {
         super.onAdded();
 
-        const sheet = this.game.getResource("sheet");
+        const sheet = this.game.getTexture("sheet");
 
         this.addGlobalSystem(new FrameTriggerSystem());
         this.addGlobalSystem(new TimerSystem());
@@ -100,7 +100,7 @@ class MainScene extends Scene {
 export class SpriteTesting extends Game {
     startScene = () => new MainScene(this);
     resourceLoad = async () => {
-        await this.resourceLoader.autoLoad();
+        await Game.resourceLoader.autoLoad();
     };
 
     constructor() {
