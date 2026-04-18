@@ -153,7 +153,7 @@ export class RenderRect extends PIXIGraphicsComponent {
  */
 export class RenderPoly extends PIXIGraphicsComponent {
     protected draw(): void {
-        let shape = this.pixiObj.poly(this.points);
+        let shape = this.pixiObj.poly(this.points.map((value) => new Point(value[0], value[1])));
         if (this.fillColour !== null) {
             shape.fill();
         }
@@ -167,7 +167,7 @@ export class RenderPoly extends PIXIGraphicsComponent {
      * @param lineColour The colour of the line.
      */
     constructor(
-        readonly points: Point[],
+        readonly points: number[][],
         fillColour: number | null = PIXIGraphicsComponent.defaultFill,
         lineColour: number = PIXIGraphicsComponent.defaultLine,
     ) {
