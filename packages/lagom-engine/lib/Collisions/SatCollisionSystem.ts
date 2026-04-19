@@ -13,6 +13,8 @@ export abstract class SatCollider extends Component {
     @visible
     abstract shape: SAT.Circle | SAT.Polygon;
 
+    debugComp: Component | null = null;
+
     constructor(
         readonly layer: number,
         readonly xOff: number,
@@ -69,6 +71,11 @@ export abstract class SatCollider extends Component {
             }
         });
     }
+
+    onRemoved() {
+        super.onRemoved();
+        this.debugComp?.destroy();
+    }
 }
 
 class DebugPoly extends RenderPoly {}
@@ -85,7 +92,7 @@ export class PolySatCollider extends SatCollider {
     onAdded() {
         super.onAdded();
         if (SatCollisionSystem.DEBUG_DRAW) {
-            this.getEntity().addComponent(new DebugPoly(this.shape.points.map((value) => [value.x + this.xOff, value.y + this.yOff])));
+            this.debugComp = this.getEntity().addComponent(new DebugPoly(this.shape.points.map((value) => [value.x + this.xOff, value.y + this.yOff])));
         }
     }
 
@@ -145,7 +152,7 @@ export class CircleSatCollider extends SatCollider {
     onAdded() {
         super.onAdded();
         if (SatCollisionSystem.DEBUG_DRAW) {
-            this.getEntity().addComponent(new DebugCircle({ radius: this.shape.r, xOff: this.xOff, yOff: this.yOff }));
+            this.debugComp = this.getEntity().addComponent(new DebugCircle({ radius: this.shape.r, xOff: this.xOff, yOff: this.yOff }));
         }
     }
 }
