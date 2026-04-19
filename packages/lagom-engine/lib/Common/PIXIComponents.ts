@@ -116,7 +116,7 @@ export class RenderCircle extends PIXIGraphicsComponent {
         lineColour: number = PIXIGraphicsComponent.defaultLine,
     ) {
         super(fillColour, lineColour);
-        this.setStyle({});
+        this.setStyle({fillColour, lineColour});
     }
 }
 
@@ -144,7 +144,7 @@ export class RenderRect extends PIXIGraphicsComponent {
         lineColour: number = PIXIGraphicsComponent.defaultLine,
     ) {
         super(fillColour, lineColour);
-        this.setStyle({});
+        this.setStyle({fillColour, lineColour});
     }
 }
 
@@ -172,6 +172,6 @@ export class RenderPoly extends PIXIGraphicsComponent {
         lineColour: number = PIXIGraphicsComponent.defaultLine,
     ) {
         super(fillColour, lineColour);
-        this.setStyle({});
+        this.setStyle({fillColour, lineColour});
     }
 }
