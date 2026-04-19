@@ -7,6 +7,7 @@ import * as SAT from "sat";
 import { Observable, Observer } from "../Common/Observer";
 import { CircleColliderOptions, PolyColliderInterface, RectColliderOptions } from "./Colliders";
 import { visible } from "../Debug/Decorators";
+import { RenderCircle, RenderPoly } from "../Common/PIXIComponents";
 
 export abstract class SatCollider extends Component {
     @visible
@@ -70,14 +71,67 @@ export abstract class SatCollider extends Component {
     }
 }
 
+class DebugPoly extends RenderPoly {}
+class DebugCircle extends RenderCircle {}
+
 export class PolySatCollider extends SatCollider {
     constructor(options: PolyColliderInterface) {
         super(options.layer, options.xOff ?? 0, options.yOff ?? 0);
-        const vec = options.points.map((value) => new SAT.Vector(value[0], value[1]));
+        const vec = PolySatCollider.reorderVertices(options.points).map((value) => new SAT.Vector(value[0], value[1]));
         this.shape = new SAT.Polygon(new SAT.Vector(options.xOff, options.yOff), vec);
     }
 
     override shape: SAT.Polygon;
+    onAdded() {
+        super.onAdded();
+        if (SatCollisionSystem.DEBUG_DRAW) {
+            this.getEntity().addComponent(new DebugPoly(this.shape.points.map((value) => [value.x + this.xOff, value.y + this.yOff])));
+        }
+    }
+
+    /**
+     * Make sure that vertices are ready to use by the collision library by ensuring their rotation is correct.
+     *
+     * @param vertices Vertices to reorder.
+     * @returns Correctly ordered vertices.
+     */
+    protected static reorderVertices(vertices: number[][]): number[][] {
+        const area = PolySatCollider.findArea(vertices);
+        if (area < 0) {
+            vertices.reverse();
+        }
+        return vertices;
+    }
+
+    /**
+     * Calculate the area of a polygon. The area will be negative if the points are not given in counter-clockwise
+     * order.
+     *
+     * @param vertices The polygon vertices.
+     * @returns The area of the polygon.
+     */
+    private static findArea(vertices: number[][]): number {
+        // find bottom right point
+        let brIndex = 0;
+        for (let i = 1; i < vertices.length; ++i) {
+            const isLower = vertices[i][1] < vertices[brIndex][1];
+            const isRight = vertices[i][1] === vertices[brIndex][1] && vertices[i][0] > vertices[brIndex][0];
+            if (isLower || isRight) {
+                brIndex = i;
+            }
+        }
+
+        // calculate area
+        let area = 0;
+        for (let i = 0; i < vertices.length; ++i) {
+            const a = vertices[(i + brIndex) % vertices.length];
+            const b = vertices[(i + 1 + brIndex) % vertices.length];
+            const c = vertices[(i + 2 + brIndex) % vertices.length];
+            area += (b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1]);
+        }
+
+        return area / 2;
+    }
 }
 
 export class CircleSatCollider extends SatCollider {
@@ -87,6 +141,12 @@ export class CircleSatCollider extends SatCollider {
         super(options.layer, options.xOff ?? 0, options.yOff ?? 0);
 
         this.shape = new SAT.Circle(new SAT.Vector(options.xOff, options.yOff), options.radius);
+    }
+    onAdded() {
+        super.onAdded();
+        if (SatCollisionSystem.DEBUG_DRAW) {
+            this.getEntity().addComponent(new DebugCircle({ radius: this.shape.r, xOff: this.xOff, yOff: this.yOff }));
+        }
     }
 }
 
@@ -148,6 +208,8 @@ export interface SatVector {
 }
 
 export class SatCollisionSystem extends GlobalSystem<[SatCollider[]]> {
+    static DEBUG_DRAW = false;
+
     types = [SatCollider];
 
     // Key is the collision layer.
